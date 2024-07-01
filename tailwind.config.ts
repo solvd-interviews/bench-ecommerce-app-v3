@@ -13,6 +13,9 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      animation: {
+        "skeleton-fast": "skeleton 1s linear infinite",
+      },
     },
   },
   daisyui: {
@@ -22,7 +25,7 @@ const config: Config = {
           primary: "#00CC66",
           secondary: "#ff00ff",
           accent: "#00ffff",
-          neutral: "#ff00ff",
+          neutral: "#00CC66",
           "base-100": "#ffffff",
           info: "#0000ff",
           success: "#00ff00",
