@@ -21,10 +21,9 @@ export default async function RootLayout({
   }
 
   return (
-    <main>
-      <Header isAdmin/>
-      {children}
-      <footer></footer>
+    <main className="w-full h-screen flex flex-col">
+      <Header isAdmin />
+      <div className="flex-grow flex flex-col overflow-hidden bg-secondary">{children}</div>
     </main>
   );
 }
