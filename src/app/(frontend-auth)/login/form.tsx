@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface FormData {
   email: string;
@@ -16,6 +17,7 @@ const Form = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>();
 
   const router = useRouter();
@@ -30,23 +32,31 @@ const Form = () => {
         password: data.password,
         redirect: false,
       });
-      setisLoading(false);
-      window.location.reload();
-      router.replace("/");
+      console.log("response ", response);
+      if (response && response.ok) {
+        window.location.reload();
+        router.replace("/");
+      } else {
+        throw new Error();
+      }
     } catch (error) {
       console.error("error login: ", error);
+      toast.error("Incorrect username or password please try again.");
+    } finally {
+      setisLoading(false);
+      reset();
     }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="hidden lg:block lg:w-1/2 bg-blue-500">
-        {/* <Image
-          src="/bag.png"
+      <div className="hidden lg:block lg:w-1/2 bg-primary relative border-r-2 border-primary">
+        <Image
+          src="/solvdwhite-hd.png"
           layout="fill"
           objectFit="cover"
           alt="Background"
-        /> */}
+        />
       </div>
 
       <div className="flex flex-1 flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -75,7 +85,12 @@ const Form = () => {
                       type="text"
                       required
                       {...register("email", {
-                        required: "Email is required",
+                        required: "Email is required.",
+                        pattern: {
+                          value:
+                            /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                          message: "Email not valid.",
+                        },
                       })}
                       className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
@@ -101,7 +116,17 @@ const Form = () => {
                       autoComplete="current-password"
                       required
                       {...register("password", {
-                        required: "Password is required",
+                        required: "Password is required.",
+                        minLength: {
+                          value: 4,
+                          message:
+                            "Password should have at least 4 characters.",
+                        },
+                        maxLength: {
+                          value: 40,
+                          message:
+                            "Password should a maximum of 40 characters.",
+                        },
                       })}
                       className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
