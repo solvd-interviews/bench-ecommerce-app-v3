@@ -4,11 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
-  const limit = searchParams.get("limit");
-  const page = searchParams.get("page");
-  const sort = searchParams.get("sort");
-  const order = searchParams.get("order");
-  console.log("sort and order", sort, order);
+  const limit = parseInt(searchParams.get("limit") || "10");
+  const page = parseInt(searchParams.get("page") || "1");
+  const sort = searchParams.get("sort") || "createdAt";
+  const order = searchParams.get("order") || "desc";
 
   if (!limit || !page || !sort || !order) {
     return NextResponse.json(
@@ -17,11 +16,22 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
+  const filters = {
+    id: parseInt(searchParams.get("id") ?? "0"),
+    name: searchParams.get("name"),
+    createDate: searchParams.get("createDate") ? new Date(searchParams.get("createDate") as string) : null,
+    updatedDate: searchParams.get("updatedDate") ? new Date(searchParams.get("updatedDate") as string) : null,
+    price: parseFloat(searchParams.get("price") ?? "0"),
+    stock: parseInt(searchParams.get("stock") ?? "0"),
+    block: searchParams.get("block") === "true",
+  }
+
   const { products, totalPages, currentPage } = await fetchProductsPagination(
-    parseInt(page),
-    parseInt(limit),
+    page,
+    limit,
     sort,
-    order
+    order,
+    filters
   );
 
   return NextResponse.json(

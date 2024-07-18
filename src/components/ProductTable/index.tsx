@@ -1,139 +1,20 @@
 "use client";
-import { Product } from "@/lib/models/ProductModel";
 import { useState, useEffect, useCallback } from "react";
 import Pagination from "../Pagination";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 import { LuClipboardEdit } from "react-icons/lu";
 import { LuTrash2 } from "react-icons/lu";
+import { ProductTableState, Filter } from "./types";
+import { tablePropertyAndSkeletonArr } from "./constants";
 import { LuArrowDownZA } from "react-icons/lu"; // z - a
 import { LuArrowDownAZ } from "react-icons/lu"; // a - z
-
 import { LuArrowDown01 } from "react-icons/lu"; // 0 - 1
 import { LuArrowDown10 } from "react-icons/lu"; // 1 - 0
 
-export interface ProductTableState {
-  isLoading: boolean;
-  page: number;
-  totalPages: undefined | number;
-  currentProducts: Product[];
-  limit: number;
-  sort: {
-    prop: string;
-    order: "asc" | "desc";
-    filter: null | string;
-  };
-}
-
-const tablePropertyAndSkeletonArr: {
-  label: string;
-  prop: string;
-  defOrder: "asc" | "desc";
-  logic: boolean;
-  icon?: "number" | "str";
-  skeletonStyle: string;
-  skeletonQuantity: number;
-}[] = [
-  {
-    label: "Id",
-    prop: "productNumber",
-    defOrder: "desc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-4",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Content",
-    logic: false,
-    prop: "",
-    defOrder: "asc",
-    skeletonStyle: "h-20 w-24",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Name",
-    prop: "name",
-    defOrder: "asc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-56",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Created At",
-    prop: "createdAt",
-    defOrder: "desc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-20",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Updated At",
-    prop: "updatedAt",
-    defOrder: "desc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-20",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Description",
-    prop: "description",
-    defOrder: "asc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-56",
-    skeletonQuantity: 3,
-  },
-  {
-    label: "Price",
-    prop: "price",
-    defOrder: "asc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-10",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Stock",
-    prop: "stock",
-    defOrder: "asc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-10",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Block",
-    prop: "isBlocked",
-    defOrder: "asc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-7 w-12",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Status",
-    logic: false,
-    prop: "",
-    defOrder: "asc",
-    skeletonStyle: "h-7 w-12",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Actions",
-    logic: false,
-    prop: "",
-    defOrder: "asc",
-    skeletonStyle: "h-10 w-20",
-    skeletonQuantity: 2,
-  },
-];
-
 const ProductTable = () => {
-  const [state, setState] = useState<ProductTableState>({
+  const [tableState, setTableState] = useState<ProductTableState>({
     isLoading: true,
     page: 1,
     totalPages: undefined,
@@ -145,6 +26,7 @@ const ProductTable = () => {
       filter: null,
     },
   });
+  const { register, handleSubmit, formState: { errors } } = useForm<Filter>();
 
   const {
     isLoading,
@@ -153,27 +35,41 @@ const ProductTable = () => {
     currentProducts,
     limit,
     sort: { prop, order },
-  } = state;
+  } = tableState;
 
   const fetchProducts = useCallback(
-    async (page: number, limit: number, prop: string, order: string) => {
-      setState((prevState) => ({ ...prevState, isLoading: true }));
-      let url = `/api/products?page=${page}&limit=${limit}&sort=${prop}&order=${order}`;
-      const res = await fetch(url);
-      const { products, totalPages } = await res.json();
-      setState((prevState) => ({
+    async (filters: Partial<Filter>) => {
+      setTableState((prevState) => ({ ...prevState, isLoading: true }));
+
+      const queryParams = new URLSearchParams({
+        page: tableState.page.toString(),
+        limit: tableState.limit.toString(),
+        sort: tableState.sort.prop,
+        order: tableState.sort.order,
+        ...Object.fromEntries(Object.entries(filters).filter(([_, v]) => v != null))
+      }).toString();
+
+      const url = `/api/products?${queryParams}`;
+      console.log("queryParams", queryParams);
+
+      try {
+        const res = await fetch(url);
+        const { products: currentProducts, totalPages } = await res.json();
+        console.log("currentProducts", currentProducts);
+        setTableState((prevState) => ({
         ...prevState,
         isLoading: false,
-        totalPages: totalPages,
-        currentProducts: products,
+          totalPages,
+          currentProducts,
       }));
+      } catch (error) {
+        console.error("Fetch error: ", error);
+        toast.error("Failed to fetch products. Try again later.");
+        setTableState(prevState => ({ ...prevState, isLoading: false }));
+      }
     },
-    []
+    [page, limit, prop, order] // change to tableState?
   );
-
-  useEffect(() => {
-    fetchProducts(page, limit, prop, order);
-  }, [page, limit, fetchProducts, prop, order]);
 
   const handleDeleteProduct = async (id: string) => {
     try {
@@ -221,9 +117,134 @@ const ProductTable = () => {
     }
   };
 
+  useEffect(() => {
+    fetchProducts({});
+  }, []);
+
+  const onSubmit = (data: Filter) => {
+    fetchProducts(data);
+  };
+
   return (
     <>
       <div className="overflow-y-auto h-full bg-white">
+        <div className="filter-section p-3 bg-blue-100">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-center gap-3">
+            {/* Product ID Filter */}
+            <div>
+              <label htmlFor="productId" className="block text-sm font-medium text-gray-700">
+                ID
+              </label>
+              <input
+                type="number"
+                id="productId"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                placeholder="123456"
+                min="1"
+                max="999999"
+                {...register('id', { valueAsNumber: true })}
+              />
+            </div>
+
+            {/* Product Name Filter */}
+            <div>
+              <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                type="text"
+                id="productName"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                placeholder="Widget X123"
+                maxLength={30}
+                {...register('name')}
+              />
+            </div>
+
+            {/* Create Date Filter */}
+            <div>
+              <label htmlFor="createDate" className="block text-sm font-medium text-gray-700">
+                Created
+              </label>
+              <input
+                type="date"
+                id="createDate"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                {...register('createDate')}
+              />
+            </div>
+
+            {/* Updated Date Filter */}
+            <div>
+              <label htmlFor="updatedDate" className="block text-sm font-medium text-gray-700">
+                Updated
+              </label>
+              <input
+                type="date"
+                id="updatedDate"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                {...register('updatedDate')}
+              />
+            </div>
+
+            {/* Price Filter */}
+            <div>
+              <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                Price
+              </label>
+              <input
+                type="text"
+                id="price"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                placeholder="19.99"
+                pattern="^\d*(\.\d{0,2})?$"
+                title="Enter a valid price"
+                {...register('price', { valueAsNumber: true })}
+              />
+            </div>
+
+            {/* Stock Filter */}
+            <div>
+              <label htmlFor="stock" className="block text-sm font-medium text-gray-700">
+                Stock
+              </label>
+              <input
+                type="number"
+                id="stock"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                placeholder="100"
+                min="0"
+                max="99999"
+                {...register('stock', { valueAsNumber: true })}
+              />
+            </div>
+
+            {/* Block Filter */}
+            <div className="flex items-center">
+              <label htmlFor="block" className="block text-sm font-medium text-gray-700 mr-2">
+                Blocked
+              </label>
+              <input
+                type="checkbox"
+                id="block"
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                {...register('block')}
+              />
+            </div>
+
+            {/* Search Button */}
+            <div>
+              <button
+                type="submit"
+                onSubmit={handleSubmit(onSubmit)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+
         <table className="w-full ">
           <thead>
             <tr>
@@ -236,7 +257,7 @@ const ProductTable = () => {
                         prop === e.prop && "bg-primary text-white"
                       }`}
                       onClick={() => {
-                        setState((prevState) => ({
+                        setTableState((prevState) => ({
                           ...prevState,
                           sort: {
                             filter: null,
@@ -357,7 +378,7 @@ const ProductTable = () => {
                                   !product.isBlocked
                                 );
                                 product.isBlocked = !product.isBlocked;
-                                setState((prevState) => ({
+                                setTableState((prevState) => ({
                                   ...prevState,
                                   currentProducts:
                                     prevState.currentProducts.map((e) => {
@@ -416,7 +437,7 @@ const ProductTable = () => {
                                     product._id
                                   );
                                   if (res) {
-                                    setState((prevState) => ({
+                                    setTableState((prevState) => ({
                                       ...prevState,
                                       currentProducts:
                                         prevState.currentProducts.filter(
@@ -453,14 +474,14 @@ const ProductTable = () => {
         <Pagination
           pages={totalPages}
           limit={limit}
-          setState={setState}
+          setState={setTableState}
           loading={false}
         />
       ) : (
         <Pagination
           pages={2}
           limit={limit}
-          setState={setState}
+            setState={setTableState}
           loading={true}
         />
       )}
