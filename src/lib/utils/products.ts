@@ -1,16 +1,6 @@
 import dbConnect from "../dbConnect";
 import ProductModel from "../models/ProductModel";
-import { Filter } from "@/components/ProductTable/types";
-
-interface MongoFilter {
-  id: number | { $eq: number };
-  name: string | { $regex: string; $options: string };
-  createdAt: Date | { $gte: Date };
-  updatedAt: Date | { $gte: Date };
-  price: number | { $eq: number };
-  stock: number | { $eq: number };
-  isBlocked: boolean;
-}
+import { MongoFilter } from "@/app/api/products/route";
 
 export const fetchProducts = async () => {
   await dbConnect();
@@ -41,26 +31,9 @@ export const fetchProductsPagination = async (
   limit = 10,
   sort: string,
   order: string,
-  filters: Filter
+  query: Partial<MongoFilter>
 ) => {
   await dbConnect();
-  const query: Partial<MongoFilter> = {};
-
-  if (filters.id) query['id'] = filters.id;
-  if (filters.name) query['name'] = { $regex: filters.name, $options: 'i' };
-  if (filters.createDate) query['createdAt'] = { $gte: new Date(filters.createDate) };
-  if (filters.updatedDate) query['updatedAt'] = { $gte: new Date(filters.updatedDate) };
-  if (typeof filters.price === 'string') {
-    query['price'] = { $eq: parseFloat(filters.price) };
-  } else if (typeof filters.price === 'number') {
-    query['price'] = { $eq: filters.price };
-  }
-  if (typeof filters.stock === 'string') {
-    query['stock'] = { $eq: parseInt(filters.stock) };
-  } else if (typeof filters.stock === 'number') {
-    query['stock'] = { $eq: filters.stock };
-  }
-  if (filters.block !== null) query['isBlocked'] = filters.block;
 
   const prom1 = ProductModel.find(query)
     .skip((page - 1) * limit)

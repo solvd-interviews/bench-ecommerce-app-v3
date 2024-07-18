@@ -50,12 +50,10 @@ const ProductTable = () => {
       }).toString();
 
       const url = `/api/products?${queryParams}`;
-      console.log("queryParams", queryParams);
 
       try {
         const res = await fetch(url);
         const { products: currentProducts, totalPages } = await res.json();
-        console.log("currentProducts", currentProducts);
         setTableState((prevState) => ({
         ...prevState,
         isLoading: false,
@@ -122,7 +120,10 @@ const ProductTable = () => {
   }, []);
 
   const onSubmit = (data: Filter) => {
-    fetchProducts(data);
+    const cleanFilters = Object.fromEntries(
+      Object.entries(data).filter(([_, value]) => value !== '' && value !== null && !isNaN(value))
+    );
+    fetchProducts(cleanFilters);
   };
 
   return (
@@ -462,8 +463,8 @@ const ProductTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={11} className="py-2 text-center">
-                  No data
+                    <td colSpan={11} className="py-10 text-center">
+                      No products found.
                 </td>
               </tr>
             )}

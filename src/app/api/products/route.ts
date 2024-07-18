@@ -2,8 +2,18 @@ import { fetchProductsPagination } from "@/lib/utils/products";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
+export interface MongoFilter {
+  name: { $regex: string; $options: string };
+  createdAt: { $gte: Date };
+  updatedAt: { $gte: Date };
+  price: { $eq: number };
+  stock: { $eq: number };
+  isBlocked: boolean;
+}
+
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
+
   const limit = parseInt(searchParams.get("limit") || "10");
   const page = parseInt(searchParams.get("page") || "1");
   const sort = searchParams.get("sort") || "createdAt";
@@ -16,14 +26,40 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  const filters = {
-    id: parseInt(searchParams.get("id") ?? "0"),
-    name: searchParams.get("name"),
-    createDate: searchParams.get("createDate") ? new Date(searchParams.get("createDate") as string) : null,
-    updatedDate: searchParams.get("updatedDate") ? new Date(searchParams.get("updatedDate") as string) : null,
-    price: parseFloat(searchParams.get("price") ?? "0"),
-    stock: parseInt(searchParams.get("stock") ?? "0"),
-    block: searchParams.get("block") === "true",
+  const query: Partial<MongoFilter> = {};
+
+  const name = searchParams.get('name');
+  if (name) {
+    query['name'] = { $regex: name, $options: 'i' };
+  }
+
+  const createDate = searchParams.get('createDate');
+  if (createDate) {
+    query['createdAt'] = { $gte: new Date(createDate) };
+  }
+
+  const updatedDate = searchParams.get('updatedDate');
+  if (updatedDate) {
+    query['updatedAt'] = { $gte: new Date(updatedDate) };
+  }
+
+  if (searchParams.has('price')) {
+    const price = parseFloat(searchParams.get('price')!);
+    if (!isNaN(price)) {
+      query['price'] = { $eq: price };
+    }
+  }
+
+  if (searchParams.has('stock')) {
+    const stock = parseInt(searchParams.get('stock')!);
+    if (!isNaN(stock)) {
+      query['stock'] = { $eq: stock };
+    }
+  }
+
+  const block = searchParams.get('block');
+  if (block !== null) {
+    query['isBlocked'] = block === 'true';
   }
 
   const { products, totalPages, currentPage } = await fetchProductsPagination(
@@ -31,7 +67,7 @@ export const GET = async (request: NextRequest) => {
     limit,
     sort,
     order,
-    filters
+    query
   );
 
   return NextResponse.json(

@@ -24,14 +24,12 @@ const UserSchema = new mongoose.Schema<User>(
 );
 
 UserSchema.pre("save", async function (next) {
-  console.log("userSchema.presave");
   if (this.isNew) {
     const counter = await CounterModel.findByIdAndUpdate(
       { _id: "userNumber" },
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
-    console.log("counter: ", counter);
     this.userNumber = counter.seq;
   }
   next();
