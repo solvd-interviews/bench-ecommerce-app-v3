@@ -30,7 +30,7 @@ const SummaryProd = ({
               <tr key={item._id}>
                 <td>
                   <Link
-                    href={`/product/${item._id}`}
+                    href={`/${item._id}`}
                     className="flex items-center min-w-28"
                   >
                     <Image
