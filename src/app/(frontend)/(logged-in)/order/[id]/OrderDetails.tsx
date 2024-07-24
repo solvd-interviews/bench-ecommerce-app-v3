@@ -16,6 +16,8 @@ export default function OrderDetails({
   paypalClientId: string;
 }) {
   const { data: session } = useSession();
+  console.log("session_: ", session);
+
   const user = session?.user as User | undefined;
 
   const { data, error } = useSWR(`/api/orders/${orderId}`);
