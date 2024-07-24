@@ -27,7 +27,7 @@ const Form = () => {
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     setisLoading(true);
     try {
-      await signIn("credentials", {
+      const response = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
