@@ -8,6 +8,7 @@ export interface MongoFilter {
   updatedAt: { $gte: Date };
   price: { $eq: number };
   stock: { $eq: number };
+  id: { $eq: number };
   isBlocked: boolean;
 }
 
@@ -47,6 +48,13 @@ export const GET = async (request: NextRequest) => {
     const price = parseFloat(searchParams.get('price')!);
     if (!isNaN(price)) {
       query['price'] = { $eq: price };
+    }
+  }
+
+  if (searchParams.has('id')) {
+    const id = parseFloat(searchParams.get('id')!);
+    if (!isNaN(id)) {
+      query['id'] = { $eq: id };
     }
   }
 
