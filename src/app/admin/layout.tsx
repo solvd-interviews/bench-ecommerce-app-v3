@@ -3,7 +3,6 @@ import { config } from "@/lib/auth";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "ADMIN | Solvd Ecommerce",
@@ -22,8 +21,8 @@ export default async function RootLayout({
 
   return (
     <main className="w-full h-screen flex flex-col">
-      <Header isAdmin />
-      <div className="flex-grow flex flex-col overflow-hidden bg-secondary">{children}</div>
+      <Header isAdmin={true} />
+      <div className="flex-grow flex flex-col overflow-hidden">{children}</div>
     </main>
   );
 }
