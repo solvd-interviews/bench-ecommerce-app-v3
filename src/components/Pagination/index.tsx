@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, Dispatch, SetStateAction } from "react";
-import { ProductTableState } from "../ProductTable";
+import type { ProductTableState } from "@/components/ProductTable/types";
 
 interface PaginationProps {
   pages: number;
@@ -80,16 +80,25 @@ function Pagination({
       <div className="flex justify-center items-center w-full py-1 relative gap-1">
         <label className="flex items-center gap-2 md:absolute md:left-2">
           <p className="text-stone-500 hidden md:flex">Rows per page</p>
-          <select className="select select-bordered w-full max-w-24">
-            <option disabled>Pick your product limit</option>
-            <option>1</option>
-            <option>3</option>
-            <option selected>5</option>
-            <option>10</option>
-            <option>20</option>
-            <option>50</option>
-            <option>100</option>
+          <select
+            className="select select-bordered w-full max-w-24"
+            value={limit}
+            onChange={(e) => {
+              setState(prevState => ({
+                ...prevState,
+                limit: parseInt(e.target.value, 10) // Ensure the value is an integer
+              }));
+            }}
+          >
+            <option value="1">1</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
           </select>
+
         </label>
 
         <button className="btn btn-primary shadow-xl btn-disabled" disabled>

@@ -1,5 +1,6 @@
 import dbConnect from "../dbConnect";
 import ProductModel from "../models/ProductModel";
+import { MongoFilter } from "@/app/api/products/route";
 
 export const fetchProducts = async () => {
   await dbConnect();
@@ -29,16 +30,17 @@ export const fetchProductsPagination = async (
   page = 1,
   limit = 10,
   sort: string,
-  order: string
+  order: string,
+  query: Partial<MongoFilter>
 ) => {
   await dbConnect();
 
-  const prom1 = ProductModel.find({})
+  const prom1 = ProductModel.find(query)
     .skip((page - 1) * limit)
     .limit(limit)
     .sort({ [sort]: order == "asc" ? 1 : -1 })
     .exec();
-  const prom2 = ProductModel.countDocuments();
+  const prom2 = ProductModel.countDocuments(query);
   const [products, totalProducts] = await Promise.all([prom1, prom2]);
 
   return {

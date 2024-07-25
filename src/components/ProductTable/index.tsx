@@ -1,139 +1,32 @@
 "use client";
-import { Product } from "@/lib/models/ProductModel";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, FormEvent } from "react";
 import Pagination from "../Pagination";
+import Accordion from "../Accordion";
 import Image from "next/image";
 import { toast } from "sonner";
 import { LuClipboardEdit } from "react-icons/lu";
 import { LuTrash2 } from "react-icons/lu";
+import { ProductTableState, Filter } from "./types";
+import { tablePropertyAndSkeletonArr } from "./constants";
 import { LuArrowDownZA } from "react-icons/lu"; // z - a
 import { LuArrowDownAZ } from "react-icons/lu"; // a - z
-
 import { LuArrowDown01 } from "react-icons/lu"; // 0 - 1
 import { LuArrowDown10 } from "react-icons/lu"; // 1 - 0
 
-export interface ProductTableState {
-  isLoading: boolean;
-  page: number;
-  totalPages: undefined | number;
-  currentProducts: Product[];
-  limit: number;
-  sort: {
-    prop: string;
-    order: "asc" | "desc";
-    filter: null | string;
-  };
-}
+const defaultValues = {
+  id: null as number | null,
+  name: '',
+  createDate: null as string | null,
+  updatedDate: null as string | null,
+  price: null as number | null,
+  stock: null as number | null,
+  block: false
+};
 
-const tablePropertyAndSkeletonArr: {
-  label: string;
-  prop: string;
-  defOrder: "asc" | "desc";
-  logic: boolean;
-  icon?: "number" | "str";
-  skeletonStyle: string;
-  skeletonQuantity: number;
-}[] = [
-  {
-    label: "Id",
-    prop: "productNumber",
-    defOrder: "desc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-4",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Content",
-    logic: false,
-    prop: "",
-    defOrder: "asc",
-    skeletonStyle: "h-20 w-24",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Name",
-    prop: "name",
-    defOrder: "asc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-56",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Created At",
-    prop: "createdAt",
-    defOrder: "desc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-20",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Updated At",
-    prop: "updatedAt",
-    defOrder: "desc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-20",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Description",
-    prop: "description",
-    defOrder: "asc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-4 w-56",
-    skeletonQuantity: 3,
-  },
-  {
-    label: "Price",
-    prop: "price",
-    defOrder: "asc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-10",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Stock",
-    prop: "stock",
-    defOrder: "asc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-10",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Block",
-    prop: "isBlocked",
-    defOrder: "asc",
-    logic: true,
-    icon: "str",
-    skeletonStyle: "h-7 w-12",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Status",
-    logic: false,
-    prop: "",
-    defOrder: "asc",
-    skeletonStyle: "h-7 w-12",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Actions",
-    logic: false,
-    prop: "",
-    defOrder: "asc",
-    skeletonStyle: "h-10 w-20",
-    skeletonQuantity: 2,
-  },
-];
+type FilterKeys = keyof typeof defaultValues;
 
 const ProductTable = () => {
-  const [state, setState] = useState<ProductTableState>({
+  const [tableState, setTableState] = useState<ProductTableState>({
     isLoading: true,
     page: 1,
     totalPages: undefined,
@@ -145,6 +38,7 @@ const ProductTable = () => {
       filter: null,
     },
   });
+  const [filters, setFilters] = useState(defaultValues);
 
   const {
     isLoading,
@@ -153,27 +47,115 @@ const ProductTable = () => {
     currentProducts,
     limit,
     sort: { prop, order },
-  } = state;
+  } = tableState;
 
-  const fetchProducts = useCallback(
-    async (page: number, limit: number, prop: string, order: string) => {
-      setState((prevState) => ({ ...prevState, isLoading: true }));
-      let url = `/api/products?page=${page}&limit=${limit}&sort=${prop}&order=${order}`;
-      const res = await fetch(url);
-      const { products, totalPages } = await res.json();
-      setState((prevState) => ({
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    let newValue: string | number | boolean | null = value;
+
+    if (type === 'number') {
+      newValue = value === '' ? null : Number(value);
+    } else if (type === 'checkbox') {
+      newValue = checked;
+    }
+
+    console.log(`Handling change for ${name}: ${newValue}`);
+
+    setFilters(prev => ({
+      ...prev,
+      [name]: newValue
+    }));
+  };
+
+  type FilterKeys = keyof typeof defaultValues;
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    type FilterAccumulator = Partial<Filter>;
+
+    const cleanFilters = Object.entries(filters).reduce<FilterAccumulator>((acc, [key, value]) => {
+      const safeKey = key as keyof Filter;
+
+      // Ensure non-null, non-undefined values are considered
+      if (value !== null && value !== undefined) {
+        switch (safeKey) {
+          case 'id':
+          case 'price':
+          case 'stock':
+            // Correctly handle number and string types, ensure no trim operation on number
+            if (typeof value === 'number') {
+              acc[safeKey] = value;
+            } else if (typeof value === 'string') {
+              acc[safeKey] = value.trim() ? Number(value.trim()) : null;
+            }
+            break;
+          case 'name':
+            // Ensure the name is treated as a string and passed even if it's an empty string
+            if (typeof value === 'string') {
+              acc[safeKey] = value.trim();  // Remove excess whitespace
+            }
+            break;
+          case 'block':
+            // Boolean values do not need trimming or conversion
+            acc[safeKey] = Boolean(value);
+            break;
+          case 'createDate':
+          case 'updatedDate':
+            // Handle string type for dates, check and convert only if it's a non-empty string
+            if (typeof value === 'string' && value.trim()) {
+              acc[safeKey] = new Date(value.trim());
+            } else {
+              acc[safeKey] = null;
+            }
+            break;
+        }
+      }
+      return acc;
+    }, {});
+
+
+
+    fetchProducts(cleanFilters);
+  };
+
+  const fetchProducts = useCallback(async (filters: Partial<Filter>) => {
+    setTableState((prevState) => ({ ...prevState, isLoading: true }));
+
+    // Initialize URLSearchParams with mandatory parameters
+    const queryParams = new URLSearchParams({
+      page: String(tableState.page),
+      limit: String(tableState.limit),
+      sort: tableState.sort.prop,
+      order: tableState.sort.order
+    });
+
+    console.log("filters before messing with them with code: ", filters);
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        queryParams.set(key, String(value));
+      }
+    });
+    console.log("queryParams: ", queryParams);
+    const url = `/api/products?${queryParams.toString()}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setTableState(prevState => ({
         ...prevState,
         isLoading: false,
-        totalPages: totalPages,
-        currentProducts: products,
+        totalPages: data.totalPages,
+        currentProducts: data.products
       }));
-    },
-    []
-  );
+    } catch (error) {
+      console.error("Fetch error: ", error);
+      toast.error("Failed to fetch products. Try again later.");
+      setTableState(prevState => ({ ...prevState, isLoading: false }));
+    }
+  }, [tableState.page, tableState.limit, tableState.sort]);
 
-  useEffect(() => {
-    fetchProducts(page, limit, prop, order);
-  }, [page, limit, fetchProducts, prop, order]);
 
   const handleDeleteProduct = async (id: string) => {
     try {
@@ -221,9 +203,153 @@ const ProductTable = () => {
     }
   };
 
+  useEffect(() => {
+    fetchProducts({});
+  }, []);
+
+  const formMarkup = () => (
+    <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
+      {/* Product ID Filter */}
+      <div>
+        <label htmlFor="productId" className="block text-sm font-medium text-gray-700">
+          ID
+        </label>
+        <input
+          type="number"
+          id="productId"
+          name="id"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          placeholder="123"
+          min="1"
+          max="999999"
+          value={filters.id === null ? '' : filters.id}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Product Name Filter */}
+      <div>
+        <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
+          Name
+        </label>
+        <input
+          type="text"
+          id="productName"
+          name="name"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          placeholder="Widget X123"
+          maxLength={30}
+          value={filters.name}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Create Date Filter */}
+      <div>
+        <label htmlFor="createDate" className="block text-sm font-medium text-gray-700">
+          Created
+        </label>
+        <input
+          type="date"
+          id="createDate"
+          name="createDate"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          value={filters.createDate ?? ''}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Updated Date Filter */}
+      <div>
+        <label htmlFor="updatedDate" className="block text-sm font-medium text-gray-700">
+          Updated
+        </label>
+        <input
+          type="date"
+          id="updatedDate"
+          name="updatedDate"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          value={filters.updatedDate ?? ''}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Price Filter */}
+      <div>
+        <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+          Price
+        </label>
+        <input
+          type="number"
+          id="price"
+          name="price"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          placeholder="19.99"
+          title="Enter a valid price"
+          value={filters.price === null ? '' : filters.price}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Stock Filter */}
+      <div>
+        <label htmlFor="stock" className="block text-sm font-medium text-gray-700">
+          Stock
+        </label>
+        <input
+          type="number"
+          id="stock"
+          name="stock"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          placeholder="100"
+          min="0"
+          max="99999"
+          value={filters.stock === null ? '' : filters.stock}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Block Filter */}
+      <div className="flex items-center">
+        <label htmlFor="block" className="block text-sm font-medium text-gray-700 mr-2">
+          Blocked
+        </label>
+        <input
+          type="checkbox"
+          id="block"
+          name="block"
+          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          checked={filters.block}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Search Button */}
+      <div>
+        <button
+          type="submit"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Search
+        </button>
+      </div>
+    </form>
+  );
+
   return (
     <>
       <div className="overflow-y-auto h-full bg-white">
+        <div className="filter-section flex justify-around p-3 bg-blue-100">
+          <div className="hidden sm:block">
+            {formMarkup()}
+          </div>
+          <div className="block sm:hidden">
+            <Accordion title="Filter options" startsOpen={false}>
+              {formMarkup()}
+            </Accordion>
+          </div>
+        </div>
+
         <table className="w-full ">
           <thead>
             <tr>
@@ -236,7 +362,7 @@ const ProductTable = () => {
                         prop === e.prop && "bg-primary text-white"
                       }`}
                       onClick={() => {
-                        setState((prevState) => ({
+                        setTableState((prevState) => ({
                           ...prevState,
                           sort: {
                             filter: null,
@@ -357,7 +483,7 @@ const ProductTable = () => {
                                   !product.isBlocked
                                 );
                                 product.isBlocked = !product.isBlocked;
-                                setState((prevState) => ({
+                                setTableState((prevState) => ({
                                   ...prevState,
                                   currentProducts:
                                     prevState.currentProducts.map((e) => {
@@ -416,7 +542,7 @@ const ProductTable = () => {
                                     product._id
                                   );
                                   if (res) {
-                                    setState((prevState) => ({
+                                    setTableState((prevState) => ({
                                       ...prevState,
                                       currentProducts:
                                         prevState.currentProducts.filter(
@@ -441,8 +567,8 @@ const ProductTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={11} className="py-2 text-center">
-                  No data
+                    <td colSpan={11} className="py-10 text-center">
+                      No products found.
                 </td>
               </tr>
             )}
@@ -453,14 +579,14 @@ const ProductTable = () => {
         <Pagination
           pages={totalPages}
           limit={limit}
-          setState={setState}
+          setState={setTableState}
           loading={false}
         />
       ) : (
         <Pagination
           pages={2}
           limit={limit}
-          setState={setState}
+            setState={setTableState}
           loading={true}
         />
       )}

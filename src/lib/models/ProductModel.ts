@@ -17,14 +17,12 @@ const productSchema = new mongoose.Schema<Product>(
 );
 
 productSchema.pre("save", async function (next) {
-  console.log("productSchema.presave");
   if (this.isNew) {
     const counter = await CounterModel.findByIdAndUpdate(
       { _id: "productNumber" },
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
-    console.log("counter: ", counter);
     this.productNumber = counter.seq;
   }
   next();
