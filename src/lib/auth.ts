@@ -31,14 +31,18 @@ export const config = {
           throw new Error("The email or password are incorrect. Err 1.");
         }
 
-
         const user = await UserModel.findOne({ email });
+        console.log("user: login", user);
         if (user) {
+          console.log("user true");
           const isMatch = await compare(password, user.password);
+          console.log("first, ", password, user.password, isMatch);
           if (isMatch) {
-            ("MATCH TRUE");
-            return user;
+            console.log("MATCH TRUE");
+            return user.toObject();
           } else {
+            console.log("MATCH FALSE");
+
             throw new Error("The email or password are incorrect. Err 2.");
           }
         }
@@ -49,9 +53,10 @@ export const config = {
   ],
   callbacks: {
     async jwt({ user, trigger, session, token }: any) {
+      console.log("jwt user: ", user);
       if (user) {
         token.user = {
-          _id: user._id,
+          _id: user._id.toString(), // Ensure _id is a string
           name: user.name,
           email: user.email,
           isBlocked: user.isBlocked,
@@ -71,6 +76,7 @@ export const config = {
       if (token) {
         session.user = {
           ...session.user,
+          _id: token.user._id, // Include _id in session
           isAdmin: token.user.isAdmin,
           isBlocked: token.user.isBlocked,
         };

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Product } from "@/lib/models/ProductModel";
 import Image from "next/image";
 import { register } from "swiper/element/bundle";
+import AddToCart from "@/components/AddToCart";
 
 register();
 
@@ -69,7 +70,7 @@ const ProductDetailPage: React.FC = () => {
   const { product, loading, error } = state;
 
   if (error) return <p>{error}</p>;
-  if (loading || !product) return <p>Loading...</p>;
+  if (loading || !product) return <></>;
 
   return (
     <div className="flex flex-col md:flex-row justify-around items-start my-8 mx-auto p-4 max-w-4xl">
@@ -102,9 +103,22 @@ const ProductDetailPage: React.FC = () => {
         <h1 className="text-xl md:text-2xl font-bold">{product.name}</h1>
         <p className="my-2 md:my-4">{product.description}</p>
         <p className="text-lg md:text-xl font-semibold">${product.price}</p>
-        <button className="btn btn-primary mt-4 w-full md:w-auto">
-          Add to Cart
-        </button>
+
+        {product.stock > 0 ? (
+          <AddToCart
+            item={{
+              ...product,
+              qty: 0,
+              color: "",
+              size: "",
+              image: product.images[0] || null,
+            }}
+          />
+        ) : (
+          <button className="btn btn-primary disabled" disabled>
+            No stock
+          </button>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import CounterModel from "./CounterModel";
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema<User>(
   {
     name: {
       type: String,
@@ -40,3 +40,15 @@ UserSchema.pre("save", async function (next) {
 const UserModel = mongoose.models.User || mongoose.model("User", UserSchema);
 
 export default UserModel;
+
+export type User = {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  isAdmin: boolean;
+  isBlocked: boolean;
+  userNumber: number;
+  createdAt: string;
+  updatedAt: string;
+};

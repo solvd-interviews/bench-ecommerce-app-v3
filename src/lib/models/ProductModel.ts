@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import CounterModel from "./CounterModel";
 
-const productSchema = new mongoose.Schema(
+const productSchema = new mongoose.Schema<Product>(
   {
     name: { type: String, required: true },
     images: { type: [String], required: true },
