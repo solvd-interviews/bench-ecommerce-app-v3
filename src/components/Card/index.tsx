@@ -5,25 +5,24 @@ import BuyButton from "./button";
 
 const Card = ({ product }: { product: Product }) => {
   return (
-    <div className="card bg-base-100 sm:w-96 w-80 shadow-xl rounded-none rounded-t-xl overflow-y-hidden">
+    <div className="card bg-base-100 sm:w-96 w-full md:w-80 lg:w-96 shadow-xl rounded-none rounded-t-xl overflow-hidden">
       <Link href={`/${product.id}`}>
-        <figure className="sm:w-96 w-80 h-40 ">
+        <figure className="w-full relative">
           <Image
             src={product.images[0]}
             alt={product.name}
-            width={400}
-            height={400}
-            className="object-cover w-full h-full bg-secondary "
+            width={830}
+            height={620}
+            className="object-contain"
+            priority={true}
           />
         </figure>
       </Link>
-      <div className="card-body ">
+      <div className="card-body">
         <h2 className="card-title truncate">{product.name}</h2>
-        <p className="w-full min-h-12 h-12 overflow-hidden">
-          {product.description}
-        </p>
+        <p className="overflow-hidden text-ellipsis">{product.description}</p>
         <div className="card-actions mt-4">
-          <p className=" text-xl">${product.price}</p>
+          <p className="text-xl">${product.price}</p>
           <BuyButton product={product} />
         </div>
       </div>
