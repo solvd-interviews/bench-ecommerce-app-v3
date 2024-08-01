@@ -8,10 +8,8 @@ import { LuClipboardEdit } from "react-icons/lu";
 import { LuTrash2 } from "react-icons/lu";
 import { ProductTableState, Filter } from "./types";
 import { tablePropertyAndSkeletonArr } from "./constants";
-import { LuArrowDownZA } from "react-icons/lu"; // z - a
-import { LuArrowDownAZ } from "react-icons/lu"; // a - z
-import { LuArrowDown01 } from "react-icons/lu"; // 0 - 1
-import { LuArrowDown10 } from "react-icons/lu"; // 1 - 0
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp } from "react-icons/io";
 import { useRouter } from "next/navigation";
 
 const defaultValues = {
@@ -21,7 +19,7 @@ const defaultValues = {
   updatedDate: null as string | null,
   price: null as number | null,
   stock: null as number | null,
-  block: false,
+  block: false
 };
 
 type FilterKeys = keyof typeof defaultValues;
@@ -35,8 +33,7 @@ const ProductTable = () => {
     limit: 5,
     sort: {
       prop: "productNumber",
-      order: "desc",
-      filter: null,
+      order: "asc"
     },
   });
   const [filters, setFilters] = useState(defaultValues);
@@ -62,8 +59,6 @@ const ProductTable = () => {
       newValue = checked;
     }
 
-    console.log(`Handling change for ${name}: ${newValue}`);
-
     setFilters((prev) => ({
       ...prev,
       [name]: newValue,
@@ -81,87 +76,86 @@ const ProductTable = () => {
       (acc, [key, value]) => {
         const safeKey = key as keyof Filter;
 
-        // Ensure non-null, non-undefined values are considered
-        if (value !== null && value !== undefined) {
-          switch (safeKey) {
-            case "id":
-            case "price":
-            case "stock":
-              // Correctly handle number and string types, ensure no trim operation on number
-              if (typeof value === "number") {
-                acc[safeKey] = value;
-              } else if (typeof value === "string") {
-                acc[safeKey] = value.trim() ? Number(value.trim()) : null;
-              }
-              break;
-            case "name":
-              // Ensure the name is treated as a string and passed even if it's an empty string
-              if (typeof value === "string") {
-                acc[safeKey] = value.trim(); // Remove excess whitespace
-              }
-              break;
-            case "block":
-              // Boolean values do not need trimming or conversion
-              acc[safeKey] = Boolean(value);
-              break;
-            case "createDate":
-            case "updatedDate":
-              // Handle string type for dates, check and convert only if it's a non-empty string
-              if (typeof value === "string" && value.trim()) {
-                acc[safeKey] = new Date(value.trim());
-              } else {
-                acc[safeKey] = null;
-              }
-              break;
-          }
+      // Ensure non-null, non-undefined values are considered
+      if (value !== null && value !== undefined) {
+        switch (safeKey) {
+          case 'id':
+          case 'price':
+          case 'stock':
+            // Correctly handle number and string types, ensure no trim operation on number
+            if (typeof value === 'number') {
+              acc[safeKey] = value;
+            } else if (typeof value === 'string') {
+              acc[safeKey] = value.trim() ? Number(value.trim()) : null;
+            }
+            break;
+          case 'name':
+            // Ensure the name is treated as a string and passed even if it's an empty string
+            if (typeof value === 'string') {
+              acc[safeKey] = value.trim();  // Remove excess whitespace
+            }
+            break;
+          case 'block':
+            // Boolean values do not need trimming or conversion
+            acc[safeKey] = Boolean(value);
+            break;
+          case 'createDate':
+          case 'updatedDate':
+            // Handle string type for dates, check and convert only if it's a non-empty string
+            if (typeof value === 'string' && value.trim()) {
+              acc[safeKey] = new Date(value.trim());
+            } else {
+              acc[safeKey] = null;
+            }
+            break;
         }
-        return acc;
-      },
-      {}
-    );
+      }
+      return acc;
+    }, {});
 
-    fetchProducts(cleanFilters);
+
+
+    fetchProducts(cleanFilters, tableState.sort);
   };
 
-  const fetchProducts = useCallback(
-    async (filters: Partial<Filter>) => {
-      setTableState((prevState) => ({ ...prevState, isLoading: true }));
+  const fetchProducts = useCallback(async (
+    filters: Partial<Filter>,
+    sorting: { prop: string, order: string }) => {
+    setTableState((prevState) => ({ ...prevState, isLoading: true }));
 
-      // Initialize URLSearchParams with mandatory parameters
-      const queryParams = new URLSearchParams({
-        page: String(tableState.page),
-        limit: String(tableState.limit),
-        sort: tableState.sort.prop,
-        order: tableState.sort.order,
-      });
+    // Initialize URLSearchParams with mandatory parameters
+    const queryParams = new URLSearchParams({
+      page: String(tableState.page),
+      limit: String(tableState.limit),
+      sort: tableState.sort.prop,
+      order: tableState.sort.order
+    });
 
-      console.log("filters before messing with them with code: ", filters);
 
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-          queryParams.set(key, String(value));
-        }
-      });
-      console.log("queryParams: ", queryParams);
-      const url = `/api/products?${queryParams.toString()}`;
-
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setTableState((prevState) => ({
-          ...prevState,
-          isLoading: false,
-          totalPages: data.totalPages,
-          currentProducts: data.products,
-        }));
-      } catch (error) {
-        console.error("Fetch error: ", error);
-        toast.error("Failed to fetch products. Try again later.");
-        setTableState((prevState) => ({ ...prevState, isLoading: false }));
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        queryParams.set(key, String(value));
       }
-    },
-    [tableState.page, tableState.limit, tableState.sort]
-  );
+    });
+    console.log("queryParams: ", queryParams);
+    const url = `/api/products?${queryParams.toString()}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setTableState(prevState => ({
+        ...prevState,
+        isLoading: false,
+        totalPages: data.totalPages,
+        currentProducts: data.products
+      }));
+    } catch (error) {
+      console.error("Fetch error: ", error);
+      toast.error("Failed to fetch products. Try again later.");
+      setTableState(prevState => ({ ...prevState, isLoading: false }));
+    }
+  }, [tableState.page, tableState.limit, tableState.sort]);
+
 
   const handleDeleteProduct = async (id: string) => {
     try {
@@ -210,7 +204,7 @@ const ProductTable = () => {
   };
 
   useEffect(() => {
-    fetchProducts({});
+    fetchProducts(filters, tableState.sort);
   }, []);
 
   const formMarkup = () => (
@@ -346,7 +340,7 @@ const ProductTable = () => {
           id="block"
           name="block"
           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-          checked={filters.block}
+          checked={filters.block || false}
           onChange={handleChange}
         />
       </div>
@@ -387,35 +381,25 @@ const ProductTable = () => {
                         prop === e.prop && "bg-primary text-white"
                       }`}
                       onClick={() => {
+                        const newOrder = prop === e.prop
+                          ? (order === "asc" ? "desc" : "asc") : e.defOrder;
+
                         setTableState((prevState) => ({
                           ...prevState,
                           sort: {
-                            filter: null,
                             prop: e.prop,
-                            order:
-                              prevState.sort.prop === e.prop
-                                ? prevState.sort.order === "asc"
-                                  ? "desc"
-                                  : "asc"
-                                : e.defOrder,
+                            order: newOrder,
                           },
                         }));
+                        fetchProducts(filters, { prop: e.prop, order: newOrder })
                       }}
                     >
-                      <div className="flex gap-1 items-center">
+                      <div className="flex gap-1 justify-between">
                         <p>{e.label}</p>
-                        {prop === e.prop &&
-                          (order == "asc" ? (
-                            e.icon === "number" ? (
-                              <LuArrowDown01 size={20} />
-                            ) : (
-                              <LuArrowDownAZ />
-                            )
-                          ) : e.icon === "number" ? (
-                            <LuArrowDown10 size={20} />
-                          ) : (
-                            <LuArrowDownZA />
-                          ))}
+                        {prop === e.prop && (
+                          order === "asc" ?
+                            <IoIosArrowDown size={25} /> :
+                            <IoIosArrowUp size={25} />)}
                       </div>
                     </th>
                   );
