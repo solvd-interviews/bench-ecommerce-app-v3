@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import { LuHand, LuX } from "react-icons/lu";
 import { toast } from "sonner";
 import Link from "next/link";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
@@ -12,19 +10,18 @@ import {
   ValidationRule,
   FieldErrors,
 } from "react-hook-form";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
+import React, { useEffect } from "react";
+import { useParams } from "next/navigation";
+import useSWR, { mutate } from "swr";
+
 import { logicRules } from "@/lib/logic";
 import ImgManagment from "@/components/ImgProdManage";
 
-interface CreatePage extends Product {
+export interface EditPage extends Product {
   isUploading: boolean;
   steps: number;
   files: (string | File)[];
+  filesDeleted: string[];
 }
 
 const FormInput = ({
@@ -43,7 +40,7 @@ const FormInput = ({
   maxLength,
   max,
 }: {
-  id: keyof CreatePage;
+  id: keyof EditPage;
   name: string;
   required?: boolean;
   pattern?: ValidationRule<RegExp>;
@@ -51,7 +48,7 @@ const FormInput = ({
   type?: "text" | "textarea" | "number" | "checkbox";
   classStyle?: string;
   register: Function;
-  errors: FieldErrors<CreatePage>;
+  errors: FieldErrors<EditPage>;
   trigger: Function; // Add trigger here
   minLength?: number;
   min?: number;
@@ -106,7 +103,7 @@ const Page = () => {
     watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CreatePage>({
+  } = useForm<EditPage>({
     defaultValues: {
       name: "",
       description: "",
@@ -116,21 +113,49 @@ const Page = () => {
       isUploading: false,
       steps: 0,
       files: [],
+      filesDeleted: [],
     },
   });
+
+  const { id } = useParams();
+  const { data, error, isLoading } = useSWR<Product>(`/api/${id}`);
+
+  useEffect(() => {
+    if (data) {
+      setValue("name", data.name);
+      setValue("description", data.description);
+      setValue("price", data.price);
+      setValue("stock", data.stock);
+      setValue("files", data.images);
+      setValue("isBlocked", data.isBlocked);
+    }
+  }, [setValue, data]);
+
+  if (error) {
+    return <h1>There was an error!</h1>;
+  }
+
+  if (isLoading) {
+    return <span className="loading loading-spinner w-20"></span>;
+  }
+
+  if (!data) {
+    return <h1>No product with id {id} founded</h1>;
+  }
 
   const {
     isUploading,
     steps,
     stock,
     files,
+    filesDeleted,
     name,
     description,
     price,
     isBlocked,
   } = watch();
 
-  const handleCreateProduct: SubmitHandler<CreatePage> = async (form) => {
+  const EditProduct: SubmitHandler<EditPage> = async (form) => {
     setValue("isUploading", true);
 
     if (name.length < 3) {
@@ -157,42 +182,30 @@ const Page = () => {
     formData.set("description", description);
     formData.set("price", price.toString());
     formData.set("stock", stock.toString());
-    formData.set("isBlock", JSON.stringify(isBlocked));
+    formData.set("isBlocked", JSON.stringify(isBlocked));
     formData.set("imgLength", JSON.stringify(files.length));
     files.forEach((e, index: number) => {
       formData.set("image-" + index, files[index]);
     });
+    formData.set("filesDeleted", JSON.stringify(filesDeleted));
     try {
       console.log("formdata before creating: ", JSON.stringify(formData));
-      const res = await fetch("/api/upload/product", {
-        method: "post",
+      const res = await fetch(`/api/products/edit/${id}`, {
+        method: "PUT",
         body: formData,
       });
-      if (res.status == 201) {
-        toast.success("The product was added succesfully!");
-        const resJson = await res.json();
+      if (res.status == 200) {
+        toast.success("The product was edited succesfully!");
+        setValue("steps", 0);
+        setValue("isUploading", false);
+        setValue("filesDeleted", []);
+        await mutate(`/api/${id}`);
       } else {
-        throw new Error("Not uploaded succesfully");
+        throw new Error("Not edited succesfully");
       }
     } catch (error) {
       toast.error("There was an unexpected error! Contact support <3.");
       console.error("error is", error);
-    } finally {
-      reset();
-    }
-  };
-
-  const handleOnDrag = (result: DropResult) => {
-    const originIndex = result.source?.index;
-    const destinationIndex = result.destination?.index;
-    console.log("originIndex destinationIndex", originIndex, destinationIndex);
-    if (originIndex !== undefined && destinationIndex !== undefined) {
-      console.log("true");
-      const arrCopy = [...files];
-      const destinAux = arrCopy[destinationIndex];
-      arrCopy[destinationIndex] = arrCopy[originIndex];
-      arrCopy[originIndex] = destinAux;
-      setValue("files", arrCopy);
     }
   };
 
@@ -200,7 +213,7 @@ const Page = () => {
     <div className="flex p-4 overflow-y-auto w-full h-full justify-center items-center">
       <form className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl">
         <div>
-          <h2 className="font-bold text-3xl">Create a Product</h2>
+          <h2 className="font-bold text-3xl">Edit product {data.name}</h2>
           <CheckoutSteps
             current={steps}
             list={["Information", "Images", "Status"]}
@@ -250,6 +263,7 @@ const Page = () => {
           <ImgManagment
             setValue={setValue}
             files={files}
+            filesDeleted={filesDeleted}
           />
         ) : (
           <>
@@ -305,9 +319,9 @@ const Page = () => {
           {steps === 2 ? (
             <button
               className="btn btn-primary flex"
-              onClick={handleSubmit(handleCreateProduct)}
+              onClick={handleSubmit(EditProduct)}
             >
-              Create
+              Edit
               {isUploading && (
                 <span className="loading loading-spinner loading-md"></span>
               )}
@@ -317,6 +331,8 @@ const Page = () => {
               className="btn btn-primary flex"
               onClick={async (e) => {
                 e.preventDefault();
+                const maxImg = logicRules.product.images.max;
+                const minImg = logicRules.product.images.min;
                 if (steps === 0) {
                   const res = await Promise.all([
                     trigger("name"),
@@ -329,7 +345,7 @@ const Page = () => {
                     }
                   }
                 } else if (steps === 1) {
-                  if (files.length < 1) {
+                  if (files.length < minImg || files.length > maxImg) {
                     return;
                   }
                 } else if (steps === 2) {

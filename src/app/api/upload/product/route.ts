@@ -3,7 +3,7 @@ import ProductModel from "@/lib/models/ProductModel";
 import { uploadImage } from "@/lib/utils/cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 
-async function uploadFileLocally(image: File) {
+export async function uploadFileLocally(image: File) {
   if (image && image instanceof File) {
     const arrayBuffer = await image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -16,6 +16,7 @@ async function uploadFileLocally(image: File) {
 export const POST = async (request: NextRequest) => {
   try {
     const formData = await request.formData();
+    console.log("create product ", formData);
     let length = formData.get("imgLength");
     if (!length || typeof length !== "string") {
       return NextResponse.json(

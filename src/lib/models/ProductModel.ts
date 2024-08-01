@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import CounterModel from "./CounterModel";
+import { deleteImage, getPublicIdFromUrl } from "../utils/cloudinary";
 
 const productSchema = new mongoose.Schema<Product>(
   {
@@ -26,6 +27,24 @@ productSchema.pre("save", async function (next) {
     this.productNumber = counter.seq;
   }
   next();
+});
+
+productSchema.pre("findOneAndDelete", async function (next) {
+  let promisesDelete: Promise<{ ok: boolean }>[] = [];
+
+  const product = await this.model.findOne(this.getQuery());
+
+  if (product && product.images && product.images.length > 0) {
+    product.images.forEach((e: string) => {
+      promisesDelete.push(deleteImage(getPublicIdFromUrl(e)));
+    });
+    try {
+      const res = await Promise.all(promisesDelete);
+      next();
+    } catch (error) {
+      console.error("Error deleting images from Cloudinary:", error);
+    }
+  }
 });
 
 const ProductModel =
