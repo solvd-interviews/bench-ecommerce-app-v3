@@ -1,24 +1,28 @@
+/**
+ * This file will contain all the logic of product details. Once changed here, 
+ */
+
 export const logicRules = {
   product: {
     name: {
-      min: 3,
-      max: 40,
+      minName: 3,
+      maxName: 40,
     },
     price: {
-      min: 1,
-      max: 1000000,
+      minPrice: 1,
+      maxPrice: 1000000,
     },
     description: {
-      min: 10,
-      max: 90,
+      minDesc: 10,
+      maxDesc: 90,
     },
     stock: {
-      min: 1,
-      max: 1000000,
+      minStock: 1,
+      maxStock: 1000000,
     },
     images: {
-      min: 1,
-      max: 6,
+      minImg: 1,
+      maxImg: 6,
     },
   },
 };

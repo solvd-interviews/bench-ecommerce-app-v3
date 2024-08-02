@@ -24,6 +24,14 @@ export interface EditPage extends Product {
   filesDeleted: string[];
 }
 
+const {
+  name: { minName, maxName },
+  description: { minDesc, maxDesc },
+  stock: { minStock, maxStock },
+  price: { minPrice, maxPrice },
+  images: { minImg, maxImg },
+} = logicRules.product;
+
 const FormInput = ({
   id,
   name,
@@ -158,24 +166,42 @@ const Page = () => {
   const EditProduct: SubmitHandler<EditPage> = async (form) => {
     setValue("isUploading", true);
 
-    if (name.length < 3) {
-      setValue("isUploading", false);
-      return toast.error("The name should be greater than 2 characters.");
-    }
-    if (description.length < 3) {
+    if (name.length < minName || name.length > maxName) {
       setValue("isUploading", false);
       return toast.error(
-        "The description should be greater than 2 characters."
+        `The name should be greater than ${minName} and less than ${maxName} characters.`
       );
     }
-    if (!price || price < 1) {
+    if (description.length < minDesc || description.length > maxDesc) {
       setValue("isUploading", false);
-      return toast.error("The price should be greater than 0.");
+      return toast.error(
+        `The description should be greater than ${minDesc} and less or equal than ${maxDesc} characters.`
+      );
     }
 
-    if (!files || files.length < 1) {
+    if (stock < minStock || stock > maxStock) {
       setValue("isUploading", false);
-      return toast.error("At least 1 file is required.");
+      return toast.error(
+        `The stock should be greater than ${minStock} and less or equal than ${maxStock} characters.`
+      );
+    }
+
+    if (price < minPrice || price > maxPrice) {
+      setValue("isUploading", false);
+      return toast.error(
+        `The price should be greater than ${minPrice} and less or equal than ${maxPrice} characters.`
+      );
+    }
+
+    if (
+      !Array.isArray(files) ||
+      files.length < minImg ||
+      files.length > maxImg
+    ) {
+      setValue("isUploading", false);
+      return toast.error(
+        `Images quantity should be grater than ${minImg} and less or equal than ${maxImg}`
+      );
     }
     const formData = new FormData();
     formData.set("name", name);
@@ -230,8 +256,8 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              minLength={3}
-              maxLength={40}
+              minLength={minName}
+              maxLength={maxName}
             />
             <FormInput
               name="Description"
@@ -242,8 +268,8 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              minLength={3}
-              maxLength={300}
+              minLength={minDesc}
+              maxLength={maxDesc}
             />
             <FormInput
               name="Price"
@@ -255,8 +281,8 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              min={1}
-              max={1000000}
+              min={minPrice}
+              max={maxPrice}
             />
           </div>
         ) : steps === 1 ? (
@@ -277,8 +303,8 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              min={1}
-              max={100000}
+              min={minStock}
+              max={maxStock}
             />
             <FormInput
               name="Block"
@@ -331,8 +357,6 @@ const Page = () => {
               className="btn btn-primary flex"
               onClick={async (e) => {
                 e.preventDefault();
-                const maxImg = logicRules.product.images.max;
-                const minImg = logicRules.product.images.min;
                 if (steps === 0) {
                   const res = await Promise.all([
                     trigger("name"),

@@ -12,14 +12,17 @@ import {
   ValidationRule,
   FieldErrors,
 } from "react-hook-form";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { DropResult } from "react-beautiful-dnd";
 import { logicRules } from "@/lib/logic";
 import ImgManagment from "@/components/ImgProdManage";
+
+const {
+  name: { minName, maxName },
+  description: { minDesc, maxDesc },
+  stock: { minStock, maxStock },
+  price: { minPrice, maxPrice },
+  images: { minImg, maxImg },
+} = logicRules.product;
 
 interface CreatePage extends Product {
   isUploading: boolean;
@@ -133,25 +136,42 @@ const Page = () => {
   const handleCreateProduct: SubmitHandler<CreatePage> = async (form) => {
     setValue("isUploading", true);
 
-    if (name.length < 3) {
-      setValue("isUploading", false);
-      return toast.error("The name should be greater than 2 characters.");
-    }
-    if (description.length < 3) {
+    if (name.length < minName || name.length > maxName) {
       setValue("isUploading", false);
       return toast.error(
-        "The description should be greater than 14 characters and less than 90."
+        `The name should be greater than ${minName} and less than ${maxName} characters.`
+      );
+    }
+    if (description.length < minDesc || description.length > maxDesc) {
+      setValue("isUploading", false);
+      return toast.error(
+        `The description should be greater than ${minDesc} and less or equal than ${maxDesc} characters.`
       );
     }
 
-    if (!price || price < 1) {
+    if (stock < minStock || stock > maxStock) {
       setValue("isUploading", false);
-      return toast.error("The price should be greater than 0.");
+      return toast.error(
+        `The stock should be greater than ${minStock} and less or equal than ${maxStock} characters.`
+      );
     }
 
-    if (!files || files.length < 1) {
+    if (price < minPrice || price > maxPrice) {
       setValue("isUploading", false);
-      return toast.error("At least 1 file is required.");
+      return toast.error(
+        `The price should be greater than ${minPrice} and less or equal than ${maxPrice} characters.`
+      );
+    }
+
+    if (
+      !Array.isArray(files) ||
+      files.length < minImg ||
+      files.length > maxImg
+    ) {
+      setValue("isUploading", false);
+      return toast.error(
+        `Images quantity should be grater than ${minImg} and less or equal than ${maxImg}`
+      );
     }
 
     const formData = new FormData();
@@ -172,7 +192,6 @@ const Page = () => {
       });
       if (res.status == 201) {
         toast.success("The product was added succesfully!");
-        const resJson = await res.json();
       } else {
         throw new Error("Not uploaded succesfully");
       }
@@ -181,20 +200,6 @@ const Page = () => {
       console.error("error is", error);
     } finally {
       reset();
-    }
-  };
-
-  const handleOnDrag = (result: DropResult) => {
-    const originIndex = result.source?.index;
-    const destinationIndex = result.destination?.index;
-    console.log("originIndex destinationIndex", originIndex, destinationIndex);
-    if (originIndex !== undefined && destinationIndex !== undefined) {
-      console.log("true");
-      const arrCopy = [...files];
-      const destinAux = arrCopy[destinationIndex];
-      arrCopy[destinationIndex] = arrCopy[originIndex];
-      arrCopy[originIndex] = destinAux;
-      setValue("files", arrCopy);
     }
   };
 
@@ -219,8 +224,8 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              minLength={3}
-              maxLength={40}
+              minLength={minName}
+              maxLength={maxName}
             />
             <FormInput
               name="Description"
@@ -231,8 +236,8 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              minLength={3}
-              maxLength={300}
+              minLength={minDesc}
+              maxLength={maxDesc}
             />
             <FormInput
               name="Price"
@@ -244,15 +249,12 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              min={1}
-              max={1000000}
+              min={minPrice}
+              max={maxPrice}
             />
           </div>
         ) : steps === 1 ? (
-          <ImgManagment
-            setValue={setValue}
-            files={files}
-          />
+          <ImgManagment setValue={setValue} files={files} />
         ) : (
           <>
             <FormInput
@@ -265,8 +267,8 @@ const Page = () => {
               register={register}
               errors={errors}
               trigger={trigger} // Pass trigger here
-              min={1}
-              max={100000}
+              min={minStock}
+              max={maxStock}
             />
             <FormInput
               name="Block"

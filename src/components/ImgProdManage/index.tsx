@@ -9,6 +9,7 @@ import {
 import { UseFormSetValue } from "react-hook-form";
 import { LuHand, LuX } from "react-icons/lu";
 import { EditPage } from "../edit/[id]/page";
+import { toast } from "sonner";
 
 const ImgManagment = ({
   setValue,
@@ -45,7 +46,7 @@ const ImgManagment = ({
             const fileArray = Array.from(e.target.files);
             const max = logicRules.product.images.max;
             if (files.length + fileArray.length > max) {
-              alert(`You can only upload up to ${max} files.`);
+              toast.error(`You can only upload up to ${max} files.`);
               return;
             }
 
