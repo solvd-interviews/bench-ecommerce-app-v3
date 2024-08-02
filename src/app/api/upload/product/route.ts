@@ -1,17 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/lib/models/ProductModel";
-import { uploadImage } from "@/lib/utils/cloudinary";
+import { uploadFileLocally } from "@/lib/utils/cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-
-export async function uploadFileLocally(image: File) {
-  if (image && image instanceof File) {
-    const arrayBuffer = await image.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64String = buffer.toString("base64");
-    const url = await uploadImage("data:image/jpeg;base64," + base64String);
-    return url;
-  }
-}
 
 export const POST = async (request: NextRequest) => {
   try {

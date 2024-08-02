@@ -8,15 +8,20 @@ import {
 } from "react-beautiful-dnd";
 import { UseFormSetValue } from "react-hook-form";
 import { LuHand, LuX } from "react-icons/lu";
-import { EditPage } from "../edit/[id]/page";
+import { EditPage } from "@/app/admin/products/edit/[id]/page";
 import { toast } from "sonner";
+import { CreateProd } from "@/app/admin/products/create/page";
+
+const {
+  images: { maxImg },
+} = logicRules.product;
 
 const ImgManagment = ({
   setValue,
   files,
   filesDeleted,
 }: {
-  setValue: UseFormSetValue<EditPage>;
+  setValue: UseFormSetValue<EditPage | CreateProd>;
   files: (string | File)[];
   filesDeleted?: string[];
 }) => {
@@ -44,9 +49,8 @@ const ImgManagment = ({
         onChange={(e) => {
           if (e.target.files && e.target.files?.length > 0) {
             const fileArray = Array.from(e.target.files);
-            const max = logicRules.product.images.max;
-            if (files.length + fileArray.length > max) {
-              toast.error(`You can only upload up to ${max} files.`);
+            if (files.length + fileArray.length > maxImg) {
+              toast.error(`You can only upload up to ${maxImg} files.`);
               return;
             }
 

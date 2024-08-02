@@ -1,9 +1,7 @@
-import { uploadFileLocally } from "@/app/api/upload/product/route";
+import { uploadFileLocally } from "@/lib/utils/cloudinary";
 import ProductModel from "@/lib/models/ProductModel";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/utils/cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-
-
 
 export const PUT = async (
   request: NextRequest,

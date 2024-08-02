@@ -24,10 +24,11 @@ const {
   images: { minImg, maxImg },
 } = logicRules.product;
 
-interface CreatePage extends Product {
+export interface CreateProd extends Product {
   isUploading: boolean;
   steps: number;
   files: (string | File)[];
+  filesDeleted: string[];
 }
 
 const FormInput = ({
@@ -46,7 +47,7 @@ const FormInput = ({
   maxLength,
   max,
 }: {
-  id: keyof CreatePage;
+  id: keyof CreateProd;
   name: string;
   required?: boolean;
   pattern?: ValidationRule<RegExp>;
@@ -54,7 +55,7 @@ const FormInput = ({
   type?: "text" | "textarea" | "number" | "checkbox";
   classStyle?: string;
   register: Function;
-  errors: FieldErrors<CreatePage>;
+  errors: FieldErrors<CreateProd>;
   trigger: Function; // Add trigger here
   minLength?: number;
   min?: number;
@@ -109,7 +110,7 @@ const Page = () => {
     watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CreatePage>({
+  } = useForm<CreateProd>({
     defaultValues: {
       name: "",
       description: "",
@@ -133,7 +134,7 @@ const Page = () => {
     isBlocked,
   } = watch();
 
-  const handleCreateProduct: SubmitHandler<CreatePage> = async (form) => {
+  const handleCreateProduct: SubmitHandler<CreateProd> = async (form) => {
     setValue("isUploading", true);
 
     if (name.length < minName || name.length > maxName) {
