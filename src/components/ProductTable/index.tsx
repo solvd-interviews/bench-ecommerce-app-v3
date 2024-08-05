@@ -19,7 +19,7 @@ const defaultValues = {
   updatedDate: null as string | null,
   price: null as number | null,
   stock: null as number | null,
-  block: false
+  block: false,
 };
 
 type FilterKeys = keyof typeof defaultValues;
@@ -33,7 +33,7 @@ const ProductTable = () => {
     limit: 5,
     sort: {
       prop: "productNumber",
-      order: "asc"
+      order: "asc",
     },
   });
   const [filters, setFilters] = useState(defaultValues);
@@ -76,86 +76,88 @@ const ProductTable = () => {
       (acc, [key, value]) => {
         const safeKey = key as keyof Filter;
 
-      // Ensure non-null, non-undefined values are considered
-      if (value !== null && value !== undefined) {
-        switch (safeKey) {
-          case 'id':
-          case 'price':
-          case 'stock':
-            // Correctly handle number and string types, ensure no trim operation on number
-            if (typeof value === 'number') {
-              acc[safeKey] = value;
-            } else if (typeof value === 'string') {
-              acc[safeKey] = value.trim() ? Number(value.trim()) : null;
-            }
-            break;
-          case 'name':
-            // Ensure the name is treated as a string and passed even if it's an empty string
-            if (typeof value === 'string') {
-              acc[safeKey] = value.trim();  // Remove excess whitespace
-            }
-            break;
-          case 'block':
-            // Boolean values do not need trimming or conversion
-            acc[safeKey] = Boolean(value);
-            break;
-          case 'createDate':
-          case 'updatedDate':
-            // Handle string type for dates, check and convert only if it's a non-empty string
-            if (typeof value === 'string' && value.trim()) {
-              acc[safeKey] = new Date(value.trim());
-            } else {
-              acc[safeKey] = null;
-            }
-            break;
+        // Ensure non-null, non-undefined values are considered
+        if (value !== null && value !== undefined) {
+          switch (safeKey) {
+            case "id":
+            case "price":
+            case "stock":
+              // Correctly handle number and string types, ensure no trim operation on number
+              if (typeof value === "number") {
+                acc[safeKey] = value;
+              } else if (typeof value === "string") {
+                acc[safeKey] = value.trim() ? Number(value.trim()) : null;
+              }
+              break;
+            case "name":
+              // Ensure the name is treated as a string and passed even if it's an empty string
+              if (typeof value === "string") {
+                acc[safeKey] = value.trim(); // Remove excess whitespace
+              }
+              break;
+            case "block":
+              // Boolean values do not need trimming or conversion
+              acc[safeKey] = Boolean(value);
+              break;
+            case "createDate":
+            case "updatedDate":
+              // Handle string type for dates, check and convert only if it's a non-empty string
+              if (typeof value === "string" && value.trim()) {
+                acc[safeKey] = new Date(value.trim());
+              } else {
+                acc[safeKey] = null;
+              }
+              break;
+          }
         }
-      }
-      return acc;
-    }, {});
-
-
+        return acc;
+      },
+      {}
+    );
 
     fetchProducts(cleanFilters, tableState.sort);
   };
 
-  const fetchProducts = useCallback(async (
-    filters: Partial<Filter>,
-    sorting: { prop: string, order: string }) => {
-    setTableState((prevState) => ({ ...prevState, isLoading: true }));
+  const fetchProducts = useCallback(
+    async (
+      filters: Partial<Filter>,
+      sorting: { prop: string; order: string }
+    ) => {
+      setTableState((prevState) => ({ ...prevState, isLoading: true }));
 
-    // Initialize URLSearchParams with mandatory parameters
-    const queryParams = new URLSearchParams({
-      page: String(tableState.page),
-      limit: String(tableState.limit),
-      sort: tableState.sort.prop,
-      order: tableState.sort.order
-    });
+      // Initialize URLSearchParams with mandatory parameters
+      const queryParams = new URLSearchParams({
+        page: String(tableState.page),
+        limit: String(tableState.limit),
+        sort: tableState.sort.prop,
+        order: tableState.sort.order,
+      });
 
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          queryParams.set(key, String(value));
+        }
+      });
+      console.log("queryParams: ", queryParams);
+      const url = `/api/products?${queryParams.toString()}`;
 
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        queryParams.set(key, String(value));
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setTableState((prevState) => ({
+          ...prevState,
+          isLoading: false,
+          totalPages: data.totalPages,
+          currentProducts: data.products,
+        }));
+      } catch (error) {
+        console.error("Fetch error: ", error);
+        toast.error("Failed to fetch products. Try again later.");
+        setTableState((prevState) => ({ ...prevState, isLoading: false }));
       }
-    });
-    console.log("queryParams: ", queryParams);
-    const url = `/api/products?${queryParams.toString()}`;
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setTableState(prevState => ({
-        ...prevState,
-        isLoading: false,
-        totalPages: data.totalPages,
-        currentProducts: data.products
-      }));
-    } catch (error) {
-      console.error("Fetch error: ", error);
-      toast.error("Failed to fetch products. Try again later.");
-      setTableState(prevState => ({ ...prevState, isLoading: false }));
-    }
-  }, [tableState.page, tableState.limit, tableState.sort]);
-
+    },
+    [tableState.page, tableState.limit, tableState.sort]
+  );
 
   const handleDeleteProduct = async (id: string) => {
     try {
@@ -381,8 +383,12 @@ const ProductTable = () => {
                         prop === e.prop && "bg-primary text-white"
                       }`}
                       onClick={() => {
-                        const newOrder = prop === e.prop
-                          ? (order === "asc" ? "desc" : "asc") : e.defOrder;
+                        const newOrder =
+                          prop === e.prop
+                            ? order === "asc"
+                              ? "desc"
+                              : "asc"
+                            : e.defOrder;
 
                         setTableState((prevState) => ({
                           ...prevState,
@@ -391,15 +397,20 @@ const ProductTable = () => {
                             order: newOrder,
                           },
                         }));
-                        fetchProducts(filters, { prop: e.prop, order: newOrder })
+                        fetchProducts(filters, {
+                          prop: e.prop,
+                          order: newOrder,
+                        });
                       }}
                     >
                       <div className="flex gap-1 justify-between">
                         <p>{e.label}</p>
-                        {prop === e.prop && (
-                          order === "asc" ?
-                            <IoIosArrowDown size={25} /> :
-                            <IoIosArrowUp size={25} />)}
+                        {prop === e.prop &&
+                          (order === "asc" ? (
+                            <IoIosArrowDown size={25} />
+                          ) : (
+                            <IoIosArrowUp size={25} />
+                          ))}
                       </div>
                     </th>
                   );
@@ -482,35 +493,44 @@ const ProductTable = () => {
                       checked={product.isBlocked}
                       onClick={() => {
                         toast.custom((t) => (
-                          <div className="flex gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2">
-                            <button
-                              className="btn btn-warning"
-                              onClick={async () => {
-                                toast.dismiss(t);
-                                await handleBlockClick(
-                                  product._id,
-                                  !product.isBlocked
-                                );
-                                product.isBlocked = !product.isBlocked;
-                                setTableState((prevState) => ({
-                                  ...prevState,
-                                  currentProducts:
-                                    prevState.currentProducts.map((e) => {
-                                      if (e._id === product._id) {
-                                        e.isBlocked = !e.isBlocked;
-                                      }
-                                      return e;
-                                    }),
-                                }));
-                              }}
-                            >
-                              {product.isBlocked ? "Unblock" : "Block"}
-                            </button>
-                            <p className="text-sm">
-                              Are you sure to{" "}
+                          <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 ">
+                            <p className="text-lg text-center">
+                              Are you sure you want to{" "}
                               {product.isBlocked ? "Unblock" : "Block"}{" "}
                               {product.name}?
                             </p>
+                            <div className="flex  gap-2">
+                              <button
+                                className="btn btn-neutral min-w-20"
+                                onClick={async () => {
+                                  toast.dismiss(t);
+                                }}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                className="btn btn-warning min-w-20"
+                                onClick={async () => {
+                                  toast.dismiss(t);
+                                  setTableState((prevState) => ({
+                                    ...prevState,
+                                    currentProducts:
+                                      prevState.currentProducts.map((e) => {
+                                        if (e._id === product._id) {
+                                          e.isBlocked = !e.isBlocked;
+                                        }
+                                        return e;
+                                      }),
+                                  }));
+                                  handleBlockClick(
+                                    product._id,
+                                    !product.isBlocked
+                                  );
+                                }}
+                              >
+                                {product.isBlocked ? "Unblock" : "Block"}
+                              </button>
+                            </div>
                           </div>
                         ));
                       }}
@@ -545,15 +565,23 @@ const ProductTable = () => {
                         size={30}
                         onClick={() => {
                           toast.custom((t) => (
-                            <div className="flex gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2">
-                              <button
-                                className="btn btn-error"
-                                onClick={async () => {
-                                  toast.dismiss(t);
-                                  const res = await handleDeleteProduct(
-                                    product._id
-                                  );
-                                  if (res) {
+                            <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2">
+                              <p className="text-lg text-center">
+                                Are you sure you want to delete {product.name}?
+                              </p>
+                              <div className="flex gap-2">
+                                <button
+                                  className="btn btn-neutral w-20"
+                                  onClick={async () => {
+                                    toast.dismiss(t);
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  className="btn btn-error w-20"
+                                  onClick={async () => {
+                                    toast.dismiss(t);
                                     setTableState((prevState) => ({
                                       ...prevState,
                                       currentProducts:
@@ -561,14 +589,12 @@ const ProductTable = () => {
                                           (e) => e._id !== product._id
                                         ),
                                     }));
-                                  }
-                                }}
-                              >
-                                Delete
-                              </button>
-                              <p className="text-sm">
-                                Are you sure to delete {product.name}?
-                              </p>
+                                    handleDeleteProduct(product._id);
+                                  }}
+                                >
+                                  Delete
+                                </button>
+                              </div>
                             </div>
                           ));
                         }}
