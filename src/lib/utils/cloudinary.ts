@@ -32,3 +32,37 @@ export const uploadImage = (image: string) => {
 export const uploadMultipleImages = (images: string[]) => {
   return Promise.all(images.map((base) => uploadImage(base)));
 };
+
+// Utility to delete an image from Cloudinary
+export const deleteImage = (publicId: string) => {
+  return new Promise<{ ok: boolean }>((resolve, reject) => {
+    v2.uploader.destroy(publicId, (error, result) => {
+      console.log("deleteImage executed", publicId);
+      if (result && result.result === "ok") {
+        resolve({ ok: true });
+      } else {
+        reject(error || { message: "Failed to delete image from Cloudinary" });
+      }
+    });
+  });
+};
+
+export const getPublicIdFromUrl = (url: string) => {
+  // Remove the base URL and transformation parts if any
+  const parts = url.split("/");
+  const publicIdIndex = parts.findIndex((part) => part === "upload") + 2;
+  return parts
+    .slice(publicIdIndex)
+    .join("/")
+    .replace(/\.[^/.]+$/, ""); // Remove file extension
+};
+
+export async function uploadFileLocally(image: File) {
+  if (image && image instanceof File) {
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64String = buffer.toString("base64");
+    const url = await uploadImage("data:image/jpeg;base64," + base64String);
+    return url;
+  }
+}

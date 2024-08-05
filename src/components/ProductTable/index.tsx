@@ -10,15 +10,16 @@ import { ProductTableState, Filter } from "./types";
 import { tablePropertyAndSkeletonArr } from "./constants";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const defaultValues = {
   id: null as number | null,
-  name: '',
+  name: "",
   createDate: null as string | null,
   updatedDate: null as string | null,
   price: null as number | null,
   stock: null as number | null,
-  block: null
+  block: false
 };
 
 type FilterKeys = keyof typeof defaultValues;
@@ -37,6 +38,8 @@ const ProductTable = () => {
   });
   const [filters, setFilters] = useState(defaultValues);
 
+  const router = useRouter();
+
   const {
     isLoading,
     page,
@@ -50,15 +53,15 @@ const ProductTable = () => {
     const { name, value, type, checked } = e.target;
     let newValue: string | number | boolean | null = value;
 
-    if (type === 'number') {
-      newValue = value === '' ? null : Number(value);
-    } else if (type === 'checkbox') {
+    if (type === "number") {
+      newValue = value === "" ? null : Number(value);
+    } else if (type === "checkbox") {
       newValue = checked;
     }
 
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [name]: newValue
+      [name]: newValue,
     }));
   };
 
@@ -69,8 +72,9 @@ const ProductTable = () => {
 
     type FilterAccumulator = Partial<Filter>;
 
-    const cleanFilters = Object.entries(filters).reduce<FilterAccumulator>((acc, [key, value]) => {
-      const safeKey = key as keyof Filter;
+    const cleanFilters = Object.entries(filters).reduce<FilterAccumulator>(
+      (acc, [key, value]) => {
+        const safeKey = key as keyof Filter;
 
       // Ensure non-null, non-undefined values are considered
       if (value !== null && value !== undefined) {
@@ -88,10 +92,11 @@ const ProductTable = () => {
           case 'name':
             // Ensure the name is treated as a string and passed even if it's an empty string
             if (typeof value === 'string') {
-              acc[safeKey] = value.trim();
+              acc[safeKey] = value.trim();  // Remove excess whitespace
             }
             break;
           case 'block':
+            // Boolean values do not need trimming or conversion
             acc[safeKey] = Boolean(value);
             break;
           case 'createDate':
@@ -122,16 +127,17 @@ const ProductTable = () => {
     const queryParams = new URLSearchParams({
       page: String(tableState.page),
       limit: String(tableState.limit),
-      sort: sorting.prop,
-      order: sorting.order
+      sort: tableState.sort.prop,
+      order: tableState.sort.order
     });
+
 
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         queryParams.set(key, String(value));
       }
     });
-
+    console.log("queryParams: ", queryParams);
     const url = `/api/products?${queryParams.toString()}`;
 
     try {
@@ -148,7 +154,7 @@ const ProductTable = () => {
       toast.error("Failed to fetch products. Try again later.");
       setTableState(prevState => ({ ...prevState, isLoading: false }));
     }
-  }, [tableState.page, tableState.limit]);
+  }, [tableState.page, tableState.limit, tableState.sort]);
 
 
   const handleDeleteProduct = async (id: string) => {
@@ -205,7 +211,10 @@ const ProductTable = () => {
     <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
       {/* Product ID Filter */}
       <div>
-        <label htmlFor="productId" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="productId"
+          className="block text-sm font-medium text-gray-700"
+        >
           ID
         </label>
         <input
@@ -216,14 +225,17 @@ const ProductTable = () => {
           placeholder="123"
           min="1"
           max="999999"
-          value={filters.id === null ? '' : filters.id}
+          value={filters.id === null ? "" : filters.id}
           onChange={handleChange}
         />
       </div>
 
       {/* Product Name Filter */}
       <div>
-        <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="productName"
+          className="block text-sm font-medium text-gray-700"
+        >
           Name
         </label>
         <input
@@ -240,7 +252,10 @@ const ProductTable = () => {
 
       {/* Create Date Filter */}
       <div>
-        <label htmlFor="createDate" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="createDate"
+          className="block text-sm font-medium text-gray-700"
+        >
           Created
         </label>
         <input
@@ -248,14 +263,17 @@ const ProductTable = () => {
           id="createDate"
           name="createDate"
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-          value={filters.createDate ?? ''}
+          value={filters.createDate ?? ""}
           onChange={handleChange}
         />
       </div>
 
       {/* Updated Date Filter */}
       <div>
-        <label htmlFor="updatedDate" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="updatedDate"
+          className="block text-sm font-medium text-gray-700"
+        >
           Updated
         </label>
         <input
@@ -263,14 +281,17 @@ const ProductTable = () => {
           id="updatedDate"
           name="updatedDate"
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-          value={filters.updatedDate ?? ''}
+          value={filters.updatedDate ?? ""}
           onChange={handleChange}
         />
       </div>
 
       {/* Price Filter */}
       <div>
-        <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="price"
+          className="block text-sm font-medium text-gray-700"
+        >
           Price
         </label>
         <input
@@ -280,14 +301,17 @@ const ProductTable = () => {
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           placeholder="19.99"
           title="Enter a valid price"
-          value={filters.price === null ? '' : filters.price}
+          value={filters.price === null ? "" : filters.price}
           onChange={handleChange}
         />
       </div>
 
       {/* Stock Filter */}
       <div>
-        <label htmlFor="stock" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="stock"
+          className="block text-sm font-medium text-gray-700"
+        >
           Stock
         </label>
         <input
@@ -298,14 +322,17 @@ const ProductTable = () => {
           placeholder="100"
           min="0"
           max="99999"
-          value={filters.stock === null ? '' : filters.stock}
+          value={filters.stock === null ? "" : filters.stock}
           onChange={handleChange}
         />
       </div>
 
       {/* Block Filter */}
       <div className="flex items-center">
-        <label htmlFor="block" className="block text-sm font-medium text-gray-700 mr-2">
+        <label
+          htmlFor="block"
+          className="block text-sm font-medium text-gray-700 mr-2"
+        >
           Blocked
         </label>
         <input
@@ -334,9 +361,7 @@ const ProductTable = () => {
     <>
       <div className="overflow-y-auto h-full bg-white">
         <div className="filter-section flex justify-around p-3 bg-blue-100">
-          <div className="hidden sm:block">
-            {formMarkup()}
-          </div>
+          <div className="hidden sm:block">{formMarkup()}</div>
           <div className="block sm:hidden">
             <Accordion title="Filter options" startsOpen={false}>
               {formMarkup()}
@@ -511,6 +536,9 @@ const ProductTable = () => {
                       <LuClipboardEdit
                         size={30}
                         className="hover:cursor-pointer"
+                        onClick={() => {
+                          router.push(`/admin/products/edit/${product._id}`);
+                        }}
                       />
                       <LuTrash2
                         className="hover:cursor-pointer"
@@ -551,8 +579,8 @@ const ProductTable = () => {
               ))
             ) : (
               <tr>
-                    <td colSpan={11} className="py-10 text-center">
-                      No products found.
+                <td colSpan={11} className="py-10 text-center">
+                  No products found.
                 </td>
               </tr>
             )}
@@ -570,7 +598,7 @@ const ProductTable = () => {
         <Pagination
           pages={2}
           limit={limit}
-            setState={setTableState}
+          setState={setTableState}
           loading={true}
         />
       )}
