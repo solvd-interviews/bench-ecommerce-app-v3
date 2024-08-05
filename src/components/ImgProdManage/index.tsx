@@ -28,9 +28,7 @@ const ImgManagment = ({
   const handleOnDrag = (result: DropResult) => {
     const originIndex = result.source?.index;
     const destinationIndex = result.destination?.index;
-    console.log("originIndex destinationIndex", originIndex, destinationIndex);
     if (originIndex !== undefined && destinationIndex !== undefined) {
-      console.log("true");
       const arrCopy = [...files];
       const destinAux = arrCopy[destinationIndex];
       arrCopy[destinationIndex] = arrCopy[originIndex];

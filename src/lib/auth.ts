@@ -32,16 +32,11 @@ export const config = {
         }
 
         const user = await UserModel.findOne({ email });
-        console.log("user: login", user);
         if (user) {
-          console.log("user true");
           const isMatch = await compare(password, user.password);
-          console.log("first, ", password, user.password, isMatch);
           if (isMatch) {
-            console.log("MATCH TRUE");
             return user.toObject();
           } else {
-            console.log("MATCH FALSE");
 
             throw new Error("The email or password are incorrect. Err 2.");
           }
@@ -53,7 +48,6 @@ export const config = {
   ],
   callbacks: {
     async jwt({ user, trigger, session, token }: any) {
-      console.log("jwt user: ", user);
       if (user) {
         token.user = {
           _id: user._id.toString(), // Ensure _id is a string

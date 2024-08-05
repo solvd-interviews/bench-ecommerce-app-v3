@@ -138,7 +138,6 @@ const ProductTable = () => {
           queryParams.set(key, String(value));
         }
       });
-      console.log("queryParams: ", queryParams);
       const url = `/api/products?${queryParams.toString()}`;
 
       try {

@@ -10,7 +10,6 @@ export default function MyOrders() {
   const router = useRouter();
   const { data: orders, error } = useSWR(`/api/orders/mine`);
 
-  console.log("orders:_ ", orders);
 
   if (error) return "An error has occurred.";
   if (!orders) return <span className="loading loading-spinner w-20"></span>;

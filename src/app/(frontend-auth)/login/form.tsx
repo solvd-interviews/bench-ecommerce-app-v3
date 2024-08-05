@@ -32,7 +32,6 @@ const Form = () => {
         password: data.password,
         redirect: false,
       });
-      console.log("response ", response);
       if (response && response.ok) {
         window.location.reload();
         router.replace("/");

@@ -15,7 +15,6 @@ export const GET = async (req: any) => {
     );
   }
 
-  console.log("user ", user);
 
   await dbConnect();
   const orders = await OrderModel.find({ user: user._id });

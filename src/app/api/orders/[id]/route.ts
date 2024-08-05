@@ -16,7 +16,6 @@ export const GET = async (req: any, { params }: { params: { id: string } }) => {
       }
     );
   }
-  console.log("params.id:_ ", params.id);
 
   if (!params.id || !mongoose.Types.ObjectId.isValid(params.id)) {
     return new NextResponse(
@@ -32,6 +31,5 @@ export const GET = async (req: any, { params }: { params: { id: string } }) => {
 
   await dbConnect();
   const order = await OrderModel.findById(params.id);
-  console.log("order found ", order);
   return Response.json(order);
 };

@@ -215,7 +215,6 @@ const Page = () => {
     });
     formData.set("filesDeleted", JSON.stringify(filesDeleted));
     try {
-      console.log("formdata before creating: ", JSON.stringify(formData));
       const res = await fetch(`/api/products/edit/${id}`, {
         method: "PUT",
         body: formData,
