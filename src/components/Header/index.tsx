@@ -42,7 +42,7 @@ const Header = async ({ isAdmin = false }) => {
                   <Link href={"/"}>User&apos;s Home</Link>
                 </li>
                 <li className="hover:underline">
-                  <Link href={"/admin/products"}>Product</Link>
+                  <Link href={"/admin/products"}>Products</Link>
                 </li>
                 <li className="hover:underline">
                   <Link href={"/admin/users"}>Users</Link>
@@ -50,9 +50,6 @@ const Header = async ({ isAdmin = false }) => {
               </>
             ) : (
               <>
-                <li className="hover:underline">
-                  <Link href={"/"}>Home</Link>
-                </li>
                 <li className="hover:underline">
                   <Link href={"/orders-history"}>Orders</Link>
                 </li>
