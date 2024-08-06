@@ -186,7 +186,6 @@ const Page = () => {
       formData.set("image-" + index, files[index]);
     });
     try {
-      console.log("formdata before creating: ", JSON.stringify(formData));
       const res = await fetch("/api/upload/product", {
         method: "post",
         body: formData,

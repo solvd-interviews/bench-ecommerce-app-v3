@@ -37,7 +37,6 @@ export const uploadMultipleImages = (images: string[]) => {
 export const deleteImage = (publicId: string) => {
   return new Promise<{ ok: boolean }>((resolve, reject) => {
     v2.uploader.destroy(publicId, (error, result) => {
-      console.log("deleteImage executed", publicId);
       if (result && result.result === "ok") {
         resolve({ ok: true });
       } else {
