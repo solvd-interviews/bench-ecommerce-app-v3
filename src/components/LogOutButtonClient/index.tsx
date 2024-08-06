@@ -9,7 +9,7 @@ export default function LogOutButtonClient() {
 
   return (
     <button
-      className="btn btn-primary"
+      className="btn btn-primary w-full max-w-24"
       onClick={() => {
         signOut();
         init();
