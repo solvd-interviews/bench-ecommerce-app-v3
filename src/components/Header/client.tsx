@@ -1,20 +1,62 @@
 "use client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import LogOutButtonClient from "../LogOutButtonClient";
 
 const ToggleMenu = ({ isAdmin = false }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const handleClickOutside = useCallback((event: MouseEvent | TouchEvent) => {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node) // Cast to Node
+    ) {
+      setIsMobileMenuOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.addEventListener(
+        "mousedown",
+        handleClickOutside as EventListener
+      );
+      document.addEventListener(
+        "touchstart",
+        handleClickOutside as EventListener
+      ); // Add touch event
+    } else {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside as EventListener
+      );
+      document.removeEventListener(
+        "touchstart",
+        handleClickOutside as EventListener
+      ); // Remove touch event
+    }
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside as EventListener
+      );
+      document.removeEventListener(
+        "touchstart",
+        handleClickOutside as EventListener
+      ); // Clean up touch event
+    };
+  }, [isMobileMenuOpen, handleClickOutside]);
+
   return (
-    <div className="sm:hidden flex items-center relative">
+    <div className="sm:hidden flex items-center relative" ref={menuRef}>
       <button onClick={toggleMobileMenu} className="mr-2">
         {isMobileMenuOpen ? (
           <AiOutlineClose size={25} />
@@ -24,7 +66,10 @@ const ToggleMenu = ({ isAdmin = false }) => {
       </button>
       <div></div>
       {isMobileMenuOpen && (
-        <nav className="absolute top-full right-1 mt-2 bg-gray-200 shadow-lg min-w-max rounded-lg">
+        <nav
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="absolute top-full right-1 mt-2 bg-gray-200 shadow-lg min-w-max rounded-lg"
+        >
           <ul className="flex flex-col gap-2 p-2">
             {isAdmin ? (
               <>
