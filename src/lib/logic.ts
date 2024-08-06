@@ -1,5 +1,5 @@
 /**
- * This file will contain all the logic of product details. Once changed here, 
+ * This file will contain all the logic of product details. Once changed here,
  */
 
 export const logicRules = {
@@ -17,7 +17,7 @@ export const logicRules = {
       maxDesc: 90,
     },
     stock: {
-      minStock: 1,
+      minStock: 0,
       maxStock: 1000000,
     },
     images: {

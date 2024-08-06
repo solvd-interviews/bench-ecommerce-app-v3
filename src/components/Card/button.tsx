@@ -7,23 +7,31 @@ const BuyButton = ({ product }: { product: Product }) => {
   const { increase } = useCartService();
   const router = useRouter();
 
-  return (
-    <button
-      className="btn btn-primary"
-      onClick={() => {
-        increase({
-          ...product,
-          qty: 0,
-          color: "",
-          size: "",
-          image: product.images[0] || null,
-        });
-        router.push("/cart");
-      }}
-    >
-      Buy Now
-    </button>
-  );
+  if (product.stock > 0) {
+    return (
+      <button
+        className="btn btn-primary"
+        onClick={() => {
+          increase({
+            ...product,
+            qty: 0,
+            color: "",
+            size: "",
+            image: product.images[0] || null,
+          });
+          router.push("/cart");
+        }}
+      >
+        Buy Now
+      </button>
+    );
+  } else {
+    return (
+      <button className="btn btn-primary disabled mt-2" disabled>
+        No stock
+      </button>
+    );
+  }
 };
 
 export default BuyButton;
