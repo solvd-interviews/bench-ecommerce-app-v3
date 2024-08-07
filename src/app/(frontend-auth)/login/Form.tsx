@@ -49,10 +49,13 @@ const Form = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100" id="src-app-frontend-auth-login-container">
-      <div className="hidden lg:block lg:w-1/2 bg-primary relative border-r-2 border-primary" id="src-app-frontend-auth-login-bg-image">
+      <div className="hidden lg:flex lg:w-1/2 relative border-r-2 border-primary items-center justify-center" id="src-app-frontend-auth-login-bg-image">
         <Image
+          className="shadow-2xl"
           src="/solvdwhite-hd.png"
-          fill
+          objectFit="cover"
+          width={1920}
+          height={1080}
           alt="Background"
           id="src-app-frontend-auth-login-image"
         />
