@@ -115,7 +115,7 @@ const ProductDetailPage: React.FC = () => {
             }}
           />
         ) : (
-          <button className="btn btn-primary disabled" disabled>
+          <button className="btn btn-primary disabled mt-2" disabled>
             No stock
           </button>
         )}

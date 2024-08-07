@@ -20,7 +20,6 @@ export const PUT = async (
       return new NextResponse("Invalid formData", { status: 400 });
     }
 
-    console.log("create product ", formData);
     let length = formData.get("imgLength");
     if (!length || typeof length !== "string") {
       return NextResponse.json(
@@ -37,7 +36,6 @@ export const PUT = async (
     }
 
     const name = formData.get("name");
-    console.log("name: ", name);
 
     if (!name || typeof name !== "string") {
       return NextResponse.json(
@@ -47,7 +45,6 @@ export const PUT = async (
     }
 
     const description = formData.get("description");
-    console.log("description: ", description);
 
     if (!description || typeof description !== "string") {
       return NextResponse.json(
@@ -57,7 +54,6 @@ export const PUT = async (
     }
 
     const stock = formData.get("stock");
-    console.log("stock: ", stock);
 
     if (!stock || typeof stock !== "string") {
       return NextResponse.json(
@@ -66,7 +62,6 @@ export const PUT = async (
       );
     }
     const isBlocked = formData.get("isBlocked");
-    console.log("isBlocked: ", isBlocked);
 
     if (!isBlocked || typeof isBlocked !== "string") {
       return NextResponse.json(
@@ -79,30 +74,23 @@ export const PUT = async (
       formData.get("filesDeleted")?.toString() || ""
     );
 
-    console.log("filesDeleted: ", filesDeleted);
     let promisesDelete: Promise<{ ok: boolean }>[] = [];
 
     if (Array.isArray(filesDeleted) && filesDeleted.length > 0) {
-      console.log("filesDeleted true ");
 
       filesDeleted.forEach((_, index) => {
-        console.log("index delete", index);
         promisesDelete.push(
           deleteImage(getPublicIdFromUrl(filesDeleted[index]))
         );
       });
-      console.log("promisesDelete: ", promisesDelete);
       const res = await Promise.all(promisesDelete);
-      console.log("res prom all delete: ", res);
     }
 
-    console.log("find by id");
     let product = await ProductModel.findById(id);
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    console.log("product fetched: ", product);
 
     let promises: (Promise<string | undefined> | string)[] = [];
     for (let index = 0; index < parseInt(length); index++) {
@@ -119,10 +107,8 @@ export const PUT = async (
       }
     }
 
-    console.log("promises files: ", promises);
 
     const urls = await Promise.all(promises);
-    console.log("urls: ", urls);
 
     // Update product fields
     product.name = name;
@@ -133,9 +119,7 @@ export const PUT = async (
     product.images = urls;
 
     // Save the updated product
-    console.log("before save: ", product);
     const res = await product.save();
-    console.log("res is: ", res);
 
     // Return success response
     return NextResponse.json({

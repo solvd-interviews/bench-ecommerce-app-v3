@@ -47,14 +47,12 @@ const orderSchema = new mongoose.Schema(
 );
 
 orderSchema.pre("save", async function (next) {
-  console.log("orderSchema.presave");
   if (this.isNew) {
     const counter = await CounterModel.findByIdAndUpdate(
       { _id: "orderNumber" },
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
-    console.log("counter: ", counter);
     this.orderNumber = counter.seq;
   }
   next();

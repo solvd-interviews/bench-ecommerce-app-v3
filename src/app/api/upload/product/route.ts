@@ -6,7 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (request: NextRequest) => {
   try {
     const formData = await request.formData();
-    console.log("create product ", formData);
     let length = formData.get("imgLength");
     if (!length || typeof length !== "string") {
       return NextResponse.json(

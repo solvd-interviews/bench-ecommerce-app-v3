@@ -18,11 +18,8 @@ export const POST = async (req: any) => {
   }
 
   try {
-    console.log("post order: ");
-    console.log("user: ", user);
 
     const payload = await req.json();
-    console.log("payload, ", payload);
     await dbConnect();
     const dbProductPrices = await ProductModel.find(
       {
@@ -30,7 +27,6 @@ export const POST = async (req: any) => {
       },
       "price"
     );
-    console.log("dbProductPrices: ", dbProductPrices);
     const dbOrderItems = payload.items.map((x: { _id: string }) => ({
       ...x,
       product: x._id,
