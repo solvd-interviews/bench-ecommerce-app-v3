@@ -1,9 +1,30 @@
+import UserTable from "@/components/UserTable";
+import Link from "next/link";
 
 const Page = () => {
   return (
-    <div className="p-4">
-      <div>Admin user dashboard view</div>
-    </div>
+    <>
+      <div className="flex gap-5 items-center px-4 h-16 min-h-16 justify-center ">
+        <div className="flex-1"></div>
+        <h2 className="md:text-3xl font-bold text-center flex-1">
+          User dashboard
+        </h2>
+        <div className="flex-1 flex items-center justify-end">
+          <button className="btn btn-primary ">
+            <Link
+              href={"/admin/products/create"}
+              className="flex items-center gap-2"
+            >
+              <p className="hidden lg:flex">Create a new user</p>
+              <p className=" lg:hidden">Create</p>
+            </Link>
+          </button>
+        </div>
+      </div>
+      <div className="flex-grow overflow-hidden flex flex-col ">
+        <UserTable />
+      </div>
+    </>
   );
 };
 

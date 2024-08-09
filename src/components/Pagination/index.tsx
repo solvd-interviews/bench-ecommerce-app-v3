@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo, Dispatch, SetStateAction } from "react";
 import type { ProductTableState } from "@/components/ProductTable/types";
+import { UserTableState } from "../UserTable/types";
 
 interface PaginationProps {
   pages: number;
   limit: number;
-  setState: Dispatch<SetStateAction<ProductTableState>>;
+  setState:
+    | Dispatch<SetStateAction<ProductTableState>>
+    | Dispatch<SetStateAction<UserTableState>>;
   loading: boolean;
 }
 
@@ -73,7 +76,7 @@ function Pagination({
     }
 
     setArrOfCurrButtons(tempNumberOfPages);
-    setState((prevState) => ({ ...prevState, page: currentButton }));
+    setState((prevState: any) => ({ ...prevState, page: currentButton }));
   }, [currentButton, arrOfCurrButtons, numberOfPages, setState]);
   if (loading) {
     return (
@@ -84,9 +87,9 @@ function Pagination({
             className="select select-bordered w-full max-w-24"
             value={limit}
             onChange={(e) => {
-              setState(prevState => ({
+              setState((prevState:any) => ({
                 ...prevState,
-                limit: parseInt(e.target.value, 10) // Ensure the value is an integer
+                limit: parseInt(e.target.value, 10), // Ensure the value is an integer
               }));
             }}
           >
@@ -98,7 +101,6 @@ function Pagination({
             <option value="50">50</option>
             <option value="100">100</option>
           </select>
-
         </label>
 
         <button className="btn btn-primary shadow-xl btn-disabled" disabled>
@@ -127,7 +129,7 @@ function Pagination({
           className="select select-bordered  w-full max-w-20  md:max-w-24"
           value={limit}
           onChange={(e) =>
-            setState((prevState) => ({
+            setState((prevState: any) => ({
               ...prevState,
               limit: parseFloat(e.target.value),
             }))

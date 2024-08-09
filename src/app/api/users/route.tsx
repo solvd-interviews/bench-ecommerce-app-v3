@@ -1,14 +1,14 @@
 import { fetchProductsPagination } from "@/lib/utils/products";
-import { error } from "console";
+import { fetchUsersPagination } from "@/lib/utils/users";
 import { NextRequest, NextResponse } from "next/server";
 
-export interface MongoFilterProduct {
+export interface MongoFilterUser {
   name: { $regex: string; $options: string };
   createdAt: { $gte: Date };
   updatedAt: { $gte: Date };
-  price: { $eq: number };
-  stock: { $eq: number };
-  id: { $eq: number };
+  email: { $regex: string; $options: string };
+  userNumber: { $eq: number };
+  isAdmin: boolean;
   isBlocked: boolean;
 }
 
@@ -27,11 +27,16 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  const query: Partial<MongoFilterProduct> = {};
+  const query: Partial<MongoFilterUser> = {};
 
   const name = searchParams.get("name");
   if (name) {
     query["name"] = { $regex: name, $options: "i" };
+  }
+
+  const email = searchParams.get("email");
+  if (email) {
+    query["email"] = { $regex: email, $options: "i" };
   }
 
   const createDate = searchParams.get("createDate");
@@ -44,33 +49,23 @@ export const GET = async (request: NextRequest) => {
     query["updatedAt"] = { $gte: new Date(updatedDate) };
   }
 
-  if (searchParams.has("price")) {
-    const price = parseFloat(searchParams.get("price")!);
-    if (!isNaN(price)) {
-      query["price"] = { $eq: price };
-    }
-  }
-
   if (searchParams.has("id")) {
     const id = parseFloat(searchParams.get("id")!);
     if (!isNaN(id)) {
-      query["id"] = { $eq: id };
+      query["userNumber"] = { $eq: id };
     }
   }
 
-  if (searchParams.has("stock")) {
-    const stock = parseInt(searchParams.get("stock")!);
-    if (!isNaN(stock)) {
-      query["stock"] = { $eq: stock };
-    }
+  const isAdmin = searchParams.get("isAdmin");
+  if (isAdmin !== null) {
+    query["isAdmin"] = isAdmin === "true";
+  }
+  const isBlocked = searchParams.get("isBlocked");
+  if (isBlocked !== null) {
+    query["isBlocked"] = isBlocked === "true";
   }
 
-  const block = searchParams.get("block");
-  if (block !== null) {
-    query["isBlocked"] = block === "true";
-  }
-
-  const { products, totalPages, currentPage } = await fetchProductsPagination(
+  const { users, totalPages, currentPage } = await fetchUsersPagination(
     page,
     limit,
     sort,
@@ -78,8 +73,5 @@ export const GET = async (request: NextRequest) => {
     query
   );
 
-  return NextResponse.json(
-    { products, totalPages, currentPage },
-    { status: 200 }
-  );
+  return NextResponse.json({ users, totalPages, currentPage }, { status: 200 });
 };
