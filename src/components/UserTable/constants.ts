@@ -16,14 +16,7 @@ export const tablePropertyAndSkeletonArr: {
     skeletonStyle: "h-4 w-4",
     skeletonQuantity: 1,
   },
-  /* {
-    label: "Content",
-    logic: false,
-    prop: "",
-    defOrder: "asc",
-    skeletonStyle: "h-20 w-24",
-    skeletonQuantity: 1,
-  }, */
+
   {
     label: "Name",
     prop: "name",
@@ -40,7 +33,7 @@ export const tablePropertyAndSkeletonArr: {
     logic: false,
     icon: "str",
     skeletonStyle: "h-4 w-56",
-    skeletonQuantity: 3,
+    skeletonQuantity: 1,
   },
   {
     label: "Created At",
@@ -69,24 +62,6 @@ export const tablePropertyAndSkeletonArr: {
     skeletonQuantity: 1,
   },
 
-  /* {
-    label: "Price",
-    prop: "price",
-    defOrder: "asc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-10",
-    skeletonQuantity: 1,
-  },
-  {
-    label: "Stock",
-    prop: "stock",
-    defOrder: "asc",
-    logic: true,
-    icon: "number",
-    skeletonStyle: "h-4 w-10",
-    skeletonQuantity: 1,
-  }, */
   {
     label: "Blocked",
     prop: "isBlocked",

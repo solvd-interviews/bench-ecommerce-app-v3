@@ -50,7 +50,6 @@ const UserTable = () => {
   } = tableState;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    
     const { name, value, type, checked } = e.target;
     let newValue: string | number | boolean | null = value;
 
@@ -176,6 +175,7 @@ const UserTable = () => {
       }
 
       const resJson = await res.json();
+      console.log("delete res: ", resJson);
       return true;
     } catch (error) {
       console.error("Fetch error: ", error);
@@ -185,24 +185,44 @@ const UserTable = () => {
   };
 
   const handleBlockClick = async (id: string, isBlocked: boolean) => {
-    /**
-     * TODO 2)
-     * you need to do the api endpoints too
-     */
     try {
       const res = await fetch(`/api/users/block/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ isBlocked }),
       });
-
+      console.log("Response admin user is: ", res);
       if (!res.ok) {
         throw new Error("Network response was not ok");
       }
 
       const resJson = await res.json();
+      console.log("Response: json", resJson);
+      return true;
+    } catch (error) {
+      console.error("Fetch error: ", error);
+      toast.error("There was an error editing the user. Try again later.");
+
+      return false;
+    }
+  };
+
+  const handleMakeUserAdmin = async (id: string) => {
+    try {
+      const res = await fetch(`/api/users/admin/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Response admin user is: ", res);
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const resJson = await res.json();
+      console.log("Response: json", resJson);
       return true;
     } catch (error) {
       console.error("Fetch error: ", error);
@@ -520,8 +540,8 @@ const UserTable = () => {
                           <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 ">
                             <p className="text-lg text-center">
                               Are you sure you want to{" "}
-                              {user.isBlocked ? "Unblock" : "Block"} {user.name}
-                              ?
+                              {user.isAdmin ? "unmake" : "make"} {user.name}{" "}
+                              admin ?
                             </p>
                             <div className="flex  gap-2">
                               <button
@@ -541,16 +561,16 @@ const UserTable = () => {
                                     currentUsers: prevState.currentUsers.map(
                                       (e) => {
                                         if (e._id === user._id) {
-                                          e.isBlocked = !e.isBlocked;
+                                          e.isAdmin = !e.isAdmin;
                                         }
                                         return e;
                                       }
                                     ),
                                   }));
-                                  handleBlockClick(user._id, !user.isBlocked);
+                                  handleMakeUserAdmin(user._id);
                                 }}
                               >
-                                {user.isBlocked ? "Unblock" : "Block"}
+                                {user.isAdmin ? "Unmake" : "Make"}
                               </button>
                             </div>
                           </div>
