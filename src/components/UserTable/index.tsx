@@ -237,18 +237,23 @@ const UserTable = () => {
   }, []);
 
   const formMarkup = () => (
-    <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-wrap items-center gap-3"
+      id="src-components-userTable-index-form"
+    >
       {/* User ID Filter */}
-      <div>
+      <div id="src-components-userTable-index-form-idFilterContainer">
         <label
           htmlFor="userId"
           className="block text-sm font-medium text-gray-700"
+          id="src-components-userTable-index-form-idFilterContainer-label"
         >
           ID
         </label>
         <input
           type="number"
-          id="userId"
+          id="src-components-userTable-index-form-idFilterContainer-inputUserId"
           name="id"
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           placeholder="123"
@@ -260,16 +265,17 @@ const UserTable = () => {
       </div>
 
       {/* user Name Filter */}
-      <div>
+      <div id="src-components-userTable-index-form-nameFilterContainer">
         <label
           htmlFor="userName"
           className="block text-sm font-medium text-gray-700"
+          id="src-components-userTable-index-form-nameFilterContainer-label"
         >
           Name
         </label>
         <input
           type="text"
-          id="userName"
+          id="src-components-userTable-index-form-nameFilterContainer-input"
           name="name"
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           placeholder="Widget X123"
@@ -280,16 +286,17 @@ const UserTable = () => {
       </div>
 
       {/* Create Date Filter */}
-      <div>
+      <div id="src-components-userTable-index-form-createFilterContainer">
         <label
           htmlFor="createDate"
           className="block text-sm font-medium text-gray-700"
+          id="src-components-userTable-index-form-createFilterContainer-label"
         >
           Created
         </label>
         <input
           type="date"
-          id="createDate"
+          id="src-components-userTable-index-form-createFilterContainer-input"
           name="createDate"
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           value={filters.createDate ?? ""}
@@ -298,16 +305,17 @@ const UserTable = () => {
       </div>
 
       {/* Updated Date Filter */}
-      <div>
+      <div id="src-components-userTable-index-form-updateFilterContainer">
         <label
           htmlFor="updatedDate"
+          id="src-components-userTable-index-form-updateFilterContainer-label"
           className="block text-sm font-medium text-gray-700"
         >
           Updated
         </label>
         <input
           type="date"
-          id="updatedDate"
+          id="src-components-userTable-index-form-updateFilterContainer-input"
           name="updatedDate"
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           value={filters.updatedDate ?? ""}
@@ -316,16 +324,20 @@ const UserTable = () => {
       </div>
 
       {/* Admin Filter */}
-      <div className="flex items-center">
+      <div
+        className="flex items-center"
+        id="src-components-userTable-index-form-isAdminFilterContainer"
+      >
         <label
           htmlFor="isAdmin"
+          id="src-components-userTable-index-form-isAdminFilterContainer-label"
           className="isAdmin text-sm font-medium text-gray-700 mr-2"
         >
           Admin
         </label>
         <input
           type="checkbox"
-          id="isAdmin"
+          id="src-components-userTable-index-form-isAdminFilterContainer-input"
           name="isAdmin"
           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           checked={filters.isAdmin || false}
@@ -334,16 +346,20 @@ const UserTable = () => {
       </div>
 
       {/* Block Filter */}
-      <div className="flex items-center">
+      <div
+        className="flex items-center"
+        id="src-components-userTable-index-form-isBlockedFilterContainer"
+      >
         <label
           htmlFor="isBlocked"
+          id="src-components-userTable-index-form-isBlockedFilterContainer-label"
           className="isBlocked text-sm font-medium text-gray-700 mr-2"
         >
           Blocked
         </label>
         <input
           type="checkbox"
-          id="isBlocked"
+          id="src-components-userTable-index-form-isBlockedFilterContainer-input"
           name="isBlocked"
           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           checked={filters.isBlocked || false}
@@ -352,8 +368,9 @@ const UserTable = () => {
       </div>
 
       {/* Search Button */}
-      <div>
+      <div id="src-components-userTable-index-form-buttonContainer">
         <button
+          id="src-components-userTable-index-form-buttonContainer-button"
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
@@ -365,23 +382,45 @@ const UserTable = () => {
 
   return (
     <>
-      <div className="overflow-y-auto h-full bg-white">
-        <div className="filter-section flex justify-around p-3 bg-blue-100">
-          <div className="hidden sm:block">{formMarkup()}</div>
-          <div className="block sm:hidden">
+      <div
+        id="src-components-userTable-index-mainContainer"
+        className="overflow-y-auto h-full bg-white"
+      >
+        <div
+          id="src-components-userTable-index-mainContainer-filters-container"
+          className="filter-section flex justify-around p-3 bg-blue-100"
+        >
+          <div
+            id="src-components-userTable-index-mainContainer-filters-container-subContainer"
+            className="hidden sm:block"
+          >
+            {formMarkup()}
+          </div>
+          <div
+            className="block sm:hidden"
+            id="src-components-userTable-index-mainContainer-filters-container-subContainer2"
+          >
             <Accordion title="Filter options" startsOpen={false}>
               {formMarkup()}
             </Accordion>
           </div>
         </div>
 
-        <table className="w-full ">
-          <thead>
-            <tr>
+        <table
+          className="w-full "
+          id="src-components-userTable-index-mainContainer-table"
+        >
+          <thead id="src-components-userTable-index-mainContainer-table-thead">
+            <tr id="src-components-userTable-index-mainContainer-table-thead-tr">
               {tablePropertyAndSkeletonArr.map((e, index) => {
                 if (e.logic) {
                   return (
                     <th
+                      id={
+                        "src-components-userTable-index-mainContainer-table-thead-tr-th-" +
+                        index +
+                        1
+                      }
                       key={index}
                       className={`py-2 px-4 text-left hover:underline hover:cursor-pointer max-w-32 ${
                         prop === e.prop && "bg-primary text-white"
@@ -407,20 +446,57 @@ const UserTable = () => {
                         });
                       }}
                     >
-                      <div className="flex gap-1 justify-between">
-                        <p>{e.label}</p>
+                      <div
+                        className="flex gap-1 justify-between"
+                        id={
+                          "src-components-userTable-index-mainContainer-table-thead-tr-th-div-" +
+                          index +
+                          1
+                        }
+                      >
+                        <p
+                          id={
+                            "src-components-userTable-index-mainContainer-table-thead-tr-th-p-" +
+                            index +
+                            1
+                          }
+                        >
+                          {e.label}
+                        </p>
                         {prop === e.prop &&
                           (order === "asc" ? (
-                            <IoIosArrowDown size={25} />
+                            <IoIosArrowDown
+                              size={25}
+                              id={
+                                "src-components-userTable-index-mainContainer-table-thead-tr-th-div-icondown" +
+                                index +
+                                1
+                              }
+                            />
                           ) : (
-                            <IoIosArrowUp size={25} />
+                            <IoIosArrowUp
+                              size={25}
+                              id={
+                                "src-components-userTable-index-mainContainer-table-thead-tr-th-iconup-" +
+                                index +
+                                1
+                              }
+                            />
                           ))}
                       </div>
                     </th>
                   );
                 } else {
                   return (
-                    <th key={index} className="py-2 px-4 text-left ">
+                    <th
+                      key={index}
+                      className="py-2 px-4 text-left "
+                      id={
+                        "src-components-userTable-index-mainContainer-table-thead-tr-th-" +
+                        index +
+                        1
+                      }
+                    >
                       {e.label}
                     </th>
                   );
@@ -428,15 +504,40 @@ const UserTable = () => {
               })}
             </tr>
           </thead>
-          <tbody>
+          <tbody id="src-components-userTable-index-mainContainer-table-tbody">
             {isLoading ? (
               Array(limit)
                 .fill(null)
                 .map((_, indexL) => (
-                  <tr key={indexL} className="h-32">
+                  <tr
+                    key={indexL}
+                    className="h-32"
+                    id={
+                      "src-components-userTable-index-mainContainer-table-tbody-tr-loading-" +
+                      indexL
+                    }
+                  >
                     {tablePropertyAndSkeletonArr.map((e, indexE) => (
-                      <td key={indexE} className="py-2 px-4 ">
-                        <div className="flex flex-col gap-1">
+                      <td
+                        key={indexE}
+                        className="py-2 px-4 "
+                        id={
+                          "src-components-userTable-index-mainContainer-table-tbody-tr-loading-" +
+                          indexL +
+                          "-" +
+                          indexE
+                        }
+                      >
+                        <div
+                          className="flex flex-col gap-1"
+                          id={
+                            "src-components-userTable-index-mainContainer-table-tbody-tr-loading-" +
+                            indexL +
+                            "-" +
+                            indexE +
+                            "-container"
+                          }
+                        >
                           {Array(e.skeletonQuantity)
                             .fill(null)
                             .map((_, indexZ) => (
@@ -445,6 +546,14 @@ const UserTable = () => {
                                 className={
                                   "skeleton animate-skeleton-fast " +
                                   e.skeletonStyle
+                                }
+                                id={
+                                  "src-components-userTable-index-mainContainer-table-tbody-tr-loading-" +
+                                  indexL +
+                                  "-" +
+                                  indexE +
+                                  "-container-skeleton-" +
+                                  indexZ
                                 }
                               ></div>
                             ))}
@@ -458,38 +567,65 @@ const UserTable = () => {
                 <tr
                   key={user._id}
                   style={{ backgroundColor: index % 2 === 0 ? "#f1f5f8" : "" }}
+                  id="src-components-userTable-index-mainContainer-table-tbody-tr"
                 >
-                  <td className="py-2 px-4">{user.userNumber}</td>
-                  {/* <td className="py-2 px-4">
-                     <Image
-                      width={400}
-                      height={400}
-                      alt={user.name}
-                      src={user.images[0]}
-                      className="w-20 h-20 min-h-20 min-w-20 object-cover rounded-sm overflow-hidden shadow-xl"
-                    /> 
-                  </td> */}
-                  <td className="py-2 px-4">{user.name}</td>
-                  <td className="py-2 px-4">{user.email}</td>
-                  <td className="py-2 px-4">{user.createdAt.split("T")[0]}</td>
-                  <td className="py-2 px-4">{user.updatedAt.split("T")[0]}</td>
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrNumber"
+                  >
+                    {user.userNumber}
+                  </td>
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrName"
+                  >
+                    {user.name}
+                  </td>
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrEmail"
+                  >
+                    {user.email}
+                  </td>
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrCreated"
+                  >
+                    {user.createdAt.split("T")[0]}
+                  </td>
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrUpdated"
+                  >
+                    {user.updatedAt.split("T")[0]}
+                  </td>
                   <td
                     className={`py-2 px-4 font-bold ${
                       user.isBlocked ? "text-red-500" : "text-gray-600"
                     }`}
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrBlocked"
                   >
                     {user.isBlocked ? "Blocked" : "Active"}
                   </td>{" "}
-                  <td className="py-2 px-4">
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrBlockContainer"
+                  >
                     <input
                       className="toggle toggle-error"
                       type="checkbox"
-                      id="isBlocked"
+                      id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrBlockContainer-input"
                       checked={user.isBlocked}
                       onClick={() => {
                         toast.custom((t) => (
-                          <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 ">
-                            <p className="text-lg text-center">
+                          <div
+                            id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrBlockContainer-alert"
+                            className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 "
+                          >
+                            <p
+                              className="text-lg text-center"
+                              id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrBlockContainer-alert-p"
+                            >
                               Are you sure you want to{" "}
                               {user.isBlocked ? "Unblock" : "Block"} {user.name}
                               ?
@@ -500,10 +636,12 @@ const UserTable = () => {
                                 onClick={async () => {
                                   toast.dismiss(t);
                                 }}
+                                id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrBlockContainer-alert-cancel"
                               >
                                 Cancel
                               </button>
                               <button
+                                id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrBlockContainer-alert-create"
                                 className="btn btn-warning min-w-20"
                                 onClick={async () => {
                                   toast.dismiss(t);
@@ -529,22 +667,32 @@ const UserTable = () => {
                       }}
                     />
                   </td>
-                  <td className="py-2 px-4">
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrAdminContainer"
+                  >
                     <input
                       className="toggle toggle-error"
                       type="checkbox"
-                      id="isAdmin"
+                      id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrAdminContainer-input"
                       checked={user.isAdmin}
                       onClick={() => {
                         toast.custom((t) => (
-                          <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 ">
-                            <p className="text-lg text-center">
+                          <div
+                            id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrAdminContainer-alert"
+                            className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 "
+                          >
+                            <p
+                              className="text-lg text-center"
+                              id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrAdminContainer-alert-p"
+                            >
                               Are you sure you want to{" "}
                               {user.isAdmin ? "unmake" : "make"} {user.name}{" "}
                               admin ?
                             </p>
                             <div className="flex  gap-2">
                               <button
+                                id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrAdminContainer-alert-cancel"
                                 className="btn btn-neutral min-w-20"
                                 onClick={async () => {
                                   toast.dismiss(t);
@@ -553,6 +701,7 @@ const UserTable = () => {
                                 Cancel
                               </button>
                               <button
+                                id="src-components-userTable-index-mainContainer-table-tbody-tr-td-usrAdminContainer-alert-create"
                                 className="btn btn-warning min-w-20"
                                 onClick={async () => {
                                   toast.dismiss(t);
@@ -578,61 +727,59 @@ const UserTable = () => {
                       }}
                     />
                   </td>
-                  <td className="py-2 px-4">
-                    <div className="flex flex-col gap-4">
-                      <LuClipboardEdit
-                        size={30}
-                        className="hover:cursor-pointer"
-                        onClick={() => {
-                          router.push(`/admin/users/edit/${user._id}`);
-                        }}
-                      />
-                      <LuTrash2
-                        className="hover:cursor-pointer"
-                        size={30}
-                        onClick={() => {
-                          toast.custom((t) => (
-                            <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2">
-                              <p className="text-lg text-center">
-                                Are you sure you want to delete {user.name}?
-                              </p>
-                              <div className="flex gap-2">
-                                <button
-                                  className="btn btn-neutral w-20"
-                                  onClick={async () => {
-                                    toast.dismiss(t);
-                                  }}
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  className="btn btn-error w-20"
-                                  onClick={async () => {
-                                    toast.dismiss(t);
-                                    setTableState((prevState) => ({
-                                      ...prevState,
-                                      currentUsers:
-                                        prevState.currentUsers.filter(
-                                          (e) => e._id !== user._id
-                                        ),
-                                    }));
-                                    handleDeleteuser(user._id);
-                                  }}
-                                >
-                                  Delete
-                                </button>
-                              </div>
+                  <td
+                    className="py-2 px-4"
+                    id="src-components-userTable-index-mainContainer-table-tbody-tr-td-actions"
+                  >
+                    <LuTrash2
+                      id="src-components-userTable-index-mainContainer-table-tbody-tr-td-actions-delete"
+                      className="hover:cursor-pointer"
+                      size={30}
+                      onClick={() => {
+                        toast.custom((t) => (
+                          <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2">
+                            <p className="text-lg text-center">
+                              Are you sure you want to delete {user.name}?
+                            </p>
+                            <div className="flex gap-2">
+                              <button
+                                className="btn btn-neutral w-20"
+                                onClick={async () => {
+                                  toast.dismiss(t);
+                                }}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                className="btn btn-error w-20"
+                                onClick={async () => {
+                                  toast.dismiss(t);
+                                  setTableState((prevState) => ({
+                                    ...prevState,
+                                    currentUsers: prevState.currentUsers.filter(
+                                      (e) => e._id !== user._id
+                                    ),
+                                  }));
+                                  handleDeleteuser(user._id);
+                                }}
+                              >
+                                Delete
+                              </button>
                             </div>
-                          ));
-                        }}
-                      />
-                    </div>
+                          </div>
+                        ));
+                      }}
+                    />
                   </td>
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan={11} className="py-10 text-center">
+              <tr id="src-components-userTable-index-mainContainer-table-tbody-tr">
+                <td
+                  colSpan={11}
+                  className="py-10 text-center"
+                  id="src-components-userTable-index-mainContainer-table-tbody-tr-td"
+                >
                   No users found.
                 </td>
               </tr>

@@ -87,6 +87,6 @@ export const tablePropertyAndSkeletonArr: {
     prop: "",
     defOrder: "asc",
     skeletonStyle: "h-10 w-20",
-    skeletonQuantity: 2,
+    skeletonQuantity: 1,
   },
 ];
