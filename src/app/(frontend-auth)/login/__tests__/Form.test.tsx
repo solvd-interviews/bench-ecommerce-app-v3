@@ -37,8 +37,8 @@ describe('Login Form', () => {
 
     await waitFor(() => {
       expect(signIn).toHaveBeenCalledWith('credentials', {
-        email: process.env.TEST_EMAIL_ADMIN,
-        password: process.env.TEST_PASSWORD_ADMIN,
+        email: "example@example.com",
+        password: "some_password",
         redirect: false,
       });
     }, { timeout: 1000 });
