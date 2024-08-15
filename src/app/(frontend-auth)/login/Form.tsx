@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 interface FormData {
@@ -21,6 +21,7 @@ const Form = () => {
   } = useForm<FormData>();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [isLoading, setisLoading] = useState(false);
 
@@ -33,8 +34,9 @@ const Form = () => {
         redirect: false,
       });
       if (response && response.ok) {
-        window.location.reload();
-        router.replace("/");
+        const redirectUrl = searchParams.get("redirect") || "/";
+        console.log("redirectUrl: ", redirectUrl);
+        window.location.href = "/" + redirectUrl;
       } else {
         throw new Error();
       }
@@ -48,8 +50,14 @@ const Form = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100" id="src-app-frontend-auth-login-container">
-      <div className="hidden lg:flex lg:w-1/2 relative border-r-2 border-primary items-center justify-center" id="src-app-frontend-auth-login-bg-image">
+    <div
+      className="flex min-h-screen bg-gray-100"
+      id="src-app-frontend-auth-login-container"
+    >
+      <div
+        className="hidden lg:flex lg:w-1/2 relative border-r-2 border-primary items-center justify-center"
+        id="src-app-frontend-auth-login-bg-image"
+      >
         <Image
           className="shadow-2xl"
           src="/solvdwhite-hd.png"
@@ -61,12 +69,27 @@ const Form = () => {
         />
       </div>
 
-      <div className="flex flex-1 flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24" id="src-app-frontend-auth-login-main">
-        <div className="mx-auto w-full max-w-sm lg:w-96" id="src-app-frontend-auth-login-card">
-          <Link className="hover:underline btn btn-primary" href={"/"} id="src-app-frontend-auth-login-back-link">
+      <div
+        className="flex flex-1 flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
+        id="src-app-frontend-auth-login-main"
+      >
+        <div
+          className="mx-auto w-full max-w-sm lg:w-96"
+          id="src-app-frontend-auth-login-card"
+        >
+          <Link
+            className="hover:underline btn btn-primary"
+            href={"/"}
+            id="src-app-frontend-auth-login-back-link"
+          >
             Back to home
           </Link>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900" id="src-app-frontend-auth-login-heading">Login</h2>
+          <h2
+            className="mt-6 text-3xl font-extrabold text-gray-900"
+            id="src-app-frontend-auth-login-heading"
+          >
+            Login
+          </h2>
           <div className="mt-8" id="src-app-frontend-auth-login-form-wrapper">
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -82,7 +105,10 @@ const Form = () => {
                 >
                   Email
                 </label>
-                <div className="mt-1" id="src-app-frontend-auth-login-email-input-container">
+                <div
+                  className="mt-1"
+                  id="src-app-frontend-auth-login-email-input-container"
+                >
                   <input
                     id="src-app-frontend-auth-login-email-input"
                     type="text"
@@ -98,7 +124,10 @@ const Form = () => {
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                   {errors.email && (
-                    <p className="mt-2 text-sm text-red-600" id="src-app-frontend-auth-login-email-error">
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="src-app-frontend-auth-login-email-error"
+                    >
                       {errors.email.message}
                     </p>
                   )}
@@ -113,7 +142,10 @@ const Form = () => {
                 >
                   Password
                 </label>
-                <div className="mt-1" id="src-app-frontend-auth-login-password-input-container">
+                <div
+                  className="mt-1"
+                  id="src-app-frontend-auth-login-password-input-container"
+                >
                   <input
                     id="src-app-frontend-auth-login-password-input"
                     type="password"
@@ -123,19 +155,20 @@ const Form = () => {
                       required: "Password is required.",
                       minLength: {
                         value: 4,
-                        message:
-                          "Password should have at least 4 characters.",
+                        message: "Password should have at least 4 characters.",
                       },
                       maxLength: {
                         value: 40,
-                        message:
-                          "Password should a maximum of 40 characters.",
+                        message: "Password should a maximum of 40 characters.",
                       },
                     })}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                   {errors.password && (
-                    <p className="mt-2 text-sm text-red-600" id="src-app-frontend-auth-login-password-error">
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="src-app-frontend-auth-login-password-error"
+                    >
                       {errors.password.message}
                     </p>
                   )}
@@ -148,9 +181,14 @@ const Form = () => {
                   className="flex justify-center items-center w-full px-4 py-2 text-sm font-medium btn btn-primary relative"
                   id="src-app-frontend-auth-login-submit-button"
                 >
-                  <p id="src-app-frontend-auth-login-submit-button-label">Sign in</p>
+                  <p id="src-app-frontend-auth-login-submit-button-label">
+                    Sign in
+                  </p>
                   {isLoading && (
-                    <span className="loading loading-spinner loading-md absolute right-4" id="src-app-frontend-auth-login-loading-spinner"></span>
+                    <span
+                      className="loading loading-spinner loading-md absolute right-4"
+                      id="src-app-frontend-auth-login-loading-spinner"
+                    ></span>
                   )}
                 </button>
               </div>
@@ -163,4 +201,3 @@ const Form = () => {
 };
 
 export default Form;
-
