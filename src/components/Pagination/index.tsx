@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo, Dispatch, SetStateAction } from "react";
 import type { ProductTableState } from "@/components/ProductTable/types";
+import { UserTableState } from "../UserTable/types";
 
 interface PaginationProps {
   pages: number;
   limit: number;
-  setState: Dispatch<SetStateAction<ProductTableState>>;
+  setState:
+    | Dispatch<SetStateAction<ProductTableState>>
+    | Dispatch<SetStateAction<UserTableState>>;
   loading: boolean;
 }
 
@@ -73,77 +76,167 @@ function Pagination({
     }
 
     setArrOfCurrButtons(tempNumberOfPages);
-    setState((prevState) => ({ ...prevState, page: currentButton }));
+    setState((prevState: any) => ({ ...prevState, page: currentButton }));
   }, [currentButton, arrOfCurrButtons, numberOfPages, setState]);
   if (loading) {
     return (
-      <div className="flex justify-center items-center w-full py-1 relative gap-1">
-        <label className="flex items-center gap-2 md:absolute md:left-2">
-          <p className="text-stone-500 hidden md:flex">Rows per page</p>
+      <div
+        id="src-components-pagination-index-mainContainerLoading"
+        className="flex justify-center items-center w-full py-1 relative gap-1"
+      >
+        <label
+          id="src-components-pagination-index-mainContainer-label"
+          className="flex items-center gap-2 md:absolute md:left-2"
+        >
+          <p
+            id="src-components-pagination-index-mainContainer-label-p"
+            className="text-stone-500 hidden md:flex"
+          >
+            Rows per page
+          </p>
           <select
+            id="src-components-pagination-index-mainContainer-label-select"
             className="select select-bordered w-full max-w-24"
             value={limit}
             onChange={(e) => {
-              setState(prevState => ({
+              setState((prevState: any) => ({
                 ...prevState,
-                limit: parseInt(e.target.value, 10) // Ensure the value is an integer
+                limit: parseInt(e.target.value, 10), // Ensure the value is an integer
               }));
             }}
           >
-            <option value="1">1</option>
-            <option value="3">3</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
+            <option
+              id="src-components-pagination-index-mainContainer-label-select-option-1"
+              value="1"
+            >
+              1
+            </option>
+            <option
+              value="3"
+              id="src-components-pagination-index-mainContainer-label-select-option-3"
+            >
+              3
+            </option>
+            <option
+              value="5"
+              id="src-components-pagination-index-mainContainer-label-select-option-5"
+            >
+              5
+            </option>
+            <option
+              value="10"
+              id="src-components-pagination-index-mainContainer-label-select-option-10"
+            >
+              10
+            </option>
+            <option
+              value="20"
+              id="src-components-pagination-index-mainContainer-label-select-option-20"
+            >
+              20
+            </option>
+            <option
+              value="50"
+              id="src-components-pagination-index-mainContainer-label-select-option-50"
+            >
+              50
+            </option>
+            <option
+              value="100"
+              id="src-components-pagination-index-mainContainer-label-select-option-100"
+            >
+              100
+            </option>
           </select>
-
         </label>
 
-        <button className="btn btn-primary shadow-xl btn-disabled" disabled>
+        <button
+          id="src-components-pagination-index-mainContainer-btnPrev"
+          className="btn btn-primary shadow-xl btn-disabled"
+          disabled
+        >
           Prev
         </button>
-        <button className=" flex justify-center items-center rounded-md font-bold btn btn-primary  shadow-xl text-white">
+        <button
+          id="src-components-pagination-index-mainContainer-btn1"
+          className=" flex justify-center items-center rounded-md font-bold btn btn-primary  shadow-xl text-white"
+        >
           1
         </button>
         <button
+          id="src-components-pagination-index-mainContainer-btn2"
           className=" flex justify-center items-center rounded-md font-bold btn btn-primary  shadow-xl btn-disabled text-white"
           disabled
         >
           2
         </button>
-        <button className=" btn btn-primary shadow-xl btn-disabled" disabled>
+        <button
+          id="src-components-pagination-index-mainContainer-btnNext"
+          className=" btn btn-primary shadow-xl btn-disabled"
+          disabled
+        >
           Next
         </button>
       </div>
     );
   }
   return (
-    <div className=" flex justify-center items-center w-full py-1 relative gap-1">
-      <label className="flex items-center gap-2 md:absolute md:left-2 ">
-        <p className="text-stone-500 hidden md:flex">Rows per page</p>
+    <div
+      id="src-components-pagination-index-mainContainer"
+      className=" flex justify-center items-center w-full py-1 relative gap-1"
+    >
+      <label
+        className="flex items-center gap-2 md:absolute md:left-2 "
+        id="src-components-pagination-index-mainContainer-label"
+      >
+        <p
+          className="text-stone-500 hidden md:flex"
+          id="src-components-pagination-index-mainContainer-label-p"
+        >
+          Rows per page
+        </p>
         <select
           className="select select-bordered  w-full max-w-20  md:max-w-24"
+          id="src-components-pagination-index-mainContainer-label-select"
           value={limit}
           onChange={(e) =>
-            setState((prevState) => ({
+            setState((prevState: any) => ({
               ...prevState,
               limit: parseFloat(e.target.value),
             }))
           }
         >
-          <option disabled>Pick your product limit</option>
-          <option>1</option>
-          <option>3</option>
-          <option>5</option>
-          <option>10</option>
-          <option>20</option>
-          <option>50</option>
-          <option>100</option>
+          <option
+            disabled
+            id="src-components-pagination-index-mainContainer-label-select-option-title"
+          >
+            Pick your product limit
+          </option>
+          <option id="src-components-pagination-index-mainContainer-label-select-option-1">
+            1
+          </option>
+          <option id="src-components-pagination-index-mainContainer-label-select-option-3">
+            3
+          </option>
+          <option id="src-components-pagination-index-mainContainer-label-select-option-5">
+            5
+          </option>
+          <option id="src-components-pagination-index-mainContainer-label-select-option-10">
+            10
+          </option>
+          <option id="src-components-pagination-index-mainContainer-label-select-option-20">
+            20
+          </option>
+          <option id="src-components-pagination-index-mainContainer-label-select-option-50">
+            50
+          </option>
+          <option id="src-components-pagination-index-mainContainer-label-select-option-100">
+            100
+          </option>
         </select>
       </label>
       <button
+        id="src-components-pagination-index-mainContainer-btnPrev"
         className={`  btn btn-primary shadow-xl hidden md:flex  ${
           currentButton === 1 ? "btn-disabled" : ""
         }`}
@@ -158,6 +251,7 @@ function Pagination({
       {arrOfCurrButtons.map((item, index) => {
         return (
           <button
+            id={"src-components-pagination-index-mainContainer-btn" + index + 1}
             key={index}
             className={` flex justify-center items-center rounded-md font-bold btn btn-primary shadow-xl  ${
               currentButton === item ? "" : "bg-opacity-40"
@@ -170,6 +264,7 @@ function Pagination({
       })}
 
       <button
+        id="src-components-pagination-index-mainContainer-btnNext"
         className={`btn btn-primary shadow-xl hidden md:flex  ${
           currentButton === numberOfPages.length ? "btn-disabled" : ""
         }`}

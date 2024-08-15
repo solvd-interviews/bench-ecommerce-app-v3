@@ -1,6 +1,6 @@
 import dbConnect from "../dbConnect";
 import ProductModel from "../models/ProductModel";
-import { MongoFilter } from "@/app/api/products/route";
+import { MongoFilterProduct } from "@/app/api/products/route";
 
 export const fetchProducts = async () => {
   await dbConnect();
@@ -31,7 +31,7 @@ export const fetchProductsPagination = async (
   limit = 10,
   sort: string,
   order: string,
-  query: Partial<MongoFilter>
+  query: Partial<MongoFilterProduct>
 ) => {
   await dbConnect();
 

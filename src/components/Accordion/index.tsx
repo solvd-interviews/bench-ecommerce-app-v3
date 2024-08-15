@@ -1,6 +1,6 @@
-"use client"
-import { useState, PropsWithChildren } from 'react';
-import styles from './index.module.css'
+"use client";
+import { useState, PropsWithChildren } from "react";
+import styles from "./index.module.css";
 import { FaChevronDown } from "react-icons/fa";
 
 interface DynamicHeadingProps extends PropsWithChildren {
@@ -17,14 +17,23 @@ export interface AccordionProps extends PropsWithChildren {
   titleSize?: string;
 }
 
-const DynamicHeading = ({ titleSize, className, onclick, children }: DynamicHeadingProps) => {
+const DynamicHeading = ({
+  titleSize,
+  className,
+  onclick,
+  children,
+}: DynamicHeadingProps) => {
   const Tag = titleSize as keyof JSX.IntrinsicElements; // Type assertion for the Tag
   return (
-    <Tag className={className} onClick={onclick}>
+    <Tag
+      className={className}
+      onClick={onclick}
+      id="src-components-dynamicHeading"
+    >
       {children}
     </Tag>
   );
-}
+};
 
 const Accordion = ({
   title,
@@ -37,11 +46,11 @@ const Accordion = ({
   const [isOpen, setIsOpen] = useState(startsOpen);
 
   const toggleIsOpen = () => {
-    if (isCollapsible) setIsOpen(prevState => !prevState)
-  }
+    if (isCollapsible) setIsOpen((prevState) => !prevState);
+  };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} id="src-components-accordion">
       <DynamicHeading
         titleSize={titleSize}
         className={`${styles.title} ${isCollapsible ? styles.collapsible : ""}`}
@@ -55,12 +64,10 @@ const Accordion = ({
         )}
       </DynamicHeading>
       <div className={`${styles.children} ${isOpen ? styles.expand : ""}`}>
-        <div className={styles.contentWrapper}>
-          {children}
-        </div>
+        <div className={styles.contentWrapper}>{children}</div>
       </div>
     </div>
   );
-}
+};
 
 export default Accordion;
