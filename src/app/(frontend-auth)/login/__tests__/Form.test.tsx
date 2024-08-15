@@ -31,8 +31,8 @@ describe('Login Form', () => {
 
     render(<Form />);
 
-    await userEvent.type(screen.getByLabelText(/email/i), process.env.TEST_EMAIL_ADMIN!);
-    await userEvent.type(screen.getByLabelText(/password/i), process.env.TEST_PASSWORD_ADMIN!);
+    await userEvent.type(screen.getByLabelText(/email/i), "example@example.com");
+    await userEvent.type(screen.getByLabelText(/password/i), "some_password");
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
