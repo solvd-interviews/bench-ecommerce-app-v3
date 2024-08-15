@@ -17,9 +17,13 @@ jest.mock('next-auth/react', () => ({
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     replace: jest.fn(),
-    push: jest.fn()
+    push: jest.fn(),
+  }),
+  useSearchParams: () => ({
+    get: jest.fn().mockReturnValue(null),
   }),
 }));
+
 
 
 describe('Login Form', () => {
