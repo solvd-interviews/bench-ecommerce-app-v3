@@ -10,12 +10,10 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(config);
   const headersList = headers();
-  console.log("headersList: ", headersList);
 
   const header_url = headersList.get("x-url") || "xd";
   const splittedUrl = header_url.split("/");
   const finalUrl = splittedUrl[splittedUrl.length - 1];
-  console.log("header_url:", header_url);
   if (!session) {
     redirect(`/login?redirect=${finalUrl}`);
   }

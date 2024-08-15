@@ -35,7 +35,6 @@ const Form = () => {
       });
       if (response && response.ok) {
         const redirectUrl = searchParams.get("redirect") || "/";
-        console.log("redirectUrl: ", redirectUrl);
         window.location.href = "/" + redirectUrl;
       } else {
         throw new Error();
