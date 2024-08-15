@@ -20,7 +20,6 @@ export const DELETE = async (
     );
   }
 
-  console.log("params.id is ,", params.id);
   if (!params.id || !mongoose.Types.ObjectId.isValid(params.id)) {
     return new NextResponse(
       JSON.stringify({ message: "User id not correct" }),

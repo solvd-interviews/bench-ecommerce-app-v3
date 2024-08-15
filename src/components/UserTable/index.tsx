@@ -175,7 +175,6 @@ const UserTable = () => {
       }
 
       const resJson = await res.json();
-      console.log("delete res: ", resJson);
       return true;
     } catch (error) {
       console.error("Fetch error: ", error);
@@ -192,13 +191,11 @@ const UserTable = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log("Response admin user is: ", res);
       if (!res.ok) {
         throw new Error("Network response was not ok");
       }
 
       const resJson = await res.json();
-      console.log("Response: json", resJson);
       return true;
     } catch (error) {
       console.error("Fetch error: ", error);
@@ -216,13 +213,11 @@ const UserTable = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log("Response admin user is: ", res);
       if (!res.ok) {
         throw new Error("Network response was not ok");
       }
 
       const resJson = await res.json();
-      console.log("Response: json", resJson);
       return true;
     } catch (error) {
       console.error("Fetch error: ", error);
