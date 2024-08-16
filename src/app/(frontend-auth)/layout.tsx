@@ -1,12 +1,15 @@
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <main>
-      {children}
-    </main>
-  );
+  const session = await getServerSession();
+  if (session) {
+    redirect("/");
+  }
+
+  return <main>{children}</main>;
 }

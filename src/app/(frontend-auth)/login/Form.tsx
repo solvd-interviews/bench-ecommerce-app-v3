@@ -33,9 +33,14 @@ const Form = () => {
         password: data.password,
         redirect: false,
       });
+      console.log("login response: ", response);
       if (response && response.ok) {
-        const redirectUrl = searchParams.get("redirect") || "/";
-        window.location.href = "/" + redirectUrl;
+        const redirectUrl = searchParams.get("redirect");
+        if (redirectUrl) {
+          window.location.href = "/" + redirectUrl;
+        } else {
+          window.location.reload();
+        }
       } else {
         throw new Error();
       }
