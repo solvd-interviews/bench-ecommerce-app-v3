@@ -18,6 +18,7 @@ const config: Config = {
       },
       height: {
         '480': '480px',
+        '640': '640px'
       },
     },
   },
