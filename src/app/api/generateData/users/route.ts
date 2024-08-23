@@ -8,7 +8,7 @@ import UserModel from "@/lib/models/UserModel";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (request: NextRequest) => {
+export const DELETE = async (request: NextRequest) => {
   const { user } = await getServerSession(config);
 
   if (!user || !user.isAdmin) {
@@ -20,13 +20,11 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  const { users, products } = sampleData;
+  const { users } = sampleData;
   await dbConnect();
 
   await UserModel.deleteMany();
-  await ProductModel.deleteMany();
-  await CounterModel.deleteMany();
-  await OrderModel.deleteMany();
+  await CounterModel.findByIdAndDelete("userNumber");
 
   // Save users with incremental userNumber sequentially
   for (const user of users) {
@@ -39,24 +37,11 @@ export const GET = async (request: NextRequest) => {
     });
   }
 
-  // Save products with incremental productNumber sequentially
-  for (const product of products) {
-    const newProduct = new ProductModel(product);
-    await newProduct.save();
-    await new Promise((res, rej) => {
-      setTimeout(() => {
-        res("");
-      }, 10);
-    });
-  }
-
   // Retrieve the saved documents
   const savedUsers = await UserModel.find();
-  const savedProducts = await ProductModel.find();
 
   return NextResponse.json({
-    message: "Generated successfully!",
+    message: "Users were generated successfully!",
     users: savedUsers,
-    products: savedProducts,
   });
 };

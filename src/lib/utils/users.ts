@@ -83,3 +83,15 @@ export async function lastThirtyDaysUsers() {
 
   return lastThirtyDaysUsers;
 }
+
+export async function countUsers() {
+  await dbConnect(); // Ensure the database connection is established
+
+  try {
+    const userCount = await UserModel.countDocuments(); // Count all users in the collection
+    return userCount; // Return the total user count
+  } catch (error) {
+    console.error("Error counting users:", error); // Log any errors
+    throw new Error("Could not count users");
+  }
+}
