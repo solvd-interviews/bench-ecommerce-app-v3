@@ -21,7 +21,6 @@ export default function BasicLineChart({
   marginLeft = 30,
   marginBottom = 30,
 }: BasicLineChartProps) {
-  console.log("xAxis ", xAxis, "series", series);
   return (
     <LineChart
       xAxis={xAxis}

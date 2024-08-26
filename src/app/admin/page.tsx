@@ -24,8 +24,6 @@ const page = async () => {
   const productCount = await countProducts();
   const orderCount = await countOrders();
 
-  console.log("userChartData", userChartData);
-  console.log("userCount", userCount);
   return (
     <div
       id="src-app-admin-page-mainContainer"

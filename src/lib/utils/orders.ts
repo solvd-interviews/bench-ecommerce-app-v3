@@ -105,7 +105,6 @@ export async function lastThirtyDaysOrdersNotPaid() {
       },
     },
   ]);
-  console.log("lastThirtyDaysOrdersNotPaid: ", lastThirtyDaysOrdersNotPaid);
   return lastThirtyDaysOrdersNotPaid;
 }
 export async function lastThirtyDaysOrders() {
@@ -155,7 +154,6 @@ export async function lastThirtyDaysOrders() {
       },
     },
   ]);
-  console.log("lastThirtyDaysOrders: ", lastThirtyDaysOrders);
   return lastThirtyDaysOrders;
 }
 
@@ -214,7 +212,6 @@ export async function lastThirtyDaysSales() {
       },
     },
   ]);
-  console.log("lastThirtyDaysSales: ", lastThirtyDaysSales);
   return lastThirtyDaysSales;
 }
 
