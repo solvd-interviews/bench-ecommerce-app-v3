@@ -69,22 +69,30 @@ const ProductDetailPage: React.FC = () => {
 
   const { product, loading, error } = state;
 
-  if (error) return <p>{error}</p>;
+  if (error) return <p id="product-detail-error">{error}</p>;
   if (loading || !product) return <></>;
 
   return (
-    <div className="flex flex-col md:flex-row justify-around items-start my-8 mx-auto p-4 max-w-4xl">
-      <div className="w-full md:w-1/2 px-2 py-4">
+    <div
+      className="flex flex-col md:flex-row justify-around items-start my-8 mx-auto p-4 max-w-4xl"
+      id="product-detail-page-container"
+    >
+      <div className="w-full md:w-1/2 px-2 py-4" id="product-image-container">
         {product.images && product.images.length > 1 ? (
-          <swiper-container navigation="true" pagination="true">
+          <swiper-container
+            navigation="true"
+            pagination="true"
+            id="product-swiper-container"
+          >
             {product.images.map((image, index) => (
-              <swiper-slide key={index}>
+              <swiper-slide key={index} id={`product-swiper-slide-${index}`}>
                 <Image
                   src={image}
                   alt={`Slide ${index}`}
                   width={400}
                   height={400}
                   className="object-cover w-full"
+                  id={`product-image-${index}`}
                 />
               </swiper-slide>
             ))}
@@ -96,13 +104,20 @@ const ProductDetailPage: React.FC = () => {
             width={400}
             height={400}
             className="object-cover w-full"
+            id="product-single-image"
           />
         )}
       </div>
-      <div className="w-full md:w-1/2 px-2 py-4">
-        <h1 className="text-xl md:text-2xl font-bold">{product.name}</h1>
-        <p className="my-2 md:my-4">{product.description}</p>
-        <p className="text-lg md:text-xl font-semibold">${product.price}</p>
+      <div className="w-full md:w-1/2 px-2 py-4" id="product-details-container">
+        <h1 className="text-xl md:text-2xl font-bold" id="product-name">
+          {product.name}
+        </h1>
+        <p className="my-2 md:my-4" id="product-description">
+          {product.description}
+        </p>
+        <p className="text-lg md:text-xl font-semibold" id="product-price">
+          ${product.price}
+        </p>
 
         {product.stock > 0 ? (
           <AddToCart
@@ -115,7 +130,11 @@ const ProductDetailPage: React.FC = () => {
             }}
           />
         ) : (
-          <button className="btn btn-primary disabled mt-2" disabled>
+          <button
+            className="btn btn-primary disabled mt-2"
+            disabled
+            id="product-no-stock-button"
+          >
             No stock
           </button>
         )}

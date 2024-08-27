@@ -98,65 +98,122 @@ export default function OrderDetails({
       });
   }
   return (
-    <div className=" p-4">
-      <h1 className="text-2xl ">Order N° {orderNumber}</h1>
-      <div className="grid gap-4 md:grid-cols-6 md:gap-5 my-4 ">
-        <div className="md:col-span-3 lg:col-span-4 overflow-x-auto pb-8">
-          <div className="card bg-white shadow-xl  ">
-            <div className="card-body">
-              <h2 className="card-title">Payment Method</h2>
-              <p>{paymentMethod}</p>
-              <ButtonProductStatus type="pay" isPaid={isPaid} paidAt={paidAt} />
+    <div className="p-4" id="src-app-frontend-loggedin-order-container">
+      <h1 className="text-2xl" id="src-app-frontend-loggedin-order-heading">
+        Order N° {orderNumber}
+      </h1>
+      <div
+        className="grid gap-4 md:grid-cols-6 md:gap-5 my-4"
+        id="src-app-frontend-loggedin-order-grid"
+      >
+        <div
+          className="md:col-span-3 lg:col-span-4 overflow-x-auto pb-8"
+          id="src-app-frontend-loggedin-order-details-container"
+        >
+          <div
+            className="card bg-white shadow-xl"
+            id="src-app-frontend-loggedin-order-payment-card"
+          >
+            <div
+              className="card-body"
+              id="src-app-frontend-loggedin-order-payment-card-body"
+            >
+              <h2
+                className="card-title"
+                id="src-app-frontend-loggedin-order-payment-title"
+              >
+                Payment Method
+              </h2>
+              <p id="src-app-frontend-loggedin-order-payment-method">
+                {paymentMethod}
+              </p>
+              <ButtonProductStatus
+                type="pay"
+                isPaid={isPaid}
+                paidAt={paidAt}
+                id="src-app-frontend-loggedin-order-payment-status"
+              />
             </div>
           </div>
-          <div className="card bg-white shadow-xl mt-4 ">
-            <div className="card-body">
-              <h2 className="card-title">Shipping Address</h2>
-              <p>{shippingAddress.fullName}</p>
-              <p>
+          <div
+            className="card bg-white shadow-xl mt-4"
+            id="src-app-frontend-loggedin-order-shipping-card"
+          >
+            <div
+              className="card-body"
+              id="src-app-frontend-loggedin-order-shipping-card-body"
+            >
+              <h2
+                className="card-title"
+                id="src-app-frontend-loggedin-order-shipping-title"
+              >
+                Shipping Address
+              </h2>
+              <p id="src-app-frontend-loggedin-order-shipping-name">
+                {shippingAddress.fullName}
+              </p>
+              <p id="src-app-frontend-loggedin-order-shipping-address">
                 {shippingAddress.address}, {shippingAddress.city},{" "}
-                {shippingAddress.postalCode}, {shippingAddress.country}{" "}
+                {shippingAddress.postalCode}, {shippingAddress.country}
               </p>
               <ButtonProductStatus
                 type="ship"
                 isPaid={isPaid}
                 isDelivered={isDelivered}
                 deliveredAt={deliveredAt}
+                id="src-app-frontend-loggedin-order-shipping-status"
               />
             </div>
           </div>
           <SummaryProd items={items} itemsPrice={itemsPrice} />
         </div>
-        <div className="md:col-span-3 lg:col-span-2 ">
-          <div className="card bg-white shadow-xl overflow-auto p-2">
-            <div className="card-body">
-              <h2 className="card-title">Order Summary</h2>
-              <ul>
-                <li>
+        <div
+          className="md:col-span-3 lg:col-span-2"
+          id="src-app-frontend-loggedin-order-summary-container"
+        >
+          <div
+            className="card bg-white shadow-xl overflow-auto p-2"
+            id="src-app-frontend-loggedin-order-summary-card"
+          >
+            <div
+              className="card-body"
+              id="src-app-frontend-loggedin-order-summary-card-body"
+            >
+              <h2
+                className="card-title"
+                id="src-app-frontend-loggedin-order-summary-title"
+              >
+                Order Summary
+              </h2>
+              <ul id="src-app-frontend-loggedin-order-summary-list">
+                <li id="src-app-frontend-loggedin-order-summary-items">
                   <div className="mb-2 flex justify-between">
                     <div>Items</div>
                     <div>${itemsPrice}</div>
                   </div>
                 </li>
-                <li>
+                <li id="src-app-frontend-loggedin-order-summary-tax">
                   <div className="mb-2 flex justify-between">
                     <div>Tax</div>
                     <div>${taxPrice}</div>
                   </div>
                 </li>
-                <li>
+                <li id="src-app-frontend-loggedin-order-summary-shipping">
                   <div className="mb-2 flex justify-between">
                     <div>Shipping</div>
                     <div>${shippingPrice}</div>
                   </div>
                 </li>
-                <li>
+                <li id="src-app-frontend-loggedin-order-summary-total">
                   <div className="mb-2 flex justify-between">
                     <div>Total</div>
                     <div>${totalPrice}</div>
                   </div>
                 </li>
-                <div className="mt-5">
+                <div
+                  className="mt-5"
+                  id="src-app-frontend-loggedin-order-paypal"
+                >
                   {!isPaid && paymentMethod === "PayPal" && (
                     <PayPalScriptProvider
                       options={{ clientId: paypalClientId }}
@@ -169,25 +226,36 @@ export default function OrderDetails({
                   )}
                 </div>
                 {user && user.isAdmin && (
-                  <div className="mt-10 py-7 border-t-2 border-gray-400 flex flex-col gap-2">
+                  <div
+                    className="mt-10 py-7 border-t-2 border-gray-400 flex flex-col gap-2"
+                    id="src-app-frontend-loggedin-order-admin-actions"
+                  >
                     <button
                       onClick={() => payOrder()}
                       disabled={isPaying}
-                      className="btn btn-primary    "
+                      className="btn btn-primary"
+                      id="src-app-frontend-loggedin-order-mark-as-paid"
                     >
                       {isPaying && (
-                        <span className="loading loading-spinner"></span>
+                        <span
+                          className="loading loading-spinner"
+                          id="src-app-frontend-loggedin-order-paying-spinner"
+                        ></span>
                       )}
                       ADMIN | Mark as paid
                     </button>
 
                     <button
-                      className="btn btn-primary  "
+                      className="btn btn-primary"
                       onClick={() => deliverOrder()}
                       disabled={isDelivering}
+                      id="src-app-frontend-loggedin-order-mark-as-delivered"
                     >
                       {isDelivering && (
-                        <span className="loading loading-spinner"></span>
+                        <span
+                          className="loading loading-spinner"
+                          id="src-app-frontend-loggedin-order-delivering-spinner"
+                        ></span>
                       )}
                       ADMIN | Mark as delivered
                     </button>
