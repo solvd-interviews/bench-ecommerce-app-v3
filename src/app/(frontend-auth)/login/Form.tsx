@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 interface FormData {
@@ -194,11 +194,20 @@ const Form = () => {
                   )}
                 </button>
               </div>
-              <div className="w-full flex justify-center gap-2">
-                <p className="text-neutral">Don&apos;t have an account?</p>
+              <div
+                className="w-full flex justify-center gap-2"
+                id="src-app-frontend-auth-login-register-container"
+              >
+                <p
+                  className="text-neutral"
+                  id="src-app-frontend-auth-login-register-text"
+                >
+                  Don&apos;t have an account?
+                </p>
                 <Link
                   href={"/register"}
                   className="hover:underline text-right text-primary"
+                  id="src-app-frontend-auth-login-register-link"
                 >
                   Register
                 </Link>
