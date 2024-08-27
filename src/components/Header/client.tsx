@@ -57,39 +57,47 @@ const ToggleMenu = ({ isAdmin = false }) => {
 
   return (
     <div className="sm:hidden flex items-center relative" ref={menuRef}>
-      <button onClick={toggleMobileMenu} className="mr-2">
+      <button
+        onClick={toggleMobileMenu}
+        className="mr-2"
+        id="toggle-menu-button"
+      >
         {isMobileMenuOpen ? (
           <AiOutlineClose size={25} />
         ) : (
           <AiOutlineMenu size={25} />
         )}
       </button>
-      <div></div>
       {isMobileMenuOpen && (
         <nav
           onClick={() => setIsMobileMenuOpen(false)}
           className="absolute top-full right-1 mt-2 bg-gray-200 shadow-lg min-w-max rounded-lg"
+          id="mobile-menu" // ID for the mobile menu
         >
           <ul className="flex flex-col gap-2 p-2">
             {isAdmin ? (
               <>
                 <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
-                  <Link className="p-3" href={"/admin"}>
+                  <Link className="p-3" href={"/admin"} id="admin-home-link">
                     Admin&apos;s Home
                   </Link>
                 </li>
                 <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
-                  <Link className="p-3" href={"/"}>
+                  <Link className="p-3" href={"/"} id="user-home-link">
                     User&apos;s Home
                   </Link>
                 </li>
                 <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
-                  <Link className="p-3" href={"/admin/products"}>
+                  <Link
+                    className="p-3"
+                    href={"/admin/products"}
+                    id="products-link"
+                  >
                     Products
                   </Link>
                 </li>
                 <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
-                  <Link className="p-3" href={"/admin/users"}>
+                  <Link className="p-3" href={"/admin/users"} id="users-link">
                     Users
                   </Link>
                 </li>
@@ -97,21 +105,28 @@ const ToggleMenu = ({ isAdmin = false }) => {
             ) : (
               <>
                 <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
-                  <Link className="p-3" href={"/orders"}>
+                  <Link className="p-3" href={"/orders"} id="orders-link">
                     Orders
                   </Link>
                 </li>
                 <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
-                  <Link className="p-3" href={"/cart"}>
+                  <Link className="p-3" href={"/cart"} id="cart-link">
                     Cart
                   </Link>
                 </li>
-                <li className=" p-1 rounded flex justify-center">
+                <li className="p-1 rounded flex justify-center">
                   {session ? (
                     <LogOutButtonClient />
                   ) : (
-                    <Link href={"/login"} className="w-full h-full max-w-24">
-                      <button className="btn btn-primary w-full max-w-24">
+                    <Link
+                      href={"/login"}
+                      className="w-full h-full max-w-24"
+                      id="login-link"
+                    >
+                      <button
+                        className="btn btn-primary w-full max-w-24"
+                        id="login-button"
+                      >
                         Login
                       </button>
                     </Link>

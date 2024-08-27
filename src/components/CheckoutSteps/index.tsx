@@ -7,6 +7,7 @@ export const CheckoutSteps = ({
       {list.map((step, index) => (
         <li
           key={step}
+          id={`step-${index}`} // Unique ID for each step
           className={`step  
            ${index <= current ? "step-primary" : ""}
            `}
