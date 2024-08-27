@@ -235,17 +235,29 @@ const Page = () => {
   };
 
   return (
-    <div className="flex p-4 overflow-y-auto w-full h-full justify-center items-center">
-      <form className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl">
-        <div>
-          <h2 className="font-bold text-3xl">Edit product {data.name}</h2>
+    <div
+      id="edit-product-container"
+      className="flex p-4 overflow-y-auto w-full h-full justify-center items-center"
+    >
+      <form
+        id="edit-product-form"
+        className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl"
+      >
+        <div id="edit-product-header">
+          <h2 id="edit-product-title" className="font-bold text-3xl">
+            Edit product {data.name}
+          </h2>
           <CheckoutSteps
             current={steps}
             list={["Information", "Images", "Status"]}
           />
         </div>
+
         {steps === 0 ? (
-          <div className="w-full h-full flex flex-col ">
+          <div
+            id="edit-product-step-1"
+            className="w-full h-full flex flex-col "
+          >
             <FormInput
               name="Name"
               id="name"
@@ -254,7 +266,7 @@ const Page = () => {
               placeholder="Pedro"
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+              trigger={trigger}
               minLength={minName}
               maxLength={maxName}
             />
@@ -266,7 +278,7 @@ const Page = () => {
               classStyle="w-full"
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+              trigger={trigger}
               minLength={minDesc}
               maxLength={maxDesc}
             />
@@ -279,7 +291,7 @@ const Page = () => {
               required
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+              trigger={trigger}
               min={minPrice}
               max={maxPrice}
             />
@@ -318,9 +330,12 @@ const Page = () => {
           </>
         )}
 
-        <div className="flex justify-between items-center mt-2">
+        <div
+          id="edit-product-footer"
+          className="flex justify-between items-center mt-2"
+        >
           {steps === 0 ? (
-            <button className="btn btn-neutral">
+            <button id="edit-product-cancel" className="btn btn-neutral">
               <Link
                 href="/admin/products"
                 className="flex w-full h-full items-center"
