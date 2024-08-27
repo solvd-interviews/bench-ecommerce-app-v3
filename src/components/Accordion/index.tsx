@@ -25,11 +25,7 @@ const DynamicHeading = ({
 }: DynamicHeadingProps) => {
   const Tag = titleSize as keyof JSX.IntrinsicElements; // Type assertion for the Tag
   return (
-    <Tag
-      className={className}
-      onClick={onclick}
-      id="src-components-dynamicHeading"
-    >
+    <Tag className={className} onClick={onclick} id="dynamic-heading">
       {children}
     </Tag>
   );
@@ -50,7 +46,7 @@ const Accordion = ({
   };
 
   return (
-    <div className={styles.card} id="src-components-accordion">
+    <div className={styles.card} id="accordion-container">
       <DynamicHeading
         titleSize={titleSize}
         className={`${styles.title} ${isCollapsible ? styles.collapsible : ""}`}
@@ -58,12 +54,18 @@ const Accordion = ({
       >
         {title}
         {showIcon && (
-          <span className={`${styles.icon} ${isOpen ? styles.rotate : ""}`}>
+          <span
+            className={`${styles.icon} ${isOpen ? styles.rotate : ""}`}
+            id="accordion-icon"
+          >
             <FaChevronDown />
           </span>
         )}
       </DynamicHeading>
-      <div className={`${styles.children} ${isOpen ? styles.expand : ""}`}>
+      <div
+        className={`${styles.children} ${isOpen ? styles.expand : ""}`}
+        id="accordion-content"
+      >
         <div className={styles.contentWrapper}>{children}</div>
       </div>
     </div>

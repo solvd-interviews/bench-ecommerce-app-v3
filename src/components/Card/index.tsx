@@ -9,9 +9,10 @@ const Card = ({ product }: { product: Product }) => {
       className={`card bg-base-100 sm:w-96 w-full md:w-80 lg:w-96 shadow-xl rounded-none rounded-t-xl overflow-hidden ${
         product.stock < 1 && "opacity-70"
       }`}
+      id={`card-${product.id}`} // Unique ID for the card
     >
       <Link href={`/${product.id}`}>
-        <figure className="w-full relative h-480">
+        <figure className="w-full relative h-480" id={`figure-${product.id}`}>
           <Image
             src={product.images[0]}
             alt={product.name}
@@ -24,13 +25,20 @@ const Card = ({ product }: { product: Product }) => {
       </Link>
       <div className="card-body">
         <Link href={`/${product.id}`}>
-          <h2 className="card-title truncate">{product.name}</h2>
+          <h2 className="card-title truncate" id={`title-${product.id}`}>
+            {product.name}
+          </h2>
         </Link>
-        <p className="overflow-hidden text-ellipsis h-20">
+        <p
+          className="overflow-hidden text-ellipsis h-20"
+          id={`description-${product.id}`}
+        >
           {product.description}
         </p>
-        <div className="card-actions mt-4">
-          <p className="text-xl">${product.price}</p>
+        <div className="card-actions mt-4" id={`actions-${product.id}`}>
+          <p className="text-xl" id={`price-${product.id}`}>
+            ${product.price}
+          </p>
           <BuyButton product={product} />
         </div>
       </div>
