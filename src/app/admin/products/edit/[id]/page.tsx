@@ -140,15 +140,20 @@ const Page = () => {
   }, [setValue, data]);
 
   if (error) {
-    return <h1>There was an error!</h1>;
+    return <h1 id="error-message">There was an error!</h1>;
   }
 
   if (isLoading) {
-    return <span className="loading loading-spinner w-20"></span>;
+    return (
+      <span
+        id="loading-spinner"
+        className="loading loading-spinner w-20"
+      ></span>
+    );
   }
 
   if (!data) {
-    return <h1>No product with id {id} founded</h1>;
+    return <h1 id="no-product-found">No product with id {id} found</h1>;
   }
 
   const {
@@ -200,9 +205,10 @@ const Page = () => {
     ) {
       setValue("isUploading", false);
       return toast.error(
-        `Images quantity should be grater than ${minImg} and less or equal than ${maxImg}`
+        `Images quantity should be greater than ${minImg} and less or equal than ${maxImg}`
       );
     }
+
     const formData = new FormData();
     formData.set("name", name);
     formData.set("description", description);
@@ -214,19 +220,20 @@ const Page = () => {
       formData.set("image-" + index, files[index]);
     });
     formData.set("filesDeleted", JSON.stringify(filesDeleted));
+
     try {
       const res = await fetch(`/api/products/edit/${id}`, {
         method: "PUT",
         body: formData,
       });
-      if (res.status == 200) {
-        toast.success("The product was edited succesfully!");
+      if (res.status === 200) {
+        toast.success("The product was edited successfully!");
         setValue("steps", 0);
         setValue("isUploading", false);
         setValue("filesDeleted", []);
         await mutate(`/api/${id}`);
       } else {
-        throw new Error("Not edited succesfully");
+        throw new Error("Not edited successfully");
       }
     } catch (error) {
       toast.error("There was an unexpected error! Contact support <3.");
@@ -235,17 +242,25 @@ const Page = () => {
   };
 
   return (
-    <div className="flex p-4 overflow-y-auto w-full h-full justify-center items-center">
-      <form className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl">
+    <div
+      id="edit-product-form"
+      className="flex p-4 overflow-y-auto w-full h-full justify-center items-center"
+    >
+      <form
+        id="product-edit-form"
+        className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl"
+      >
         <div>
-          <h2 className="font-bold text-3xl">Edit product {data.name}</h2>
+          <h2 id="edit-product-title" className="font-bold text-3xl">
+            Edit product {data.name}
+          </h2>
           <CheckoutSteps
             current={steps}
             list={["Information", "Images", "Status"]}
           />
         </div>
         {steps === 0 ? (
-          <div className="w-full h-full flex flex-col ">
+          <div id="form-step-0" className="w-full h-full flex flex-col ">
             <FormInput
               name="Name"
               id="name"
@@ -261,7 +276,7 @@ const Page = () => {
             <FormInput
               name="Description"
               id="description"
-              placeholder="Playstation slim 4 with the spiderman super exclusive edition with four games"
+              placeholder="Playstation slim 4 with the Spiderman super exclusive edition with four games"
               required={true}
               classStyle="w-full"
               register={register}
@@ -309,7 +324,6 @@ const Page = () => {
               name="Block"
               id="isBlocked"
               type="checkbox"
-              placeholder="10"
               classStyle="toggle w-12"
               register={register}
               errors={errors}

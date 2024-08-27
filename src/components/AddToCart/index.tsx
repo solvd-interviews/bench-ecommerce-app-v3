@@ -16,19 +16,23 @@ export default function AddToCart({ item }: { item: OrderItem }) {
   };
 
   return existItem ? (
-    <div className="mt-2 flex items-center">
+    <div className="mt-2 flex items-center" id="cart-item-controls">
       <button
         className="btn btn-primary w-10"
         type="button"
         onClick={() => decrease(existItem)}
+        id="decrease-item-button"
       >
         -
       </button>
-      <div className="px-2 w-10 text-center">{existItem.qty}</div>
+      <div className="px-2 w-10 text-center" id="item-quantity">
+        {existItem.qty}
+      </div>
       <button
         className="btn btn-primary w-10"
         type="button"
         onClick={() => increase(existItem)}
+        id="increase-item-button"
       >
         +
       </button>
@@ -38,6 +42,7 @@ export default function AddToCart({ item }: { item: OrderItem }) {
       className={"btn btn-primary mt-4 w-full md:w-auto"}
       type="button"
       onClick={addToCartHandler}
+      id="add-to-cart-button"
     >
       Add to cart
     </button>

@@ -69,7 +69,7 @@ const ProductDetailPage: React.FC = () => {
 
   const { product, loading, error } = state;
 
-  if (error) return <p>{error}</p>;
+  if (error) return <p id="product-detail-error">{error}</p>;
   if (loading || !product) return <></>;
 
   return (
