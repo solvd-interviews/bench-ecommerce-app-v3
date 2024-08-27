@@ -69,32 +69,72 @@ const Form = () => {
   if (!mounted) return <></>;
 
   return (
-    <div>
+    <div id="src-app-frontend-loggedin-placeorder-form-container">
       <CheckoutSteps current={4} />
 
-      <div className="grid gap-4 md:grid-cols-4 md:gap-5 my-4 ">
-        <div className="overflow-x-auto md:col-span-3 ">
-          <div className="card bg-white shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title">Shipping Address</h2>
-              <p>{shippingAddress.fullName}</p>
-              <p>
+      <div
+        className="grid gap-4 md:grid-cols-4 md:gap-5 my-4"
+        id="src-app-frontend-loggedin-placeorder-grid"
+      >
+        <div
+          className="overflow-x-auto md:col-span-3"
+          id="src-app-frontend-loggedin-placeorder-details-container"
+        >
+          <div
+            className="card bg-white shadow-xl"
+            id="src-app-frontend-loggedin-placeorder-shipping-card"
+          >
+            <div
+              className="card-body"
+              id="src-app-frontend-loggedin-placeorder-shipping-card-body"
+            >
+              <h2
+                className="card-title"
+                id="src-app-frontend-loggedin-placeorder-shipping-title"
+              >
+                Shipping Address
+              </h2>
+              <p id="src-app-frontend-loggedin-placeorder-shipping-name">
+                {shippingAddress.fullName}
+              </p>
+              <p id="src-app-frontend-loggedin-placeorder-shipping-address">
                 {shippingAddress.address}, {shippingAddress.city},{" "}
                 {shippingAddress.postalCode}, {shippingAddress.country}{" "}
               </p>
-              <div>
-                <Link className="btn btn-primary" href="/shipping">
+              <div id="src-app-frontend-loggedin-placeorder-shipping-edit-button-container">
+                <Link
+                  className="btn btn-primary"
+                  href="/shipping"
+                  id="src-app-frontend-loggedin-placeorder-shipping-edit-button"
+                >
                   Edit
                 </Link>
               </div>
             </div>
           </div>
-          <div className="card bg-white shadow-xl mt-4">
-            <div className="card-body">
-              <h2 className="card-title">Payment Method</h2>
-              <p>{paymentMethod}</p>
-              <div>
-                <Link className="btn btn-primary" href="/payment">
+          <div
+            className="card bg-white shadow-xl mt-4"
+            id="src-app-frontend-loggedin-placeorder-payment-card"
+          >
+            <div
+              className="card-body"
+              id="src-app-frontend-loggedin-placeorder-payment-card-body"
+            >
+              <h2
+                className="card-title"
+                id="src-app-frontend-loggedin-placeorder-payment-title"
+              >
+                Payment Method
+              </h2>
+              <p id="src-app-frontend-loggedin-placeorder-payment-method">
+                {paymentMethod}
+              </p>
+              <div id="src-app-frontend-loggedin-placeorder-payment-edit-button-container">
+                <Link
+                  className="btn btn-primary"
+                  href="/payment"
+                  id="src-app-frontend-loggedin-placeorder-payment-edit-button"
+                >
                   Edit
                 </Link>
               </div>
@@ -102,43 +142,70 @@ const Form = () => {
           </div>
           <SummaryProd items={items} itemsPrice={itemsPrice} edit={true} />
         </div>
-        <div>
-          <div className="card bg-white shadow-xl px-3 ">
-            <div className="card-body">
-              <h2 className="card-title">Order Summary</h2>
-              <ul className="space-y-3">
-                <li>
+        <div id="src-app-frontend-loggedin-placeorder-summary-container">
+          <div
+            className="card bg-white shadow-xl px-3"
+            id="src-app-frontend-loggedin-placeorder-summary-card"
+          >
+            <div
+              className="card-body"
+              id="src-app-frontend-loggedin-placeorder-summary-card-body"
+            >
+              <h2
+                className="card-title"
+                id="src-app-frontend-loggedin-placeorder-summary-title"
+              >
+                Order Summary
+              </h2>
+              <ul
+                className="space-y-3"
+                id="src-app-frontend-loggedin-placeorder-summary-list"
+              >
+                <li id="src-app-frontend-loggedin-placeorder-summary-items">
                   <div className=" flex justify-between">
-                    <div>Items </div>
-                    <div>{`  ${itemsPrice}`}</div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-items-label">
+                      Items{" "}
+                    </div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-items-price">{`  ${itemsPrice}`}</div>
                   </div>
                 </li>
-                <li>
+                <li id="src-app-frontend-loggedin-placeorder-summary-tax">
                   <div className=" flex justify-between">
-                    <div>Tax </div> <div>{`  ${taxPrice}`}</div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-tax-label">
+                      Tax{" "}
+                    </div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-tax-price">{`  ${taxPrice}`}</div>
                   </div>
                 </li>
-                <li>
+                <li id="src-app-frontend-loggedin-placeorder-summary-shipping">
                   <div className=" flex justify-between">
-                    <div>Shipping </div>
-                    <div>{`  ${shippingPrice}`}</div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-shipping-label">
+                      Shipping{" "}
+                    </div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-shipping-price">{`  ${shippingPrice}`}</div>
                   </div>
                 </li>
-                <li>
+                <li id="src-app-frontend-loggedin-placeorder-summary-total">
                   <div className=" flex justify-between">
-                    <div>Total </div>
-                    <div>{`  ${totalPrice}`}</div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-total-label">
+                      Total{" "}
+                    </div>
+                    <div id="src-app-frontend-loggedin-placeorder-summary-total-price">{`  ${totalPrice}`}</div>
                   </div>
                 </li>
 
-                <li>
+                <li id="src-app-frontend-loggedin-placeorder-summary-placeorder-button-container">
                   <button
                     onClick={() => placeOrder()}
                     disabled={isPlacing}
                     className="btn btn-primary w-full"
+                    id="src-app-frontend-loggedin-placeorder-summary-placeorder-button"
                   >
                     {isPlacing && (
-                      <span className="loading loading-spinner"></span>
+                      <span
+                        className="loading loading-spinner"
+                        id="src-app-frontend-loggedin-placeorder-summary-placeorder-spinner"
+                      ></span>
                     )}
                     Place Order
                   </button>
