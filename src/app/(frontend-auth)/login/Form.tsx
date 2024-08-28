@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn, getSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 interface FormData {
@@ -20,7 +20,6 @@ const Form = () => {
     reset,
   } = useForm<FormData>();
 
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [isLoading, setisLoading] = useState(false);
@@ -66,8 +65,7 @@ const Form = () => {
           className="shadow-2xl"
           src="/solvdwhite-hd.png"
           objectFit="cover"
-          width={1920}
-          height={1080}
+          fill
           alt="Background"
           id="src-app-frontend-auth-login-image"
         />
@@ -195,6 +193,24 @@ const Form = () => {
                     ></span>
                   )}
                 </button>
+              </div>
+              <div
+                className="w-full flex justify-center gap-2"
+                id="src-app-frontend-auth-login-register-container"
+              >
+                <p
+                  className="text-neutral"
+                  id="src-app-frontend-auth-login-register-text"
+                >
+                  Don&apos;t have an account?
+                </p>
+                <Link
+                  href={"/register"}
+                  className="hover:underline text-right text-primary"
+                  id="src-app-frontend-auth-login-register-link"
+                >
+                  Register
+                </Link>
               </div>
             </form>
           </div>
