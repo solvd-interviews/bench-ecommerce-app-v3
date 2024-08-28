@@ -18,5 +18,18 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
+    - name: Set environment variables from secrets
+      run: |
+        echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> $GITHUB_ENV
+        echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> $GITHUB_ENV
+        echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> $GITHUB_ENV
+        echo "API_SECRET=${{ secrets.API_SECRET }}" >> $GITHUB_ENV
+        echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+        echo "CLOUD_NAME=${{ secrets.CLOUD_NAME }}" >> $GITHUB_ENV
+        echo "DEPLOYABLE_ENV=${{ secrets.DEPLOYABLE_ENV }}" >> $GITHUB_ENV
+        echo "TEST_EMAIL_ADMIN=${{ secrets.TEST_EMAIL_ADMIN }}" >> $GITHUB_ENV
+        echo "TEST_PASSWORD_ADMIN=${{ secrets.TEST_PASSWORD_ADMIN }}" >> $GITHUB_ENV
+        echo "TEST_EMAIL_USER=${{ secrets.TEST_EMAIL_USER }}" >> $GITHUB_ENV
+        echo "TEST_PASSWORD_USER=${{ secrets.TEST_PASSWORD_USER }}" >> $GITHUB_ENV
     - run: npm install
     - run: npm test
