@@ -226,15 +226,11 @@ export async function lastThirtyDaysSales() {
 export async function topFiveProductsLastThirtyDays() {
   await dbConnect();
 
-  const startDate = new Date();
-  startDate.setUTCDate(startDate.getUTCDate() - 30);
-  startDate.setUTCHours(0, 0, 0, 0);
-
   const topProducts = await OrderModel.aggregate([
     {
       $match: {
         isPaid: true,
-        paidAt: { $gte: startDate },
+        paidAt: { $gte: getStartDate30DAgo() },
       },
     },
     { $unwind: "$items" },

@@ -1,4 +1,3 @@
-import BarChartComponent from "@/components/BarChart";
 import DeleteButton from "@/components/DeleteButton";
 import BasicLineChart from "@/components/LineChart";
 import {
@@ -11,7 +10,6 @@ import {
 } from "@/lib/utils/orders";
 import { countProducts } from "@/lib/utils/products";
 import { countUsers, lastThirtyDaysUsers } from "@/lib/utils/users";
-import { BarChart, PieChart } from "@mui/x-charts";
 import PieChartComponent from "../../components/PieChart/index";
 
 const page = async () => {
