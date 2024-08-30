@@ -65,7 +65,6 @@ const page = async () => {
                 data: userChartData.map((entry) => entry.count),
                 area: true,
                 color: "#00CC77",
-                showMark: false,
               },
             ]}
           />
@@ -177,7 +176,6 @@ const page = async () => {
                 color: "#A0A0A0",
                 label: "Orders",
                 area: true,
-                showMark: false,
               },
 
               {
@@ -185,14 +183,12 @@ const page = async () => {
                 label: "Paid orders",
                 color: "#00CC77",
                 area: true,
-                showMark: false,
               },
               {
                 data: notPaidOrders30d.map((entry) => entry.count),
                 color: "#DE3163",
                 label: "Not paid orders",
                 area: true,
-                showMark: false,
               },
             ]}
           />
@@ -222,7 +218,6 @@ const page = async () => {
                 data: totalSales30d.map((entry) => entry.totalSales),
                 color: "#00CC77",
                 area: true,
-                showMark: false,
               },
             ]}
           />

@@ -21,10 +21,16 @@ export default function BasicLineChart({
   marginLeft = 30,
   marginBottom = 30,
 }: BasicLineChartProps) {
+
+  let newSeries: any[] = series.map(function (e) {
+    e.showMark = ({ value }) => value > 0;
+    return e;
+  });
+  
   return (
     <LineChart
       xAxis={xAxis}
-      series={series}
+      series={newSeries}
       width={width}
       height={height}
       margin={{
