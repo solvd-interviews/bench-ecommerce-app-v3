@@ -1,6 +1,7 @@
 import { MongoFilterUser } from "@/app/api/users/route";
 import dbConnect from "../dbConnect";
 import UserModel from "../models/UserModel";
+import { getStartDate30DAgo, normalizeDate } from ".";
 
 export const fetchUsersPagination = async (
   page = 1,
@@ -28,9 +29,22 @@ export const fetchUsersPagination = async (
 
 export async function lastThirtyDaysUsers() {
   await dbConnect();
-  const lastThirtyDaysUsers = await UserModel.aggregate([
+
+  // Step 1: Generate an array of all dates for the last 30 days
+  const startDate = getStartDate30DAgo();
+  const endDate = new Date();
+  const allDates = [];
+  let currentDate = startDate;
+
+  while (currentDate <= endDate) {
+    allDates.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  // Step 2: Aggregate user counts by date
+  const userCounts = await UserModel.aggregate([
     {
-      // Match documents within the last 30 days
+      // Match users created within the last 30 days
       $match: {
         createdAt: {
           $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
@@ -38,7 +52,7 @@ export async function lastThirtyDaysUsers() {
       },
     },
     {
-      // Group by full date (year, month, and day) to avoid conflicts
+      // Group by full date (year, month, and day)
       $group: {
         _id: {
           year: { $year: "$createdAt" },
@@ -49,11 +63,7 @@ export async function lastThirtyDaysUsers() {
       },
     },
     {
-      // Sort by full date (year, month, day)
-      $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 },
-    },
-    {
-      // Project the data into a format that MUI chart can use
+      // Project the date into a usable format
       $project: {
         _id: 0,
         date: {
@@ -64,24 +74,29 @@ export async function lastThirtyDaysUsers() {
           },
         },
         count: 1,
-        dayNumber: {
-          $dateDiff: {
-            startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
-            endDate: {
-              $dateFromParts: {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-            },
-            unit: "day",
-          },
-        },
       },
+    },
+    {
+      // Sort by date
+      $sort: { date: 1 },
     },
   ]);
 
-  return lastThirtyDaysUsers;
+  // Step 3: Merge the full date range with the user counts
+  const mergedData = allDates.map((date: Date) => {
+    const userData = userCounts.find((user) => {
+      return normalizeDate(user.date) === normalizeDate(date);
+    });
+    if (userData) {
+      return userData;
+    }
+    return {
+      date,
+      count: 0,
+    };
+  });
+
+  return mergedData;
 }
 
 export async function countUsers() {

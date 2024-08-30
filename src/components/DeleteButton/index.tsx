@@ -24,8 +24,8 @@ const DeleteButton = ({
   }
   async function onClickFunction() {
     toast.custom((t) => (
-      <div className=" flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 ">
-        <p className="text-lg text-center">
+      <div className=" flex flex-col gap-5 items-center bg-white p-5 rounded-xl shadow-xl border-2 ">
+        <p className="text-2xl font-bold text-center">
           Are you sure to delete {deleteType}?
         </p>
         <div className="flex  gap-2">
@@ -38,7 +38,7 @@ const DeleteButton = ({
             Cancel
           </button>
           <button
-            className="btn btn-warning min-w-20"
+            className="btn btn-error min-w-20"
             onClick={() => {
               deleteLogic();
               toast.dismiss(t);

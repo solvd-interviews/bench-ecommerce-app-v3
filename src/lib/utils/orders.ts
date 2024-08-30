@@ -1,3 +1,4 @@
+import { getStartDate30DAgo, normalizeDate, starter30DAgo } from ".";
 import dbConnect from "../dbConnect";
 import OrderModel from "../models/OrderModel";
 
@@ -8,18 +9,18 @@ export const countOrders = async () => {
 
 export async function lastThirtyDaysOrdersPaid() {
   await dbConnect();
-  const lastThirtyDaysOrdersPaid = await OrderModel.aggregate([
+
+  const { allDates } = starter30DAgo();
+
+  // Step 2: Aggregate paid order counts by date
+  const orderCounts = await OrderModel.aggregate([
     {
-      // Match paid orders within the last 30 days
       $match: {
         isPaid: true,
-        paidAt: {
-          $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
-        },
+        paidAt: { $gte: getStartDate30DAgo() },
       },
     },
     {
-      // Group by full date (year, month, and day)
       $group: {
         _id: {
           year: { $year: "$paidAt" },
@@ -30,47 +31,49 @@ export async function lastThirtyDaysOrdersPaid() {
       },
     },
     {
-      // Sort by full date (year, month, day)
-      $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 },
-    },
-    {
-      // Project the data into a format that MUI chart can use
       $project: {
         _id: 0,
-        dayNumber: {
-          $dateDiff: {
-            startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
-            endDate: {
-              $dateFromParts: {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-            },
-            unit: "day",
+        date: {
+          $dateFromParts: {
+            year: "$_id.year",
+            month: "$_id.month",
+            day: "$_id.day",
           },
         },
         count: 1,
       },
+    },
+    {
+      $sort: { date: 1 },
     },
   ]);
 
-  return lastThirtyDaysOrdersPaid;
+  // Step 3: Merge the full date range with the order counts
+  const mergedData = allDates.map((date) => {
+    const orderData = orderCounts.find((order) => {
+      return normalizeDate(order.date) === normalizeDate(date);
+    });
+    return orderData || { date, count: 0 };
+  });
+
+  return mergedData;
 }
+
 export async function lastThirtyDaysOrdersNotPaid() {
   await dbConnect();
-  const lastThirtyDaysOrdersNotPaid = await OrderModel.aggregate([
+
+  // Step 1: Generate an array of all dates for the last 30 days
+  const { allDates } = starter30DAgo();
+
+  // Step 2: Aggregate not paid order counts by date
+  const orderCounts = await OrderModel.aggregate([
     {
-      // Match paid orders within the last 30 days
       $match: {
         isPaid: false,
-        createdAt: {
-          $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
-        },
+        createdAt: { $gte: getStartDate30DAgo() },
       },
     },
     {
-      // Group by full date (year, month, and day)
       $group: {
         _id: {
           year: { $year: "$createdAt" },
@@ -81,45 +84,50 @@ export async function lastThirtyDaysOrdersNotPaid() {
       },
     },
     {
-      // Sort by full date (year, month, day)
-      $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 },
-    },
-    {
-      // Project the data into a format that MUI chart can use
       $project: {
         _id: 0,
-        dayNumber: {
-          $dateDiff: {
-            startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
-            endDate: {
-              $dateFromParts: {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-            },
-            unit: "day",
+        date: {
+          $dateFromParts: {
+            year: "$_id.year",
+            month: "$_id.month",
+            day: "$_id.day",
           },
         },
         count: 1,
       },
     },
+    {
+      $sort: { date: 1 },
+    },
   ]);
-  return lastThirtyDaysOrdersNotPaid;
+
+  // Step 3: Merge the full date range with the order counts
+  const mergedData = allDates.map((date) => {
+    const orderData = orderCounts.find((order) => {
+      return normalizeDate(order.date) === normalizeDate(date);
+    });
+    return orderData || { date, count: 0 };
+  });
+
+  return mergedData;
 }
+
 export async function lastThirtyDaysOrders() {
   await dbConnect();
-  const lastThirtyDaysOrders = await OrderModel.aggregate([
+
+  // Step 1: Generate an array of all dates for the last 30 days
+  const { allDates } = starter30DAgo();
+
+  // Step 2: Aggregate all order counts by date
+  const orderCounts = await OrderModel.aggregate([
     {
-      // Match paid orders within the last 30 days
       $match: {
         createdAt: {
-          $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+          $gte: getStartDate30DAgo(),
         },
       },
     },
     {
-      // Group by full date (year, month, and day)
       $group: {
         _id: {
           year: { $year: "$createdAt" },
@@ -130,41 +138,45 @@ export async function lastThirtyDaysOrders() {
       },
     },
     {
-      // Sort by full date (year, month, day)
-      $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 },
-    },
-    {
-      // Project the data into a format that MUI chart can use
       $project: {
         _id: 0,
-        dayNumber: {
-          $dateDiff: {
-            startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
-            endDate: {
-              $dateFromParts: {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-            },
-            unit: "day",
+        date: {
+          $dateFromParts: {
+            year: "$_id.year",
+            month: "$_id.month",
+            day: "$_id.day",
           },
         },
         count: 1,
       },
     },
+    {
+      $sort: { date: 1 },
+    },
   ]);
-  return lastThirtyDaysOrders;
+  // Step 3: Merge the full date range with the order counts
+  const mergedData = allDates.map((date) => {
+    const orderData = orderCounts.find((order) => {
+      return normalizeDate(order.date) === normalizeDate(date);
+    });
+    return orderData || { date, count: 0 };
+  });
+
+  return mergedData;
 }
 
 export async function lastThirtyDaysSales() {
   await dbConnect();
-  const lastThirtyDaysSales = await OrderModel.aggregate([
+
+  // Step 1: Generate an array of all dates for the last 30 days
+  const { allDates } = starter30DAgo();
+
+  // Step 2: Aggregate sales data by date
+  const salesCounts = await OrderModel.aggregate([
     {
-      // Match orders that were paid in the last 30 days
       $match: {
         paidAt: {
-          $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+          $gte: getStartDate30DAgo(),
         },
         isPaid: true, // Ensure that only paid orders are counted
       },
@@ -185,7 +197,7 @@ export async function lastThirtyDaysSales() {
       $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 },
     },
     {
-      // Project the data into a format that MUI chart can use
+      // Project the date into a usable format
       $project: {
         _id: 0,
         date: {
@@ -196,122 +208,63 @@ export async function lastThirtyDaysSales() {
           },
         },
         totalSales: 1,
-        dayNumber: {
-          $dateDiff: {
-            startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
-            endDate: {
-              $dateFromParts: {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-            },
-            unit: "day",
-          },
-        },
       },
     },
   ]);
-  return lastThirtyDaysSales;
+
+  // Step 3: Merge the full date range with the sales data
+  const mergedData = allDates.map((date) => {
+    const salesData = salesCounts.find((sale) => {
+      return normalizeDate(date) === normalizeDate(sale.date);
+    });
+    return salesData || { date, totalSales: 0 };
+  });
+
+  return mergedData;
 }
 
 export async function topFiveProductsLastThirtyDays() {
   await dbConnect();
 
+  const startDate = new Date();
+  startDate.setUTCDate(startDate.getUTCDate() - 30);
+  startDate.setUTCHours(0, 0, 0, 0);
+
   const topProducts = await OrderModel.aggregate([
     {
-      // Match paid orders within the last 30 days
       $match: {
         isPaid: true,
-        paidAt: {
-          $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
-        },
+        paidAt: { $gte: startDate },
       },
     },
+    { $unwind: "$items" },
     {
-      // Unwind the items array to group by individual products
-      $unwind: "$items",
-    },
-    {
-      // Group by product and day, summing up the total sales and total sold per day
       $group: {
-        _id: {
-          product: "$items.product",
-          year: { $year: "$paidAt" },
-          month: { $month: "$paidAt" },
-          day: { $dayOfMonth: "$paidAt" },
-        },
+        _id: "$items.product",
         name: { $first: "$items.name" },
         totalSales: { $sum: { $multiply: ["$items.qty", "$items.price"] } },
-        totalSold: { $sum: "$items.qty" },
       },
     },
     {
-      // Sort by total sales per product, descending
       $sort: { totalSales: -1 },
     },
+    { $limit: 5 },
     {
-      // Project the data with the correct dayNumber calculation
       $project: {
         _id: 0,
+        productId: "$_id",
         name: "$name",
-        productId: "$_id.product",
-        dayNumber: {
-          $dateDiff: {
-            startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
-            endDate: {
-              $dateFromParts: {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-            },
-            unit: "day",
-          },
-        },
-        dailySales: {
-          totalSales: "$totalSales",
-        },
-        totalSales: "$totalSales",
-        totalSold: "$totalSold",
-      },
-    },
-    {
-      // Group again by product to accumulate sales and sold quantities, maintaining daily sales
-      $group: {
-        _id: {
-          productId: "$productId",
-          name: "$name",
-        },
-        totalSales: { $sum: "$totalSales" },
-        totalSold: { $sum: "$totalSold" },
-        dailySales: {
-          $push: {
-            dayNumber: "$dayNumber",
-            totalSales: "$dailySales.totalSales",
-          },
-        },
-      },
-    },
-    {
-      // Sort by total sales, descending and limit to top 5 products
-      $sort: { totalSales: -1 },
-    },
-    {
-      $limit: 5,
-    },
-    {
-      // Final project for output formatting
-      $project: {
-        _id: 0,
-        name: "$_id.name",
-        productId: "$_id.productId",
-        totalSales: "$totalSales",
-        totalSold: "$totalSold",
-        dailySales: "$dailySales",
+        totalSales: 1,
       },
     },
   ]);
 
-  return topProducts;
+  // Format the data for the PieChart
+  const pieChartData = topProducts.map((product, index) => ({
+    id: index,
+    value: product.totalSales,
+    label: product.name,
+  }));
+
+  return pieChartData;
 }

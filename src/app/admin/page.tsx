@@ -1,3 +1,4 @@
+import BarChartComponent from "@/components/BarChart";
 import DeleteButton from "@/components/DeleteButton";
 import BasicLineChart from "@/components/LineChart";
 import {
@@ -10,16 +11,23 @@ import {
 } from "@/lib/utils/orders";
 import { countProducts } from "@/lib/utils/products";
 import { countUsers, lastThirtyDaysUsers } from "@/lib/utils/users";
+import { BarChart, PieChart } from "@mui/x-charts";
+import PieChartComponent from "../../components/PieChart/index";
 
 const page = async () => {
+  // 30D users
   const userChartData = await lastThirtyDaysUsers();
+
+  // Orders
   const paidOrders30d = await lastThirtyDaysOrdersPaid();
   const notPaidOrders30d = await lastThirtyDaysOrdersNotPaid();
   const orders30d = await lastThirtyDaysOrders();
-  const totalSales30d = await lastThirtyDaysSales();
 
+  // Sales stats
+  const totalSales30d = await lastThirtyDaysSales();
   const topFiveProd = await topFiveProductsLastThirtyDays();
 
+  // Items count
   const userCount = await countUsers();
   const productCount = await countProducts();
   const orderCount = await countOrders();
@@ -35,21 +43,31 @@ const page = async () => {
       >
         <div
           id="src-app-admin-page-mainContainer-gridContainer-newUsers30d"
-          className="flex flex-col gap:1 justify-start rounded-xl items-center bg-white shadow-xl"
+          className="flex flex-col gap:1 justify-start rounded-xl items-center bg-white shadow-xl overflow-x-auto"
         >
           <h1
             id="src-app-admin-page-mainContainer-gridContainer-newUsers30d-title"
             className="text-2xl font-bold mt-2"
           >
-            New users 30D
+            New users last 30D
+            {/* {userChartData.reduce(function (accumulator, currentValue) {
+              return accumulator + currentValue.count;
+            }, 0)} */}
           </h1>
           <BasicLineChart
-            xAxis={[{ data: userChartData.map((entry) => entry.dayNumber) }]}
+            width={400}
+            xAxis={[
+              {
+                data: userChartData.map((entry) => entry.date),
+                scaleType: "time",
+              },
+            ]}
             series={[
               {
                 data: userChartData.map((entry) => entry.count),
                 area: true,
                 color: "#00CC77",
+                showMark: false,
               },
             ]}
           />
@@ -112,27 +130,17 @@ const page = async () => {
         </div>
         <div
           id="src-app-admin-page-mainContainer-gridContainer-top5Products"
-          className="flex flex-col gap:1 justify-start rounded-xl items-center bg-white shadow-xl col-span-1 md:col-span-2 lg:col-span-1 overflow-x-auto"
+          className="flex flex-col gap:1 justify-start rounded-xl items-center bg-white shadow-xl col-span-1 md:col-span-2 lg:col-span-1 overflow-x-auto h-full"
         >
           <h1
             id="src-app-admin-page-mainContainer-gridContainer-top5Products-title"
             className="text-2xl font-bold mt-2"
           >
-            Top 5 most selled products
+            Top 5 most sold products 30D
           </h1>
-          <BasicLineChart
-            marginTop={120}
-            width={400}
-            xAxis={topFiveProd.map((e, i) => ({
-              data: topFiveProd[i].dailySales.map((e: any) =>
-                parseFloat(e.dayNumber)
-              ),
-            }))}
-            series={topFiveProd.map((e, i) => ({
-              data: topFiveProd[i].dailySales.map((e: any) => e.totalSales),
-              label: e.name,
-            }))}
-          />
+          <div className="w-full h-full flex justify-center items-center p-5">
+            <PieChartComponent data={topFiveProd} />
+          </div>
         </div>
       </div>
       <div
@@ -149,13 +157,21 @@ const page = async () => {
           >
             New orders 30D
           </h1>
+
           <BasicLineChart
-            marginTop={50}
+            marginTop={80}
             width={400}
             xAxis={[
-              { data: orders30d.map((entry) => entry.dayNumber) },
-              { data: notPaidOrders30d.map((entry) => entry.dayNumber) },
-              { data: paidOrders30d.map((entry) => entry.dayNumber) },
+              { data: orders30d.map((entry) => entry.date), scaleType: "time" },
+
+              {
+                data: paidOrders30d.map((entry) => entry.date),
+                scaleType: "time",
+              },
+              {
+                data: notPaidOrders30d.map((entry) => entry.date),
+                scaleType: "time",
+              },
             ]}
             series={[
               {
@@ -163,25 +179,29 @@ const page = async () => {
                 color: "#A0A0A0",
                 label: "Orders",
                 area: true,
+                showMark: false,
+              },
+
+              {
+                data: paidOrders30d.map((entry) => entry.count),
+                label: "Paid orders",
+                color: "#00CC77",
+                area: true,
+                showMark: false,
               },
               {
                 data: notPaidOrders30d.map((entry) => entry.count),
                 color: "#DE3163",
                 label: "Not paid orders",
                 area: true,
-              },
-              {
-                data: paidOrders30d.map((entry) => entry.count),
-                label: "Paid orders",
-                color: "#00CC77",
-                area: true,
+                showMark: false,
               },
             ]}
           />
         </div>
         <div
           id="src-app-admin-page-mainContainer-gridContainer-ordersAndSales-totalSales30d"
-          className="flex flex-col gap:1 justify-start rounded-xl items-center bg-white shadow-xl"
+          className="flex flex-col gap:1 justify-start rounded-xl items-center bg-white shadow-xl overflow-x-auto"
         >
           <h1
             id="src-app-admin-page-mainContainer-gridContainer-ordersAndSales-totalSales30d-title"
@@ -190,14 +210,21 @@ const page = async () => {
             Total sales 30D
           </h1>
           <BasicLineChart
+            width={400}
             marginTop={50}
             marginLeft={40}
-            xAxis={[{ data: totalSales30d.map((entry) => entry.dayNumber) }]}
+            xAxis={[
+              {
+                data: totalSales30d.map((entry) => entry.date),
+                scaleType: "time",
+              },
+            ]}
             series={[
               {
                 data: totalSales30d.map((entry) => entry.totalSales),
                 color: "#00CC77",
                 area: true,
+                showMark: false,
               },
             ]}
           />
