@@ -1,14 +1,17 @@
-import dbConnect from "@/lib/dbConnect";
-import OrderModel, { OrderItem } from "@/lib/models/OrderModel";
-import { getServerSession } from "next-auth";
 import { config } from "@/lib/auth";
+import dbConnect from "@/lib/dbConnect";
+import OrderModel from "@/lib/models/OrderModel";
 import mongoose from "mongoose";
-import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: any, { params }: { params: { id: string } }) => {
+export const PATCH = async (
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) => {
   const { user } = await getServerSession(config);
 
-  if (!user) {
+  if (!user || !user.isAdmin) {
     return Response.json(
       { message: "unauthorized" },
       {
@@ -31,5 +34,12 @@ export const GET = async (req: any, { params }: { params: { id: string } }) => {
 
   await dbConnect();
   const order = await OrderModel.findById(params.id);
-  return Response.json(order);
+  order.isDelivered = !order.isDelivered;
+  const res = await order.save();
+  return new NextResponse(JSON.stringify({ order: res }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };
