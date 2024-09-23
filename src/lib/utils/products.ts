@@ -49,3 +49,8 @@ export const fetchProductsPagination = async (
     currentPage: page,
   };
 };
+
+export const countProducts = async () => {
+  const numberOfProducts = await ProductModel.countDocuments();
+  return numberOfProducts;
+};
