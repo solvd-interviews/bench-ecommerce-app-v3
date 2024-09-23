@@ -32,22 +32,12 @@ export const DELETE = async (request: NextRequest) => {
   for (const user of users) {
     const newUser = new UserModel(user);
     await newUser.save();
-    await new Promise((res, rej) => {
-      setTimeout(() => {
-        res("");
-      }, 10);
-    });
   }
 
   // Save products with incremental productNumber sequentially
   for (const product of products) {
     const newProduct = new ProductModel(product);
     await newProduct.save();
-    await new Promise((res, rej) => {
-      setTimeout(() => {
-        res("");
-      }, 10);
-    });
   }
 
   // Retrieve the saved documents

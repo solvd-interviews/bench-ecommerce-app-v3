@@ -33,11 +33,7 @@ export const DELETE = async (request: NextRequest) => {
   for (const product of products) {
     const newProduct = new ProductModel(product);
     await newProduct.save();
-    await new Promise((res, rej) => {
-      setTimeout(() => {
-        res("");
-      }, 10);
-    });
+    
   }
 
   // Retrieve the saved documents
