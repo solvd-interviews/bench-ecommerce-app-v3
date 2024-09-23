@@ -42,3 +42,21 @@ export const DELETE = async (
     },
   });
 };
+
+export const GET = async (req: any, { params }: { params: { id: string } }) => {
+  if (!params.id || !mongoose.Types.ObjectId.isValid(params.id)) {
+    return new NextResponse(
+      JSON.stringify({ message: "Order id not correct" }),
+      {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
+  await dbConnect();
+  const order = await OrderModel.findById(params.id);
+  return Response.json(order);
+};
