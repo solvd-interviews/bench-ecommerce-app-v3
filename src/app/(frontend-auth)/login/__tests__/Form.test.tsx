@@ -19,9 +19,9 @@ jest.mock('next/navigation', () => ({
     replace: jest.fn(),
     push: jest.fn(),
   }),
-  useSearchParams: jest.fn(() => ({
-    get: jest.fn(),
-  })),
+  useSearchParams: () => ({
+    get: jest.fn().mockReturnValue(null),
+  }),
 }));
 
 
@@ -31,14 +31,14 @@ describe('Login Form', () => {
 
     render(<Form />);
 
-    await userEvent.type(screen.getByLabelText(/email/i), process.env.TEST_EMAIL_ADMIN!);
-    await userEvent.type(screen.getByLabelText(/password/i), process.env.TEST_PASSWORD_ADMIN!);
+    await userEvent.type(screen.getByLabelText(/email/i), "example@example.com");
+    await userEvent.type(screen.getByLabelText(/password/i), "some_password");
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
       expect(signIn).toHaveBeenCalledWith('credentials', {
-        email: process.env.TEST_EMAIL_ADMIN,
-        password: process.env.TEST_PASSWORD_ADMIN,
+        email: "example@example.com",
+        password: "some_password",
         redirect: false,
       });
     }, { timeout: 1000 });
