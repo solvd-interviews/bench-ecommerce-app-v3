@@ -10,48 +10,69 @@ export default function MyOrders() {
   const router = useRouter();
   const { data: orders, error } = useSWR(`/api/orders/mine`);
 
-
   if (error) return "An error has occurred.";
   if (!orders) return <span className="loading loading-spinner w-20"></span>;
 
   return orders.length > 0 ? (
-    <table className="table bg-white shadow-xl">
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>DATE</th>
-          <th>TOTAL</th>
-          <th>PAID</th>
-          <th>DELIVERED</th>
-          {/*           <th>ACTION</th>
-           */}{" "}
+    <table
+      className="table bg-white shadow-xl"
+      id="src-app-frontend-loggedin-orders-history-table"
+    >
+      <thead id="src-app-frontend-loggedin-orders-history-thead">
+        <tr id="src-app-frontend-loggedin-orders-history-thead-row">
+          <th id="src-app-frontend-loggedin-orders-history-th-number">N°</th>
+          <th id="src-app-frontend-loggedin-orders-history-th-date">DATE</th>
+          <th id="src-app-frontend-loggedin-orders-history-th-total">TOTAL</th>
+          <th id="src-app-frontend-loggedin-orders-history-th-paid">PAID</th>
+          <th id="src-app-frontend-loggedin-orders-history-th-delivered">
+            DELIVERED
+          </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="src-app-frontend-loggedin-orders-history-tbody">
         {[...orders].reverse().map((order: Order) => (
           <tr
             onClick={() => {
               router.push(`order/${order._id}`);
             }}
             key={order._id}
-            className="hover:cursor-pointer  hover:bg-slate-50"
+            className="hover:cursor-pointer hover:bg-slate-50"
+            id={`src-app-frontend-loggedin-orders-history-tr-${order._id}`}
           >
-            <td>{order.orderNumber}</td>
-            <td>{order.createdAt.split("T")[0]}</td>
-            <td>${order.totalPrice}</td>
-            <td>
+            <td
+              id={`src-app-frontend-loggedin-orders-history-order-number-${order._id}`}
+            >
+              {order.orderNumber}
+            </td>
+            <td
+              id={`src-app-frontend-loggedin-orders-history-order-date-${order._id}`}
+            >
+              {order.createdAt.split("T")[0]}
+            </td>
+            <td
+              id={`src-app-frontend-loggedin-orders-history-order-total-${order._id}`}
+            >
+              ${order.totalPrice}
+            </td>
+            <td
+              id={`src-app-frontend-loggedin-orders-history-order-paid-${order._id}`}
+            >
               <ButtonProductStatus
                 type="pay"
                 paidAt={order.paidAt}
                 isPaid={order.isPaid}
+                id={`src-app-frontend-loggedin-orders-history-order-paid-status-${order._id}`}
               />
             </td>
-            <td>
+            <td
+              id={`src-app-frontend-loggedin-orders-history-order-delivered-${order._id}`}
+            >
               <ButtonProductStatus
                 type="ship"
                 isDelivered={order.isDelivered}
                 isPaid={order.isPaid}
                 deliveredAt={order.deliveredAt}
+                id={`src-app-frontend-loggedin-orders-history-order-delivered-status-${order._id}`}
               />
             </td>
           </tr>
@@ -59,11 +80,25 @@ export default function MyOrders() {
       </tbody>
     </table>
   ) : (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className="card bg-white shadow-xl max-w-60 p-4 flex flex-col">
-        <h2 className="card-title ">No orders yet! </h2>
+    <div
+      className="w-full h-full flex justify-center items-center"
+      id="src-app-frontend-loggedin-orders-history-empty"
+    >
+      <div
+        className="card bg-white shadow-xl max-w-60 p-4 flex flex-col"
+        id="src-app-frontend-loggedin-orders-history-empty-card"
+      >
+        <h2
+          className="card-title"
+          id="src-app-frontend-loggedin-orders-history-empty-title"
+        >
+          No orders yet!
+        </h2>
         <Link href="/">
-          <button className="btn btn-primary mt-4">
+          <button
+            className="btn btn-primary mt-4"
+            id="src-app-frontend-loggedin-orders-history-empty-button"
+          >
             Go shopping! <LuArrowRight size={25} />
           </button>
         </Link>

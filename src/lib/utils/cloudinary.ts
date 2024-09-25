@@ -14,7 +14,7 @@ v2.config({
 const opts: UploadApiOptions = {
   overwrite: true,
   resource_type: "image",
-  folder: "solvd/solvd-ecommerce/v2",
+  folder: "solvd/solvd-ecommerce/v3",
 };
 
 export const uploadImage = (image: string) => {

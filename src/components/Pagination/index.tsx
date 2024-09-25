@@ -1,13 +1,15 @@
 import { useState, useEffect, useMemo, Dispatch, SetStateAction } from "react";
 import type { ProductTableState } from "@/components/ProductTable/types";
 import { UserTableState } from "../UserTable/types";
+import { OrderTableState } from "../OrderTable/types";
 
 interface PaginationProps {
   pages: number;
   limit: number;
   setState:
     | Dispatch<SetStateAction<ProductTableState>>
-    | Dispatch<SetStateAction<UserTableState>>;
+    | Dispatch<SetStateAction<UserTableState>>
+    | Dispatch<SetStateAction<OrderTableState>>;
   loading: boolean;
 }
 

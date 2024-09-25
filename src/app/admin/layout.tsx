@@ -20,9 +20,14 @@ export default async function RootLayout({
   }
 
   return (
-    <main className="w-full h-screen flex flex-col">
+    <main className="w-full h-screen flex flex-col" id="admin-layout-container">
       <Header isAdmin={true} />
-      <div className="flex-grow flex flex-col overflow-hidden">{children}</div>
+      <div
+        className="flex-grow flex flex-col overflow-hidden"
+        id="admin-layout-container-children"
+      >
+        {children}
+      </div>
     </main>
   );
 }

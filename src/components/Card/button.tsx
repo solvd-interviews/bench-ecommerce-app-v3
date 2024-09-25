@@ -11,6 +11,7 @@ const BuyButton = ({ product }: { product: Product }) => {
     return (
       <button
         className="btn btn-primary"
+        id="buy-button"
         onClick={() => {
           increase({
             ...product,
@@ -27,7 +28,7 @@ const BuyButton = ({ product }: { product: Product }) => {
     );
   } else {
     return (
-      <button className="btn btn-primary disabled mt-2" disabled>
+      <button className="btn btn-primary disabled mt-2" id="no-stock-button" disabled>
         No stock
       </button>
     );
