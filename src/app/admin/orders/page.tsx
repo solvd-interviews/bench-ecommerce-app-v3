@@ -1,25 +1,24 @@
-import UserTable from "@/components/UserTable";
-import Link from "next/link";
+import OrderTable from "@/components/OrderTable";
 
 const Page = () => {
   return (
     <>
       <div
-        id="src-app-admin-users-page-menuContainer"
+        id="src-app-admin-orders-page-menuContainer"
         className="flex gap-5 items-center px-4 h-16 min-h-16 justify-center "
       >
         <h2
           className="md:text-3xl font-bold text-center flex-1"
-          id="src-app-admin-users-page-contentContainer-title"
+          id="src-app-admin-orders-page-contentContainer-title"
         >
-          User dashboard
+          Orders dashboard
         </h2>
       </div>
       <div
-        id="src-app-admin-users-page-contentContainer"
+        id="src-app-admin-orders-page-contentContainer"
         className="flex-grow overflow-hidden flex flex-col "
       >
-        <UserTable />
+        <OrderTable />
       </div>
     </>
   );

@@ -1,12 +1,11 @@
 import { config } from "@/lib/auth";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel from "@/lib/models/OrderModel";
-import UserModel from "@/lib/models/UserModel";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export const DELETE = async (
+export const PATCH = async (
   request: NextRequest,
   { params }: { params: { id: string } }
 ) => {
@@ -34,29 +33,13 @@ export const DELETE = async (
   }
 
   await dbConnect();
-  const order = await OrderModel.findByIdAndDelete(params.id);
-  return new NextResponse(JSON.stringify({ order }), {
+  const order = await OrderModel.findById(params.id);
+  order.isDelivered = !order.isDelivered;
+  const res = await order.save();
+  return new NextResponse(JSON.stringify({ order: res }), {
     status: 200,
     headers: {
       "Content-Type": "application/json",
     },
   });
-};
-
-export const GET = async (req: any, { params }: { params: { id: string } }) => {
-  if (!params.id || !mongoose.Types.ObjectId.isValid(params.id)) {
-    return new NextResponse(
-      JSON.stringify({ message: "Order id not correct" }),
-      {
-        status: 404,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
-
-  await dbConnect();
-  const order = await OrderModel.findById(params.id);
-  return Response.json(order);
 };
