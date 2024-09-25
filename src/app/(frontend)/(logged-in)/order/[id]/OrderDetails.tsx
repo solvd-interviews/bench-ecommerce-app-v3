@@ -19,7 +19,7 @@ export default function OrderDetails({
 
   const user = session?.user as User | undefined;
 
-  const { data, error } = useSWR(`/api/orders/${orderId}`);
+  const { data, error, mutate } = useSWR(`/api/orders/${orderId}`);
 
   const { trigger: payOrder, isMutating: isPaying } = useSWRMutation(
     `/api/orders/${orderId}`,
@@ -33,7 +33,10 @@ export default function OrderDetails({
       const data = await res.json();
       if (res.ok) {
         toast.success("Order paid successfully");
-        window.location.reload();
+        const mutated = await mutate(`/api/orders/${orderId}`, {
+          revalidate: true,
+        });
+        console.log("mutated", mutated);
       } else {
         toast.error(data.message);
       }
