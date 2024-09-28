@@ -45,7 +45,7 @@ const Form = () => {
             onSubmit={handleSubmit}
             id="src-app-frontend-loggedin-payment-form"
           >
-            {["PayPal", "Stripe", "MercadoPago"].map((payment) => (
+            {["PayPal", "MercadoPago"].map((payment) => (
               <div
                 key={payment}
                 id={`src-app-frontend-loggedin-payment-form-${payment}`}
