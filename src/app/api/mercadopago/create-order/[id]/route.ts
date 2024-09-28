@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
-import { MercadoPagoConfig, Payment, Preference } from "mercadopago";
+import { MercadoPagoConfig, Preference } from "mercadopago";
 import mongoose from "mongoose";
 import OrderModel, { Order, OrderItem } from "@/lib/models/OrderModel";
 
@@ -51,21 +51,22 @@ export const POST = async (
 
     const { protocol, host } = new URL(request.url);
     const baseUrl = `${protocol}//${host}`;
+    const noti_url = process.env.NGROK_URL || `${protocol}//${host}`;
 
     const preferenceResponse = await preference.create({
       body: {
         items: orderItemsToPreference,
         back_urls: {
-          success: `${baseUrl}/api/orders/pay/${order._id}`,
-          failure: "",
-          pending: "",
+          success: `${baseUrl}/order/${order._id}`,
+          failure: `${baseUrl}/order/${order._id}`,
+          pending: `${baseUrl}/order/${order._id}`,
         },
+        notification_url: `${noti_url}/api/mercadopago/webhook`,
+        external_reference: order._id.toString(),
+
+        auto_return: "approved",
       },
     });
-    console.log(
-      "url to succesfully redirect is: ",
-      `https://bench-ecommerce-app-v3.vercel.app/api/orders/pay/${order._id}`
-    );
 
     return new NextResponse(JSON.stringify({ preferenceResponse }), {
       status: 200,
