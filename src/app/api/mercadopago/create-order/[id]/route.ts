@@ -75,7 +75,7 @@ export const POST = async (
       },
     });
   } catch (error) {
-    console.error("Error handling upload:", error);
+    console.error("Error handling upload: ", error);
     return NextResponse.json(
       { message: "Internal server error", error: JSON.stringify(error) },
       { status: 500 }
