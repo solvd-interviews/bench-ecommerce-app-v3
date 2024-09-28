@@ -52,6 +52,8 @@ export const POST = async (
     const { protocol, host } = new URL(request.url);
     const baseUrl = `${protocol}//${host}`;
     const noti_url = process.env.NGROK_URL || `${protocol}//${host}`;
+    const noti_url_fin = `${noti_url}/api/mercadopago/webhook`;
+    console.log("noti_url_fin ", noti_url_fin);
 
     const preferenceResponse = await preference.create({
       body: {
@@ -61,7 +63,7 @@ export const POST = async (
           failure: `${baseUrl}/order/${order._id}`,
           pending: `${baseUrl}/order/${order._id}`,
         },
-        notification_url: `${noti_url}/api/mercadopago/webhook`,
+        notification_url: noti_url_fin,
         external_reference: order._id.toString(),
 
         auto_return: "approved",
