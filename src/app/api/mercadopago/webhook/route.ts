@@ -73,3 +73,10 @@ export const POST = async (request: NextRequest) => {
     );
   }
 };
+export const GET = async (request: NextRequest) => {
+  console.log("Received GET webhook", request);
+  return NextResponse.json(
+    { message: "GET request received" },
+    { status: 405 }
+  );
+};
