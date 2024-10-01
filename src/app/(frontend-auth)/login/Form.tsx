@@ -33,7 +33,6 @@ const Form = () => {
         password: data.password,
         redirect: false,
       });
-      console.log("login response: ", response);
       if (response && response.ok) {
         const redirectUrl = searchParams.get("redirect");
         if (redirectUrl) {
@@ -187,6 +186,7 @@ const Form = () => {
               <div id="src-app-frontend-auth-login-submit-button-container">
                 <button
                   type="submit"
+                  data-testid="credentials-signin"
                   className="flex justify-center items-center w-full px-4 py-2 text-sm font-medium btn btn-primary relative"
                   id="src-app-frontend-auth-login-submit-button"
                 >
