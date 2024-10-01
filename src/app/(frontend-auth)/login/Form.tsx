@@ -6,6 +6,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { FcGoogle } from "react-icons/fc";
 
 interface FormData {
   email: string;
@@ -40,8 +41,14 @@ const Form = () => {
         } else {
           window.location.reload();
         }
+      } else if (response && response.error) {
+        if (response.error === "This account uses Google Sign-In. Please use the Google button to log in.") {
+          toast.error(response.error);
+        } else {
+          throw new Error(response.error);
+        }
       } else {
-        throw new Error();
+        throw new Error("An unexpected error occurred");
       }
     } catch (error) {
       console.error("error login: ", error);
@@ -212,6 +219,16 @@ const Form = () => {
                   Register
                 </Link>
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  signIn("google", { callbackUrl: "/" });
+                }}
+                className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <FcGoogle className="w-5 h-5 mr-2" />
+                Sign in with Google
+              </button>
             </form>
           </div>
         </div>

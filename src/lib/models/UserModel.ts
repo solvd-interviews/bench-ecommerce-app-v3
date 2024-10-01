@@ -14,11 +14,11 @@ const UserSchema = new mongoose.Schema<User>(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
     },
     isAdmin: { type: Boolean, required: true, default: false },
     isBlocked: { type: Boolean, required: true, default: false },
-    userNumber: { type: Number, unique: true }, // Add this field
+    userNumber: { type: Number, unique: true },
   },
   { timestamps: true }
 );
@@ -43,7 +43,7 @@ export type User = {
   _id: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   isAdmin: boolean;
   isBlocked: boolean;
   userNumber: number;
