@@ -28,7 +28,7 @@ export const config = {
           typeof email !== "string" ||
           email.length < 3 ||
           typeof password !== "string" ||
-          password.length < 3
+          password.length < 8
         ) {
           throw new Error("Invalid email or password.");
         }
