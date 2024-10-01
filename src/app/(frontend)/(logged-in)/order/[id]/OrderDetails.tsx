@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import { User } from "@/lib/models/UserModel";
 import SummaryProd from "@/components/SummaryProd";
 import ButtonProductStatus from "@/components/ButtonProductStatus";
+import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
+import { useEffect, useState } from "react";
 
 export default function OrderDetails({
   orderId,
@@ -15,6 +17,9 @@ export default function OrderDetails({
   orderId: string;
   paypalClientId: string;
 }) {
+  initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY!);
+  const [preferenceId, setPreferenceId] = useState(null);
+
   const { data: session } = useSession();
 
   const user = session?.user as User | undefined;
@@ -58,6 +63,21 @@ export default function OrderDetails({
     }
   );
 
+  useEffect(() => {
+    if (data?.paymentMethod === "MercadoPago" && !data?.isPaid) {
+      fetch(`/api/mercadopago/create-order/${orderId}`, { method: "POST" })
+        .then((res) => {
+          return res.json();
+        })
+        .then((resJson) => {
+          console.log("resJson is: ", resJson);
+          setPreferenceId(resJson.preferenceResponse.id);
+        });
+    }
+  }, [orderId, data]);
+
+  console.log("data, session", data, session);
+
   if (error) return error.message;
   if (!data || !session)
     return <span className="loading loading-spinner w-20"></span>;
@@ -100,6 +120,7 @@ export default function OrderDetails({
         toast.success("Order paid successfully");
       });
   }
+
   return (
     <div className="p-4" id="src-app-frontend-loggedin-order-container">
       <h1 className="text-2xl" id="src-app-frontend-loggedin-order-heading">
@@ -227,6 +248,17 @@ export default function OrderDetails({
                       />
                     </PayPalScriptProvider>
                   )}
+                  {!isPaid &&
+                    paymentMethod === "MercadoPago" &&
+                    preferenceId && (
+                      <Wallet
+                        initialization={{
+                          preferenceId: preferenceId,
+                          redirectMode: "blank",
+                        }}
+                        customization={{ texts: { valueProp: "smart_option" } }}
+                      />
+                    )}
                 </div>
                 {user && user.isAdmin && (
                   <div
