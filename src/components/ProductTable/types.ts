@@ -20,4 +20,5 @@ export interface Filter {
   price: number | null;
   stock: number | null;
   block: boolean | null
+  brand: boolean | null
 }

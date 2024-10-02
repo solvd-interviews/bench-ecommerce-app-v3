@@ -12,6 +12,7 @@ export const sampleData = {
         "https://res.cloudinary.com/doxpkairh/image/upload/v1724847902/bag_f8z6gw_wqtxic_igfvsk.png",
       ],
       isBlocked: false,
+      isBranded: true,
       stock: 10,
     },
     {
@@ -48,6 +49,8 @@ export const sampleData = {
         "https://res.cloudinary.com/doxpkairh/image/upload/v1724847903/fleece-jacket_kznpkh_txr4pm_pwyjcn.png",
       ],
       isBlocked: false,
+      isBranded: true,
+
       stock: 10000,
     },
     {
@@ -72,6 +75,8 @@ export const sampleData = {
         "https://res.cloudinary.com/doxpkairh/image/upload/v1724847903/red-tshirt_ygrp5h_mkviue_lnn3iy.png",
       ],
       isBlocked: false,
+      isBranded: true,
+
       stock: 10,
     },
   ],

@@ -35,7 +35,6 @@ body {
   padding-bottom: 0;
 }
 
-
 /* Chrome, Safari, Edge, Opera */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -57,4 +56,10 @@ input[type="number"] {
 
 .no-spinner {
   -moz-appearance: textfield;
+}
+
+/* Add this to your global CSS file or inside a specific CSS file */
+.swiper-pagination-bullets .swiper-pagination-bullet-active {
+  background-color: #00cc66; /* Default dot color */
+  opacity: 1; /* To ensure full opacity */
 }

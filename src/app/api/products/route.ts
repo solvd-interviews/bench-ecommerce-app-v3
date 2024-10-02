@@ -10,6 +10,7 @@ export interface MongoFilterProduct {
   stock: { $eq: number };
   id: { $eq: number };
   isBlocked: boolean;
+  isBranded: boolean;
 }
 
 export const GET = async (request: NextRequest) => {
@@ -68,6 +69,11 @@ export const GET = async (request: NextRequest) => {
   const block = searchParams.get("block");
   if (block !== null) {
     query["isBlocked"] = block === "true";
+  }
+
+  const brand = searchParams.get("brand");
+  if (brand !== null) {
+    query["isBranded"] = brand === "true";
   }
 
   const { products, totalPages, currentPage } = await fetchProductsPagination(
