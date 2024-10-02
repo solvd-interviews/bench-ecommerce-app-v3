@@ -3,11 +3,12 @@ import Card from "@/components/Card";
 import { fetchBrandedProducts, fetchProducts } from "@/lib/utils/products";
 
 export default async function Home() {
-  const res = await fetchProducts();
-  const resBranded = await fetchBrandedProducts();
+  const [res, resBranded] = await Promise.all([
+    fetchProducts(),
+    fetchBrandedProducts(),
+  ]);
   return (
     <div className="w-full   flex-col p-4 sm:p-10 gap-4 items-center  justify-center ">
-      {/* Full-width slider for the first image of branded products */}
       <div className="w-full flex justify-center">
         <BrandedProducts brandedProd={resBranded} />
       </div>

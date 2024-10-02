@@ -6,15 +6,13 @@ import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useRouter } from "next/navigation";
 
 const BrandedProducts = ({ brandedProd }: { brandedProd: Product[] }) => {
-  /**
-   * TODO PUT THE SLIDER FULL WIDTH IN MOBILE
-   * TODO 2 CHANGE THE COLOR TO SOLVD ONE
-   */
+  const router = useRouter();
+
   return (
     <div className="w-full ">
-      {/* Swiper for branded products */}
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={0}
@@ -25,7 +23,10 @@ const BrandedProducts = ({ brandedProd }: { brandedProd: Product[] }) => {
         className="w-full shadow-xl  rounded-xl overflow-hidden"
       >
         {brandedProd.map((product) => (
-          <SwiperSlide key={product.id}>
+          <SwiperSlide
+            key={product._id}
+            onClick={() => router.push(`/${product._id}`)}
+          >
             <img
               src={product.images[0]} // Use the first image of the product
               alt={product.name}
