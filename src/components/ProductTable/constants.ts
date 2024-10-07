@@ -88,6 +88,15 @@ export const tablePropertyAndSkeletonArr: {
       skeletonQuantity: 1,
     },
     {
+      label: "Brand",
+      prop: "isBranded",
+      defOrder: "asc",
+      isSortable: false,
+      icon: "str",
+      skeletonStyle: "h-7 w-12",
+      skeletonQuantity: 1,
+    },
+    {
       label: "Status",
       isSortable: false,
       prop: "",

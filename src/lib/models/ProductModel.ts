@@ -37,6 +37,7 @@ const productSchema = new mongoose.Schema<Product>(
       maxlength: maxDesc,
     },
     isBlocked: { type: Boolean, required: true, default: false },
+    isBranded: { type: Boolean, required: true, default: false }, // NEW
     stock: {
       type: Number,
       required: true,
@@ -94,6 +95,7 @@ export type Product = {
   price: number;
   images: string[];
   isBlocked: boolean;
+  isBranded: boolean;
   stock: number;
   createdAt: string;
   updatedAt: string;

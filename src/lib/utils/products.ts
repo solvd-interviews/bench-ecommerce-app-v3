@@ -9,12 +9,32 @@ export const fetchProducts = async () => {
   });
   return res;
 };
+export const fetchBrandedProducts = async () => {
+  await dbConnect();
+  const res = await ProductModel.find({
+    isBlocked: false,
+    isBranded: true,
+  }).sort({
+    createdAt: -1,
+  });
+  return res;
+};
 
 export const blockProduct = async (id: string, block: boolean) => {
   await dbConnect();
   const res = await ProductModel.findByIdAndUpdate(
     id,
     { $set: { isBlocked: block } },
+    { new: true }
+  );
+  return res;
+};
+
+export const brandProduct = async (id: string, brand: boolean) => {
+  await dbConnect();
+  const res = await ProductModel.findByIdAndUpdate(
+    id,
+    { $set: { isBranded: brand } },
     { new: true }
   );
   return res;

@@ -6,7 +6,7 @@ import BuyButton from "./button";
 const Card = ({ product }: { product: Product }) => {
   return (
     <div
-      className={`card bg-base-100 sm:w-96 w-full md:w-80 lg:w-96 shadow-xl rounded-none rounded-t-xl overflow-hidden ${
+      className={`card bg-base-100 sm:w-96 w-full md:w-80 lg:w-96 shadow-xl  rounded-t-xl overflow-hidden ${
         product.stock < 1 && "opacity-70"
       }`}
       id={`card-${product.id}`} // Unique ID for the card
