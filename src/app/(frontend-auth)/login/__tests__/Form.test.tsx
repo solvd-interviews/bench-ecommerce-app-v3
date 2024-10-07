@@ -33,7 +33,7 @@ describe('Login Form', () => {
 
     await userEvent.type(screen.getByLabelText(/email/i), "example@example.com");
     await userEvent.type(screen.getByLabelText(/password/i), "some_password");
-    await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await userEvent.click(screen.getByTestId('credentials-signin'));
 
     await waitFor(() => {
       expect(signIn).toHaveBeenCalledWith('credentials', {
