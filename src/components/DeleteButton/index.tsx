@@ -11,6 +11,7 @@ const DeleteButton = ({
   text: string;
   deleteType: string;
 }) => {
+  /* TODO 2) ADD OPTION TO DELETE ALL CATEGORIES AND GENERATE IT IN GENERATE DATA */
   async function deleteLogic() {
     try {
       const resUsr = await fetch(`/api/generateData/${deleteType}`, {

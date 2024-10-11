@@ -1,11 +1,13 @@
 import SessionProviderComponent from "@/components/SessionProvider";
 import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import { Toaster } from "sonner";
 import ClientProviders from "@/components/ClientProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "700"], // Include the weights you need
+});
 
 export const metadata: Metadata = {
   title: "Solvd Ecommerce",
@@ -19,7 +21,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + " bg-secondary"}>
+      <body className={roboto.className + " bg-secondary"}>
         <SessionProviderComponent>
           <ClientProviders>{children}</ClientProviders>
         </SessionProviderComponent>

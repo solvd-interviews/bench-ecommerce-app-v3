@@ -1,24 +1,24 @@
 "use client";
 import useCartService from "@/lib/hooks/useCartStore";
-import { Product } from "@/lib/models/ProductModel";
 import { useRouter } from "next/navigation";
 
-const BuyButton = ({ product }: { product: Product }) => {
+const BuyButton = ({ productJsonStr }: { productJsonStr: string }) => {
+  const productJson = JSON.parse(productJsonStr);
   const { increase } = useCartService();
   const router = useRouter();
 
-  if (product.stock > 0) {
+  if (productJson && productJson.stock && productJson.stock > 0) {
     return (
       <button
         className="btn btn-primary"
         id="buy-button"
         onClick={() => {
           increase({
-            ...product,
+            ...productJson,
             qty: 0,
             color: "",
             size: "",
-            image: product.images[0] || null,
+            image: productJson.images[0] || null,
           });
           router.push("/cart");
         }}
@@ -28,7 +28,11 @@ const BuyButton = ({ product }: { product: Product }) => {
     );
   } else {
     return (
-      <button className="btn btn-primary disabled mt-2" id="no-stock-button" disabled>
+      <button
+        className="btn btn-primary disabled mt-2"
+        id="no-stock-button"
+        disabled
+      >
         No stock
       </button>
     );

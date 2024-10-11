@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, Dispatch, SetStateAction } from "react";
 import type { ProductTableState } from "@/components/ProductTable/types";
 import { UserTableState } from "../UserTable/types";
 import { OrderTableState } from "../OrderTable/types";
+import { CategoryTableState } from "../CategoryTable/types";
 
 interface PaginationProps {
   pages: number;
@@ -9,7 +10,8 @@ interface PaginationProps {
   setState:
     | Dispatch<SetStateAction<ProductTableState>>
     | Dispatch<SetStateAction<UserTableState>>
-    | Dispatch<SetStateAction<OrderTableState>>;
+    | Dispatch<SetStateAction<OrderTableState>>
+    | Dispatch<SetStateAction<CategoryTableState>>;
   loading: boolean;
 }
 

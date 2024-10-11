@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import CounterModel from "./CounterModel";
 import { deleteImage, getPublicIdFromUrl } from "../utils/cloudinary";
 import { logicRules } from "../logic";
+import { Category } from "./CategoryModel";
 
 const {
   name: { minName, maxName },
@@ -46,6 +47,12 @@ const productSchema = new mongoose.Schema<Product>(
       max: maxStock,
     },
     productNumber: { type: Number, unique: true }, // Add this field
+    categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId, // Assuming Category is a referenced model
+        ref: "Category", // Replace this with the actual model name of Category
+      },
+    ],
   },
   {
     timestamps: true,
@@ -100,4 +107,5 @@ export type Product = {
   createdAt: string;
   updatedAt: string;
   productNumber: number; // Add this field
+  categories: (Category | string)[];
 };
