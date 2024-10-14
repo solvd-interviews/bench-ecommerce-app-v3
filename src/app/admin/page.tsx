@@ -138,7 +138,7 @@ const page = async () => {
               id="src-app-admin-page-mainContainer-gridContainer-smallGrid-categories-count"
               className="text-4xl w-full h-full flex items-center justify-center"
             >
-              {orderCount} {/* TODO: 1) ADD CATEGORY COUNT */}
+              {orderCount} 
             </p>
           </div>
         </div>
