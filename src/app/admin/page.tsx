@@ -124,6 +124,23 @@ const page = async () => {
               {orderCount}
             </p>
           </div>
+          <div
+            id="src-app-admin-page-mainContainer-gridContainer-smallGrid-categories"
+            className="p-2 flex flex-col gap:1 justify-start rounded-xl items-center bg-white shadow-xl"
+          >
+            <h1
+              id="src-app-admin-page-mainContainer-gridContainer-smallGrid-categories-title"
+              className="text-2xl font-bold text-center"
+            >
+              Categories
+            </h1>
+            <p
+              id="src-app-admin-page-mainContainer-gridContainer-smallGrid-categories-count"
+              className="text-4xl w-full h-full flex items-center justify-center"
+            >
+              {orderCount} 
+            </p>
+          </div>
         </div>
         <div
           id="src-app-admin-page-mainContainer-gridContainer-top5Products"
@@ -247,6 +264,7 @@ const page = async () => {
           text={"Delete users"}
           deleteType={"users"}
         />
+        
       </div>
     </div>
   );

@@ -159,9 +159,6 @@ const UserTable = () => {
   );
 
   const handleDeleteuser = async (id: string) => {
-    /**
-     * TODO 1)
-     */
     try {
       const res = await fetch(`/api/users/${id}`, {
         method: "DELETE",

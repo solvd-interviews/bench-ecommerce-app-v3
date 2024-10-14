@@ -101,6 +101,20 @@ const ToggleMenu = ({ isAdmin = false }) => {
                     Users
                   </Link>
                 </li>
+                <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
+                  <Link
+                    className="p-3"
+                    href={"/admin/categories"}
+                    id="orders-link"
+                  >
+                    Categories
+                  </Link>
+                </li>
+                <li className="hover:bg-gray-600 hover:text-white p-1 rounded">
+                  <Link className="p-3" href={"/admin/orders"} id="orders-link">
+                    Orders
+                  </Link>
+                </li>
               </>
             ) : (
               <>

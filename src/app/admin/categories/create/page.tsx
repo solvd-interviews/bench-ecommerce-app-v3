@@ -1,9 +1,7 @@
 "use client";
-
 import { toast } from "sonner";
 import Link from "next/link";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
-import { Product } from "@/lib/models/ProductModel";
 import {
   useForm,
   SubmitHandler,
@@ -11,23 +9,16 @@ import {
   FieldErrors,
 } from "react-hook-form";
 import { logicRules } from "@/lib/logic";
-import ImgManagment from "@/components/ImgProdManage";
-import { useEffect, useState } from "react";
-import { Category } from "@/lib/models/CategoryModel";
+import { Category } from "../../../../lib/models/CategoryModel";
 
 const {
   name: { minName, maxName },
   description: { minDesc, maxDesc },
-  stock: { minStock, maxStock },
-  price: { minPrice, maxPrice },
-  images: { minImg, maxImg },
-} = logicRules.product;
+} = logicRules.category;
 
-export interface CreateProd extends Product {
+export interface CreateCategory extends Category {
   isUploading: boolean;
   steps: number;
-  files: (string | File)[];
-  filesDeleted: string[];
 }
 
 const FormInput = ({
@@ -46,15 +37,15 @@ const FormInput = ({
   maxLength,
   max,
 }: {
-  id: keyof CreateProd;
+  id: keyof CreateCategory;
   name: string;
   required?: boolean;
   pattern?: ValidationRule<RegExp>;
   placeholder?: string;
-  type?: "text" | "textarea" | "number" | "checkbox";
+  type?: "text" | "textarea" | "number" | "checkbox" | "color";
   classStyle?: string;
   register: Function;
-  errors: FieldErrors<CreateProd>;
+  errors: FieldErrors<CreateCategory>;
   trigger: Function;
   minLength?: number;
   min?: number;
@@ -108,46 +99,20 @@ const Page = () => {
     trigger,
     watch,
     reset,
-    formState: { errors },
-  } = useForm<CreateProd>({
+    formState: { errors, isSubmitting },
+  } = useForm<CreateCategory>({
     defaultValues: {
       name: "",
       description: "",
-      price: 0,
-      stock: 0,
-      isBlocked: false,
+      color: "",
       isUploading: false,
       steps: 0,
-      files: [],
-      categories: [],
     },
   });
 
-  const [defCategories, setDefCategories] = useState<Category[] | null>(null);
+  const { isUploading, steps, name, description, color } = watch();
 
-  const fetchCategories = async () => {
-    const res = await fetch("/api/categories");
-    const { categories } = await res.json();
-    setDefCategories(categories);
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const {
-    isUploading,
-    steps,
-    stock,
-    files,
-    name,
-    description,
-    price,
-    isBlocked,
-    categories,
-  } = watch();
-
-  const handleCreateProduct: SubmitHandler<CreateProd> = async (form) => {
+  const handleCreateProduct: SubmitHandler<CreateCategory> = async (form) => {
     setValue("isUploading", true);
 
     if (name.length < minName || name.length > maxName) {
@@ -163,48 +128,17 @@ const Page = () => {
       );
     }
 
-    if (stock < minStock || stock > maxStock) {
-      setValue("isUploading", false);
-      return toast.error(
-        `The stock should be greater than ${minStock} and less or equal than ${maxStock} characters.`
-      );
-    }
-
-    if (price < minPrice || price > maxPrice) {
-      setValue("isUploading", false);
-      return toast.error(
-        `The price should be greater than ${minPrice} and less or equal than ${maxPrice} characters.`
-      );
-    }
-
-    if (
-      !Array.isArray(files) ||
-      files.length < minImg ||
-      files.length > maxImg
-    ) {
-      setValue("isUploading", false);
-      return toast.error(
-        `Images quantity should be grater than ${minImg} and less or equal than ${maxImg}`
-      );
-    }
-    const formData = new FormData();
-    formData.set("name", name);
-    formData.set("description", description);
-    formData.set("price", price.toString());
-    formData.set("categories", JSON.stringify(categories));
-    formData.set("stock", stock.toString());
-    formData.set("isBlock", JSON.stringify(isBlocked));
-    formData.set("imgLength", JSON.stringify(files.length));
-    files.forEach((e, index: number) => {
-      formData.set("image-" + index, files[index]);
-    });
     try {
-      const res = await fetch("/api/upload/product", {
+      const res = await fetch("/api/upload/category", {
         method: "post",
-        body: formData,
+        body: JSON.stringify({
+          color,
+          name,
+          description,
+        }),
       });
       if (res.status == 201) {
-        toast.success("The product was added successfully!");
+        toast.success("The category was added successfully!");
       } else {
         throw new Error("Not uploaded successfully");
       }
@@ -218,28 +152,25 @@ const Page = () => {
 
   return (
     <div
-      id="src-app-admin-products-create-page-outer-div"
+      id="src-app-admin-categories-create-page-outer-div"
       className="flex p-4 overflow-y-auto w-full h-full justify-center items-center"
     >
       <form
-        id="src-app-admin-products-create-page-form"
+        id="src-app-admin-categories-create-page-form"
         className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl"
       >
-        <div id="src-app-admin-products-create-page-header">
+        <div id="src-app-admin-categories-create-page-header">
           <h2
-            id="src-app-admin-products-create-page-h2"
+            id="src-app-admin-categories-create-page-h2"
             className="font-bold text-3xl"
           >
-            Create a Product
+            Create a Category
           </h2>
-          <CheckoutSteps
-            current={steps}
-            list={["Information", "Images", "Status", "Categories"]}
-          />
+          <CheckoutSteps current={steps} list={["Information", "Color"]} />
         </div>
         {steps === 0 ? (
           <div
-            id="src-app-admin-products-create-page-step0"
+            id="src-app-admin-categories-create-page-step0"
             className="w-full h-full flex flex-col "
           >
             <FormInput
@@ -266,90 +197,29 @@ const Page = () => {
               minLength={minDesc}
               maxLength={maxDesc}
             />
-            <FormInput
-              name="Price"
-              id="price"
-              type="number"
-              classStyle="w-full"
-              placeholder="$50"
-              required
-              register={register}
-              errors={errors}
-              trigger={trigger} // Pass trigger here
-              min={minPrice}
-              max={maxPrice}
-            />
           </div>
-        ) : steps === 1 ? (
-          <ImgManagment setValue={setValue} files={files} />
-        ) : steps === 2 ? (
-          <>
-            <FormInput
-              name="Stock"
-              id="stock"
-              type="number"
-              placeholder="10"
-              required
-              classStyle="w-full"
-              register={register}
-              errors={errors}
-              trigger={trigger} // Pass trigger here
-              min={minStock}
-              max={maxStock}
-            />
-            <FormInput
-              name="Block"
-              id="isBlocked"
-              type="checkbox"
-              placeholder="10"
-              classStyle="toggle w-12"
-              register={register}
-              errors={errors}
-              trigger={trigger} // Pass trigger here
-            />
-          </>
         ) : (
-          <>
-            <div className="w-full h-full flex flex-wrap gap-2 justify-center items-center">
-              {Array.isArray(defCategories) && defCategories.length > 0 ? (
-                defCategories.map((cat) => (
-                  <div
-                    key={cat._id}
-                    style={{ backgroundColor: cat.color }}
-                    className={`p-2 rounded-md   select-none ${
-                      categories.includes(cat._id)
-                        ? "border-4 "
-                        : "hover:cursor-pointer hover:scale-95"
-                    }`}
-                    onClick={() => {
-                      if (categories.includes(cat._id)) {
-                        setValue(
-                          "categories",
-                          categories.filter((subCat) => subCat !== cat._id)
-                        );
-                      } else {
-                        setValue("categories", [...categories, cat._id]);
-                      }
-                    }}
-                  >
-                    {cat.name}
-                  </div>
-                ))
-              ) : (
-                <p>No categories.</p>
-              )}
-            </div>
-          </>
+          <FormInput
+            name="Color"
+            id="color"
+            placeholder="#00CC66"
+            required={true}
+            classStyle="w-full"
+            register={register}
+            type="color"
+            errors={errors}
+            trigger={trigger} // Pass trigger here
+          />
         )}
 
         <div
-          id="src-app-admin-products-create-page-buttons"
+          id="src-app-admin-categories-create-page-buttons"
           className="flex justify-between items-center mt-2"
         >
           {steps === 0 ? (
             <button className="btn btn-neutral">
               <Link
-                href="/admin/products"
+                href="/admin/categories"
                 className="flex w-full h-full items-center"
               >
                 <p>Cancel</p>
@@ -368,7 +238,7 @@ const Page = () => {
             </button>
           )}
 
-          {steps === 3 ? (
+          {steps === 1 ? (
             <button
               className="btn btn-primary flex"
               onClick={handleSubmit(handleCreateProduct)}
@@ -387,7 +257,6 @@ const Page = () => {
                   const res = await Promise.all([
                     trigger("name"),
                     trigger("description"),
-                    trigger("price"),
                   ]);
                   for (let i = 0; i < res.length; i++) {
                     if (!res[i]) {
@@ -395,11 +264,7 @@ const Page = () => {
                     }
                   }
                 } else if (steps === 1) {
-                  if (files.length < 1) {
-                    return;
-                  }
-                } else if (steps === 2) {
-                  if (!(await trigger("stock"))) {
+                  if (!(await trigger("color"))) {
                     return; // Stop execution if validation fails
                   }
                 }

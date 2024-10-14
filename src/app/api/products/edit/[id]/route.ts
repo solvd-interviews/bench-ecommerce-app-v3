@@ -3,6 +3,7 @@ import ProductModel from "@/lib/models/ProductModel";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/utils/cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { Buffer } from "buffer";
+import mongoose from "mongoose";
 
 export const PUT = async (
   request: NextRequest,
@@ -71,6 +72,19 @@ export const PUT = async (
       );
     }
 
+    const categories = formData.get("categories");
+    if (!categories || typeof categories !== "string") {
+      return NextResponse.json(
+        { message: "Not correct categories." },
+        { status: 400 }
+      );
+    }
+
+    // Parse categories as an array of ObjectIds
+    const categoryArray = JSON.parse(categories).map((id: string) => {
+      return new mongoose.Types.ObjectId(id);
+    });
+
     const filesDeleted = JSON.parse(
       formData.get("filesDeleted")?.toString() || ""
     );
@@ -78,7 +92,6 @@ export const PUT = async (
     let promisesDelete: Promise<{ ok: boolean }>[] = [];
 
     if (Array.isArray(filesDeleted) && filesDeleted.length > 0) {
-
       filesDeleted.forEach((_, index) => {
         promisesDelete.push(
           deleteImage(getPublicIdFromUrl(filesDeleted[index]))
@@ -120,6 +133,7 @@ export const PUT = async (
     product.stock = stock;
     product.isBlocked = isBlocked;
     product.images = urls;
+    product.categories = categoryArray;
 
     // Save the updated product
     const res = await product.save();

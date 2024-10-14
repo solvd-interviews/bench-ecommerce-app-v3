@@ -11,6 +11,7 @@ import { tablePropertyAndSkeletonArr } from "./constants";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import { Category } from "@/lib/models/CategoryModel";
 
 const defaultValues = {
   id: null as number | null,
@@ -604,6 +605,31 @@ const ProductTable = () => {
                     }`}
                   >
                     {product.stock}
+                  </td>
+                  <td
+                    id={`src-components-ProductTable-index-cellStock-${product._id}`}
+                    className={`py-2 px-4 `}
+                  >
+                    <div className="flex flex-wrap gap-1">
+                      {Array.isArray(product.categories) &&
+                      product.categories.length > 0 ? (
+                        product.categories.map((cat) => {
+                          return (
+                            typeof cat !== "string" && (
+                              <div
+                                key={cat._id}
+                                style={{ backgroundColor: cat.color }}
+                                className={`p-2 rounded-md   select-none `}
+                              >
+                                {cat.name}
+                              </div>
+                            )
+                          );
+                        })
+                      ) : (
+                        <p>No categories.</p>
+                      )}
+                    </div>
                   </td>
                   <td
                     id={`src-components-ProductTable-index-cellBlock-${product._id}`}
