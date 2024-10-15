@@ -11,6 +11,7 @@ import { tablePropertyAndSkeletonArr } from "./constants";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import { Category } from "@/lib/models/CategoryModel";
 
 const defaultValues = {
   id: null as number | null,
@@ -20,6 +21,7 @@ const defaultValues = {
   price: null as number | null,
   stock: null as number | null,
   block: false,
+  brand: false,
 };
 
 type FilterKeys = keyof typeof defaultValues;
@@ -96,6 +98,7 @@ const ProductTable = () => {
               }
               break;
             case "block":
+            case "brand":
               // Boolean values do not need trimming or conversion
               acc[safeKey] = Boolean(value);
               break;
@@ -203,13 +206,40 @@ const ProductTable = () => {
       return false;
     }
   };
+  const handleBrandClick = async (id: string, isBranded: boolean) => {
+    try {
+      const res = await fetch(`/api/products/brand/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isBranded }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const resJson = await res.json();
+      return true;
+    } catch (error) {
+      console.error("Fetch error: ", error);
+      toast.error("There was an error branding the product. Try again later.");
+
+      return false;
+    }
+  };
 
   useEffect(() => {
     fetchProducts(filters, tableState.sort);
   }, []);
 
   const formMarkup = () => (
-    <form onSubmit={handleSubmit} id="src-components-ProductTable-index-form" className="flex flex-wrap items-center gap-3">
+    <form
+      onSubmit={handleSubmit}
+      id="src-components-ProductTable-index-form"
+      className="flex flex-wrap items-center gap-3"
+    >
       {/* Product ID Filter */}
       <div id="src-components-ProductTable-index-idFilter">
         <label
@@ -335,7 +365,10 @@ const ProductTable = () => {
       </div>
 
       {/* Block Filter */}
-      <div id="src-components-ProductTable-index-blockFilter" className="flex items-center">
+      <div
+        id="src-components-ProductTable-index-blockFilter"
+        className="flex items-center"
+      >
         <label
           htmlFor="src-components-ProductTable-index-blockInput"
           id="src-components-ProductTable-index-blockLabel"
@@ -349,6 +382,28 @@ const ProductTable = () => {
           name="block"
           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           checked={filters.block || false}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Brand Filter */}
+      <div
+        id="src-components-ProductTable-index-brandFilter"
+        className="flex items-center"
+      >
+        <label
+          htmlFor="src-components-ProductTable-index-brandInput"
+          id="src-components-ProductTable-index-brandLabel"
+          className="brand text-sm font-medium text-gray-700 mr-2"
+        >
+          Branded
+        </label>
+        <input
+          type="checkbox"
+          id="src-components-ProductTable-index-brandInput"
+          name="brand"
+          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          checked={filters.brand || false}
           onChange={handleChange}
         />
       </div>
@@ -367,12 +422,24 @@ const ProductTable = () => {
 
   return (
     <>
-      <div id="src-components-ProductTable-index-mainContainer" className="overflow-y-auto h-full bg-white">
-        <div id="src-components-ProductTable-index-filterSection" className="filter-section flex justify-around p-3 bg-blue-100">
-          <div id="src-components-ProductTable-index-formDesktop" className="hidden sm:block">
+      <div
+        id="src-components-ProductTable-index-mainContainer"
+        className="overflow-y-auto h-full bg-white"
+      >
+        <div
+          id="src-components-ProductTable-index-filterSection"
+          className="filter-section flex justify-around p-3 bg-blue-100"
+        >
+          <div
+            id="src-components-ProductTable-index-formDesktop"
+            className="hidden sm:block"
+          >
             {formMarkup()}
           </div>
-          <div id="src-components-ProductTable-index-formMobile" className="block sm:hidden">
+          <div
+            id="src-components-ProductTable-index-formMobile"
+            className="block sm:hidden"
+          >
             <Accordion title="Filter options" startsOpen={false}>
               {formMarkup()}
             </Accordion>
@@ -412,7 +479,10 @@ const ProductTable = () => {
                         });
                       }}
                     >
-                      <div id={`src-components-ProductTable-index-thContent-${index}`} className="flex gap-1 justify-between">
+                      <div
+                        id={`src-components-ProductTable-index-thContent-${index}`}
+                        className="flex gap-1 justify-between"
+                      >
                         <p>{e.label}</p>
                         {prop === e.prop &&
                           (order === "asc" ? (
@@ -425,7 +495,11 @@ const ProductTable = () => {
                   );
                 } else {
                   return (
-                    <th key={index} id={`src-components-ProductTable-index-th-${index}`} className="py-2 px-4 text-left">
+                    <th
+                      key={index}
+                      id={`src-components-ProductTable-index-th-${index}`}
+                      className="py-2 px-4 text-left"
+                    >
                       {e.label}
                     </th>
                   );
@@ -438,9 +512,17 @@ const ProductTable = () => {
               Array(limit)
                 .fill(null)
                 .map((_, indexL) => (
-                  <tr key={indexL} id={`src-components-ProductTable-index-rowLoading-${indexL}`} className="h-32">
+                  <tr
+                    key={indexL}
+                    id={`src-components-ProductTable-index-rowLoading-${indexL}`}
+                    className="h-32"
+                  >
                     {tablePropertyAndSkeletonArr.map((e, indexE) => (
-                      <td key={indexE} id={`src-components-ProductTable-index-loadingCell-${indexL}-${indexE}`} className="py-2 px-4">
+                      <td
+                        key={indexE}
+                        id={`src-components-ProductTable-index-loadingCell-${indexL}-${indexE}`}
+                        className="py-2 px-4"
+                      >
                         <div className="flex flex-col gap-1">
                           {Array(e.skeletonQuantity)
                             .fill(null)
@@ -448,7 +530,10 @@ const ProductTable = () => {
                               <div
                                 key={indexZ}
                                 id={`src-components-ProductTable-index-skeleton-${indexL}-${indexE}-${indexZ}`}
-                                className={"skeleton animate-skeleton-fast " + e.skeletonStyle}
+                                className={
+                                  "skeleton animate-skeleton-fast " +
+                                  e.skeletonStyle
+                                }
                               ></div>
                             ))}
                         </div>
@@ -463,8 +548,16 @@ const ProductTable = () => {
                   id={`src-components-ProductTable-index-productRow-${product._id}`}
                   style={{ backgroundColor: index % 2 === 0 ? "#f1f5f8" : "" }}
                 >
-                  <td id={`src-components-ProductTable-index-cellProductNumber-${product._id}`} className="py-2 px-4">{product.productNumber}</td>
-                  <td id={`src-components-ProductTable-index-cellImage-${product._id}`} className="py-2 px-4">
+                  <td
+                    id={`src-components-ProductTable-index-cellProductNumber-${product._id}`}
+                    className="py-2 px-4"
+                  >
+                    {product.productNumber}
+                  </td>
+                  <td
+                    id={`src-components-ProductTable-index-cellImage-${product._id}`}
+                    className="py-2 px-4"
+                  >
                     <Image
                       width={400}
                       height={400}
@@ -473,19 +566,38 @@ const ProductTable = () => {
                       className="w-20 h-20 min-h-20 min-w-20 object-cover rounded-sm overflow-hidden shadow-xl"
                     />
                   </td>
-                  <td id={`src-components-ProductTable-index-cellName-${product._id}`} className="py-2 px-4">{product.name}</td>
-                  <td id={`src-components-ProductTable-index-cellCreatedAt-${product._id}`} className="py-2 px-4">
+                  <td
+                    id={`src-components-ProductTable-index-cellName-${product._id}`}
+                    className="py-2 px-4"
+                  >
+                    {product.name}
+                  </td>
+                  <td
+                    id={`src-components-ProductTable-index-cellCreatedAt-${product._id}`}
+                    className="py-2 px-4"
+                  >
                     {product.createdAt.split("T")[0]}
                   </td>
-                  <td id={`src-components-ProductTable-index-cellUpdatedAt-${product._id}`} className="py-2 px-4">
+                  <td
+                    id={`src-components-ProductTable-index-cellUpdatedAt-${product._id}`}
+                    className="py-2 px-4"
+                  >
                     {product.updatedAt.split("T")[0]}
                   </td>
-                  <td id={`src-components-ProductTable-index-cellDescription-${product._id}`} className="py-2 px-4">
+                  <td
+                    id={`src-components-ProductTable-index-cellDescription-${product._id}`}
+                    className="py-2 px-4"
+                  >
                     <div className="h-28 max-w-52 overflow-hidden flex items-center text-ellipsis whitespace-normal">
                       {product.description.slice(0, 90)}
                     </div>
                   </td>
-                  <td id={`src-components-ProductTable-index-cellPrice-${product._id}`} className="py-2 px-4">${product.price}</td>
+                  <td
+                    id={`src-components-ProductTable-index-cellPrice-${product._id}`}
+                    className="py-2 px-4"
+                  >
+                    ${product.price}
+                  </td>
                   <td
                     id={`src-components-ProductTable-index-cellStock-${product._id}`}
                     className={`py-2 px-4 ${
@@ -494,7 +606,35 @@ const ProductTable = () => {
                   >
                     {product.stock}
                   </td>
-                  <td id={`src-components-ProductTable-index-cellBlock-${product._id}`} className="py-2 px-4">
+                  <td
+                    id={`src-components-ProductTable-index-cellStock-${product._id}`}
+                    className={`py-2 px-4 `}
+                  >
+                    <div className="flex flex-wrap gap-1">
+                      {Array.isArray(product.categories) &&
+                      product.categories.length > 0 ? (
+                        product.categories.map((cat) => {
+                          return (
+                            typeof cat !== "string" && (
+                              <div
+                                key={cat._id}
+                                style={{ backgroundColor: cat.color }}
+                                className={`p-2 rounded-md   select-none `}
+                              >
+                                {cat.name}
+                              </div>
+                            )
+                          );
+                        })
+                      ) : (
+                        <p>No categories.</p>
+                      )}
+                    </div>
+                  </td>
+                  <td
+                    id={`src-components-ProductTable-index-cellBlock-${product._id}`}
+                    className="py-2 px-4"
+                  >
                     <input
                       className="toggle toggle-error"
                       type="checkbox"
@@ -546,6 +686,60 @@ const ProductTable = () => {
                     />
                   </td>
                   <td
+                    id={`src-components-ProductTable-index-cellBrand-${product._id}`}
+                    className="py-2 px-4"
+                  >
+                    <input
+                      className="toggle toggle-error"
+                      type="checkbox"
+                      id={`src-components-ProductTable-index-brandToggle-${product._id}`}
+                      checked={product.isBranded}
+                      onClick={() => {
+                        toast.custom((t) => (
+                          <div className="flex flex-col gap-2 items-center bg-white p-2 rounded-xl shadow-xl border-2 ">
+                            <p className="text-lg text-center">
+                              Are you sure you want to{" "}
+                              {product.isBranded ? "Unbrand" : "Brand"}{" "}
+                              {product.name}?
+                            </p>
+                            <div className="flex  gap-2">
+                              <button
+                                className="btn btn-neutral min-w-20"
+                                onClick={async () => {
+                                  toast.dismiss(t);
+                                }}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                className="btn btn-warning min-w-20"
+                                onClick={async () => {
+                                  toast.dismiss(t);
+                                  setTableState((prevState) => ({
+                                    ...prevState,
+                                    currentProducts:
+                                      prevState.currentProducts.map((e) => {
+                                        if (e._id === product._id) {
+                                          e.isBranded = !e.isBranded;
+                                        }
+                                        return e;
+                                      }),
+                                  }));
+                                  handleBrandClick(
+                                    product._id,
+                                    !product.isBranded
+                                  );
+                                }}
+                              >
+                                {product.isBranded ? "Unbrand" : "Brand"}
+                              </button>
+                            </div>
+                          </div>
+                        ));
+                      }}
+                    />
+                  </td>
+                  <td
                     id={`src-components-ProductTable-index-cellStatus-${product._id}`}
                     className={`py-2 px-4 font-bold ${
                       product.isBlocked
@@ -561,7 +755,10 @@ const ProductTable = () => {
                       ? "Active"
                       : "Inactive"}
                   </td>
-                  <td id={`src-components-ProductTable-index-cellActions-${product._id}`} className="py-2 px-4">
+                  <td
+                    id={`src-components-ProductTable-index-cellActions-${product._id}`}
+                    className="py-2 px-4"
+                  >
                     <div className="flex flex-col gap-4">
                       <LuClipboardEdit
                         size={30}
@@ -614,7 +811,7 @@ const ProductTable = () => {
                 </tr>
               ))
             ) : (
-                  <tr id="src-components-ProductTable-index-noProducts">
+              <tr id="src-components-ProductTable-index-noProducts">
                 <td colSpan={11} className="py-10 text-center">
                   No products found.
                 </td>

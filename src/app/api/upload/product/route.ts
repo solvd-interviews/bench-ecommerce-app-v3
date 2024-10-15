@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/lib/models/ProductModel";
 import { uploadFileLocally } from "@/lib/utils/cloudinary";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
@@ -13,6 +14,20 @@ export const POST = async (request: NextRequest) => {
         { status: 400 }
       );
     }
+
+    const categories = formData.get("categories");
+    if (!categories || typeof categories !== "string") {
+      return NextResponse.json(
+        { message: "Not correct categories." },
+        { status: 400 }
+      );
+    }
+
+    // Parse categories as an array of ObjectIds
+    const categoryArray = JSON.parse(categories).map((id: string) => {
+      return new mongoose.Types.ObjectId(id);
+    });
+
     const price = formData.get("price");
     if (!price || typeof price !== "string") {
       return NextResponse.json(
@@ -40,7 +55,7 @@ export const POST = async (request: NextRequest) => {
 
     for (let i = 0; i < parseInt(length); i++) {
       let file = formData.get("image-" + i);
-      if (file instanceof Blob && typeof file.arrayBuffer === 'function') {
+      if (file instanceof Blob && typeof file.arrayBuffer === "function") {
         const buffer = Buffer.from(await file.arrayBuffer());
         promises.push(uploadFileLocally(buffer));
       } else {
@@ -57,6 +72,7 @@ export const POST = async (request: NextRequest) => {
       description: formData.get("description"),
       price: parseInt(price),
       stock: parseInt(stock),
+      categories: categoryArray,
       isBlocked: String(isBlock === "true"),
       images: urls,
     };

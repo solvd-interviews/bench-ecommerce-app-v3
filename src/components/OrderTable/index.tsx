@@ -162,9 +162,7 @@ const OrderTable = () => {
   );
 
   const handleDeleteOrder = async (id: string) => {
-    /**
-     * TODO 1)
-     */
+   
     try {
       const res = await fetch(`/api/orders/${id}`, {
         method: "DELETE",

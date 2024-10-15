@@ -10,12 +10,13 @@ import {
   ValidationRule,
   FieldErrors,
 } from "react-hook-form";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 
 import { logicRules } from "@/lib/logic";
 import ImgManagment from "@/components/ImgProdManage";
+import { Category } from "@/lib/models/CategoryModel";
 
 export interface EditPage extends Product {
   isUploading: boolean;
@@ -109,7 +110,6 @@ const Page = () => {
     setValue,
     trigger, // Get the trigger function
     watch,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm<EditPage>({
     defaultValues: {
@@ -121,12 +121,26 @@ const Page = () => {
       isUploading: false,
       steps: 0,
       files: [],
+      categories: [],
       filesDeleted: [],
     },
   });
 
   const { id } = useParams();
   const { data, error, isLoading } = useSWR<Product>(`/api/${id}`);
+
+  const [defCategories, setDefCategories] = useState<Category[] | null>(null);
+
+  const fetchCategories = async () => {
+    console.log("fetch categories");
+    const res = await fetch("/api/categories");
+    const { categories } = await res.json();
+    setDefCategories(categories);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -136,6 +150,7 @@ const Page = () => {
       setValue("stock", data.stock);
       setValue("files", data.images);
       setValue("isBlocked", data.isBlocked);
+      setValue("categories", data.categories);
     }
   }, [setValue, data]);
 
@@ -166,6 +181,7 @@ const Page = () => {
     description,
     price,
     isBlocked,
+    categories,
   } = watch();
 
   const EditProduct: SubmitHandler<EditPage> = async (form) => {
@@ -213,6 +229,7 @@ const Page = () => {
     formData.set("name", name);
     formData.set("description", description);
     formData.set("price", price.toString());
+    formData.set("categories", JSON.stringify(categories));
     formData.set("stock", stock.toString());
     formData.set("isBlocked", JSON.stringify(isBlocked));
     formData.set("imgLength", JSON.stringify(files.length));
@@ -256,7 +273,7 @@ const Page = () => {
           </h2>
           <CheckoutSteps
             current={steps}
-            list={["Information", "Images", "Status"]}
+            list={["Information", "Images", "Status", "Categories"]}
           />
         </div>
         {steps === 0 ? (
@@ -305,7 +322,7 @@ const Page = () => {
             files={files}
             filesDeleted={filesDeleted}
           />
-        ) : (
+        ) : steps === 2 ? (
           <>
             <FormInput
               name="Stock"
@@ -330,9 +347,44 @@ const Page = () => {
               trigger={trigger} // Pass trigger here
             />
           </>
+        ) : (
+          <div className="w-full h-full flex  ">
+            <div className="w-full h-full flex flex-wrap gap-2 justify-center items-center">
+              {Array.isArray(defCategories) && defCategories.length > 0 ? (
+                defCategories.map((cat) => (
+                  <div
+                    key={cat._id}
+                    style={{ backgroundColor: cat.color }}
+                    className={`p-2 rounded-md   select-none ${
+                      categories.includes(cat._id)
+                        ? "border-4 "
+                        : "hover:cursor-pointer hover:scale-95"
+                    }`}
+                    onClick={() => {
+                      if (categories.includes(cat._id)) {
+                        setValue(
+                          "categories",
+                          categories.filter((subCat) => subCat !== cat._id)
+                        );
+                      } else {
+                        setValue("categories", [...categories, cat._id]);
+                      }
+                    }}
+                  >
+                    {cat.name}
+                  </div>
+                ))
+              ) : (
+                <p>No categories.</p>
+              )}
+            </div>
+          </div>
         )}
 
-        <div className="flex justify-between items-center mt-2">
+        <div
+          id="src-app-admin-products-create-page-buttons"
+          className="flex justify-between items-center mt-2"
+        >
           {steps === 0 ? (
             <button className="btn btn-neutral">
               <Link
@@ -355,7 +407,7 @@ const Page = () => {
             </button>
           )}
 
-          {steps === 2 ? (
+          {steps === 3 ? (
             <button
               className="btn btn-primary flex"
               onClick={handleSubmit(EditProduct)}

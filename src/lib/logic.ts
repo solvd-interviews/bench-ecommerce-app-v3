@@ -25,4 +25,14 @@ export const logicRules = {
       maxImg: 6,
     },
   },
+  category: {
+    name: {
+      minName: 3,
+      maxName: 40,
+    },
+    description: {
+      minDesc: 10,
+      maxDesc: 90,
+    },
+  },
 };

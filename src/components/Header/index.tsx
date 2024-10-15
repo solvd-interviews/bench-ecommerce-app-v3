@@ -62,6 +62,11 @@ const Header = async ({ isAdmin = false }) => {
                     Orders
                   </Link>
                 </li>
+                <li className="hover:underline">
+                  <Link href={"/admin/categories"} id="orders-link">
+                    Categories
+                  </Link>
+                </li>
               </>
             ) : (
               <>

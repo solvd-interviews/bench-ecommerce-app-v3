@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import { LuHand, LuX } from "react-icons/lu";
 import { toast } from "sonner";
 import Link from "next/link";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
@@ -12,9 +10,10 @@ import {
   ValidationRule,
   FieldErrors,
 } from "react-hook-form";
-import { DropResult } from "react-beautiful-dnd";
 import { logicRules } from "@/lib/logic";
 import ImgManagment from "@/components/ImgProdManage";
+import { useEffect, useState } from "react";
+import { Category } from "@/lib/models/CategoryModel";
 
 const {
   name: { minName, maxName },
@@ -56,7 +55,7 @@ const FormInput = ({
   classStyle?: string;
   register: Function;
   errors: FieldErrors<CreateProd>;
-    trigger: Function;
+  trigger: Function;
   minLength?: number;
   min?: number;
   maxLength?: number;
@@ -109,7 +108,7 @@ const Page = () => {
     trigger,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<CreateProd>({
     defaultValues: {
       name: "",
@@ -120,8 +119,21 @@ const Page = () => {
       isUploading: false,
       steps: 0,
       files: [],
+      categories: [],
     },
   });
+
+  const [defCategories, setDefCategories] = useState<Category[] | null>(null);
+
+  const fetchCategories = async () => {
+    const res = await fetch("/api/categories");
+    const { categories } = await res.json();
+    setDefCategories(categories);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const {
     isUploading,
@@ -132,6 +144,7 @@ const Page = () => {
     description,
     price,
     isBlocked,
+    categories,
   } = watch();
 
   const handleCreateProduct: SubmitHandler<CreateProd> = async (form) => {
@@ -174,11 +187,11 @@ const Page = () => {
         `Images quantity should be grater than ${minImg} and less or equal than ${maxImg}`
       );
     }
-
     const formData = new FormData();
     formData.set("name", name);
     formData.set("description", description);
     formData.set("price", price.toString());
+    formData.set("categories", JSON.stringify(categories));
     formData.set("stock", stock.toString());
     formData.set("isBlock", JSON.stringify(isBlocked));
     formData.set("imgLength", JSON.stringify(files.length));
@@ -204,17 +217,31 @@ const Page = () => {
   };
 
   return (
-    <div id="src-app-admin-products-create-page-outer-div" className="flex p-4 overflow-y-auto w-full h-full justify-center items-center">
-      <form id="src-app-admin-products-create-page-form" className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl">
+    <div
+      id="src-app-admin-products-create-page-outer-div"
+      className="flex p-4 overflow-y-auto w-full h-full justify-center items-center"
+    >
+      <form
+        id="src-app-admin-products-create-page-form"
+        className="flex flex-col justify-between gap-4 max-w-xs lg:max-w-xl lg:w-full min-h-96 bg-white p-4 rounded-xl shadow-xl"
+      >
         <div id="src-app-admin-products-create-page-header">
-          <h2 id="src-app-admin-products-create-page-h2" className="font-bold text-3xl">Create a Product</h2>
+          <h2
+            id="src-app-admin-products-create-page-h2"
+            className="font-bold text-3xl"
+          >
+            Create a Product
+          </h2>
           <CheckoutSteps
             current={steps}
-            list={["Information", "Images", "Status"]}
+            list={["Information", "Images", "Status", "Categories"]}
           />
         </div>
         {steps === 0 ? (
-          <div id="src-app-admin-products-create-page-step0" className="w-full h-full flex flex-col ">
+          <div
+            id="src-app-admin-products-create-page-step0"
+            className="w-full h-full flex flex-col "
+          >
             <FormInput
               name="Name"
               id="name"
@@ -255,7 +282,7 @@ const Page = () => {
           </div>
         ) : steps === 1 ? (
           <ImgManagment setValue={setValue} files={files} />
-        ) : (
+        ) : steps === 2 ? (
           <>
             <FormInput
               name="Stock"
@@ -281,9 +308,44 @@ const Page = () => {
               trigger={trigger} // Pass trigger here
             />
           </>
+        ) : (
+          <>
+            <div className="w-full h-full flex flex-wrap gap-2 justify-center items-center">
+              {Array.isArray(defCategories) && defCategories.length > 0 ? (
+                defCategories.map((cat) => (
+                  <div
+                    key={cat._id}
+                    style={{ backgroundColor: cat.color }}
+                    className={`p-2 rounded-md   select-none ${
+                      categories.includes(cat._id)
+                        ? "border-4 "
+                        : "hover:cursor-pointer hover:scale-95"
+                    }`}
+                    onClick={() => {
+                      if (categories.includes(cat._id)) {
+                        setValue(
+                          "categories",
+                          categories.filter((subCat) => subCat !== cat._id)
+                        );
+                      } else {
+                        setValue("categories", [...categories, cat._id]);
+                      }
+                    }}
+                  >
+                    {cat.name}
+                  </div>
+                ))
+              ) : (
+                <p>No categories.</p>
+              )}
+            </div>
+          </>
         )}
 
-        <div id="src-app-admin-products-create-page-buttons" className="flex justify-between items-center mt-2">
+        <div
+          id="src-app-admin-products-create-page-buttons"
+          className="flex justify-between items-center mt-2"
+        >
           {steps === 0 ? (
             <button className="btn btn-neutral">
               <Link
@@ -306,7 +368,7 @@ const Page = () => {
             </button>
           )}
 
-          {steps === 2 ? (
+          {steps === 3 ? (
             <button
               className="btn btn-primary flex"
               onClick={handleSubmit(handleCreateProduct)}
