@@ -89,7 +89,8 @@ const Page = () => {
         throw new Error("Failed to update name");
       }
       toast.success(`Name updated`);
-      await update({ name: formData.name });
+      await update({ ...data, user: { ...data.user, name: formData.name } });
+      window.location.reload();
     } catch (error) {
       toast.error(`Error updating name`);
     }
@@ -108,7 +109,8 @@ const Page = () => {
         throw new Error("Failed to update email");
       }
       toast.success(`Email updated`);
-      await update({ email: formData.email });
+      await update({ ...data, user: { ...data.user, email: formData.email } });
+      window.location.reload();
     } catch (error) {
       toast.error(`Error updating email`);
     }

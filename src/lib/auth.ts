@@ -37,7 +37,6 @@ export const config = {
           if (isMatch) {
             return user.toObject();
           } else {
-
             throw new Error("The email or password are incorrect. Err 2.");
           }
         }
@@ -48,6 +47,10 @@ export const config = {
   ],
   callbacks: {
     async jwt({ user, trigger, session, token }: any) {
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
+
       if (user) {
         token.user = {
           _id: user._id.toString(), // Ensure _id is a string
@@ -57,13 +60,7 @@ export const config = {
           isAdmin: user.isAdmin,
         };
       }
-      if (trigger === "update" && session) {
-        token.user = {
-          ...token.user,
-          email: session.user.email,
-          name: session.user.name,
-        };
-      }
+
       return token;
     },
     async session({ session, token }: any) {
