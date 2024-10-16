@@ -70,7 +70,7 @@ const Form = () => {
         <Image
           className="shadow-2xl"
           src="/solvdwhite-hd.png"
-          objectFit="cover"
+          objectFit="contain"
           fill
           alt="Background"
           id="src-app-frontend-auth-login-image"

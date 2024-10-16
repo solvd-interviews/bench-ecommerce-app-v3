@@ -380,7 +380,7 @@ const UserTable = () => {
       >
         <div
           id="src-components-userTable-index-mainContainer-filters-container"
-          className="filter-section flex justify-around p-3 bg-blue-100"
+          className="filter-section flex justify-around p-3 bg-blue-100 w-full min-w-max overflow-x-auto"
         >
           <div
             id="src-components-userTable-index-mainContainer-filters-container-subContainer"
