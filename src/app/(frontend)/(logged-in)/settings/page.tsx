@@ -22,7 +22,6 @@ interface PasswordData {
 
 const Page = () => {
   const { data, update } = useSession();
-  console.log("data ", data);
 
   // Name form setup
   const {
