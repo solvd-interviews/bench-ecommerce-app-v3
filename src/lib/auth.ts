@@ -58,7 +58,6 @@ export const config = {
   ],
   callbacks: {
     async jwt({ user, account, trigger, session, token }: any) {
-      
       if (trigger === "update") {
         return { ...token, ...session.user };
       }
