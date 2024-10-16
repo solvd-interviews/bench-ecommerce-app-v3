@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { compareSync, hashSync } from "bcrypt";
+import { logicRules } from "@/lib/logic";
 
 // Email validation regex
 const emailRegex = /\S+@\S+\.\S+/;
@@ -35,7 +36,11 @@ export const PATCH = async (request: NextRequest) => {
   const { name, email, currentPassword, newPassword } = body;
 
   // Validate name, email, and password
-  if (name && name.length < 3) {
+  if (
+    name &&
+    (name.length < logicRules.user.name.min ||
+      name.length > logicRules.user.name.max)
+  ) {
     return new NextResponse(
       JSON.stringify({ message: "Name must be at least 3 characters long." }),
       {
@@ -84,7 +89,21 @@ export const PATCH = async (request: NextRequest) => {
   // Update fields if they exist
   if (name) user.name = name;
   if (email) user.email = email;
-  if (newPassword) user.password = hashSync(newPassword, 5); // Hash the new password
+  if (newPassword) {
+    if (
+      newPassword.length > logicRules.user.password.max ||
+      newPassword.length < logicRules.user.password.min
+    ) {
+      return new NextResponse(
+        JSON.stringify({ message: "New password is incorrect." }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+    user.password = hashSync(newPassword, 5); // Hash the new password
+  }
 
   // Save the updated user document
   await user.save();

@@ -1,5 +1,6 @@
 "use client";
 
+import { logicRules } from "@/lib/logic";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import { useForm, SubmitHandler, UseFormRegister } from "react-hook-form";
@@ -149,6 +150,7 @@ const Page = () => {
     type = "text",
     required,
     minLength,
+    maxLength,
     validate,
     registerFn,
     errors,
@@ -158,6 +160,7 @@ const Page = () => {
     type?: string;
     required?: boolean;
     minLength?: number;
+    maxLength?: number;
     validate?: (value: string) => string | boolean;
     registerFn: any;
     errors: any;
@@ -175,6 +178,10 @@ const Page = () => {
           minLength: minLength && {
             value: minLength,
             message: `${label} must be at least ${minLength} characters`,
+          },
+          maxLength: maxLength && {
+            value: maxLength,
+            message: `${label} must be max ${maxLength} characters`,
           },
           validate,
         })}
@@ -199,7 +206,8 @@ const Page = () => {
               id="name"
               label="Username"
               required
-              minLength={3}
+              minLength={logicRules.user.name.min}
+              maxLength={logicRules.user.name.max}
               registerFn={registerName}
               errors={errorsName}
             />
@@ -260,7 +268,8 @@ const Page = () => {
               label="New password"
               type="password"
               required
-              minLength={6}
+              minLength={logicRules.user.password.min}
+              maxLength={logicRules.user.password.max}
               registerFn={registerPassword}
               errors={errorsPassword}
             />
