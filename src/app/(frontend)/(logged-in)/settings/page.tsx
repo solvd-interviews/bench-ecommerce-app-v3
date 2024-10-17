@@ -63,6 +63,10 @@ const Page = () => {
 
   const name = data?.user?.name;
   const email = data?.user?.email;
+  const _id = data?.user?._id;
+  const externalProvider = data?.user?.externalProvider;
+  console.log("_id ", _id);
+  console.log("externalProvider ", externalProvider);
 
   // Set default values from session
   useEffect(() => {
@@ -222,80 +226,85 @@ const Page = () => {
           </div>
         </form>
 
-        {/* Email Section */}
-        <form
-          onSubmit={handleSubmitEmail(onSubmitEmail)}
-          className="flex flex-col gap-8 w-96 bg-white p-2 shadow-2xl rounded-md "
-        >
-          <div className="flex flex-col gap-2">
-            <h3 className="text-2xl">Change your email</h3>
-            <InputField<EmailData>
-              id="email"
-              label="Email"
-              type="email"
-              required
-              validate={(value) =>
-                /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value) ||
-                "Invalid email address"
-              }
-              registerFn={registerEmail}
-              errors={errorsEmail}
-            />
-            <button
-              className="btn btn-neutral"
-              type="submit"
-              disabled={isSubmittingEmail}
+        {externalProvider === "Google" && (
+          <>
+            {/* Email Section */}
+            <form
+              onSubmit={handleSubmitEmail(onSubmitEmail)}
+              className="flex flex-col gap-8 w-96 bg-white p-2 shadow-2xl rounded-md "
             >
-              {isSubmittingEmail ? "Saving..." : "Update Email"}
-            </button>
-          </div>
-        </form>
+              <div className="flex flex-col gap-2">
+                <h3 className="text-2xl">Change your email</h3>
+                <InputField<EmailData>
+                  id="email"
+                  label="Email"
+                  type="email"
+                  required
+                  validate={(value) =>
+                    /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value) ||
+                    "Invalid email address"
+                  }
+                  registerFn={registerEmail}
+                  errors={errorsEmail}
+                />
+                <button
+                  className="btn btn-neutral"
+                  type="submit"
+                  disabled={isSubmittingEmail}
+                >
+                  {isSubmittingEmail ? "Saving..." : "Update Email"}
+                </button>
+              </div>
+            </form>
 
-        <form
-          onSubmit={handleSubmitPassword(onSubmitPassword)}
-          className="flex flex-col gap-8 w-96 bg-white p-2 shadow-2xl rounded-md"
-        >
-          <div className="flex flex-col gap-2">
-            <h3 className="text-2xl">Change your password</h3>
-            <InputField<PasswordData>
-              id="currentPassword"
-              label="Current password"
-              type="password"
-              required
-              registerFn={registerPassword}
-              errors={errorsPassword}
-            />
-            <InputField<PasswordData>
-              id="newPassword"
-              label="New password"
-              type="password"
-              required
-              minLength={logicRules.user.password.min}
-              maxLength={logicRules.user.password.max}
-              registerFn={registerPassword}
-              errors={errorsPassword}
-            />
-            <InputField<PasswordData>
-              id="confirmPassword"
-              label="Confirm password"
-              type="password"
-              required
-              validate={
-                (value) =>
-                  value === watchPass("newPassword") || "Passwords do not match" // Use watch to get newPassword
-              }
-              registerFn={registerPassword}
-              errors={errorsPassword}
-            />
-            <button
-              className="btn btn-neutral"
-              type="submit"
-              disabled={isSubmittingPassword}
+            <form
+              onSubmit={handleSubmitPassword(onSubmitPassword)}
+              className="flex flex-col gap-8 w-96 bg-white p-2 shadow-2xl rounded-md"
             >
-              {isSubmittingPassword ? "Saving..." : "Change Password"}
-            </button>
-          </div>
-        </form>
+              <div className="flex flex-col gap-2">
+                <h3 className="text-2xl">Change your password</h3>
+                <InputField<PasswordData>
+                  id="currentPassword"
+                  label="Current password"
+                  type="password"
+                  required
+                  registerFn={registerPassword}
+                  errors={errorsPassword}
+                />
+                <InputField<PasswordData>
+                  id="newPassword"
+                  label="New password"
+                  type="password"
+                  required
+                  minLength={logicRules.user.password.min}
+                  maxLength={logicRules.user.password.max}
+                  registerFn={registerPassword}
+                  errors={errorsPassword}
+                />
+                <InputField<PasswordData>
+                  id="confirmPassword"
+                  label="Confirm password"
+                  type="password"
+                  required
+                  validate={
+                    (value) =>
+                      value === watchPass("newPassword") ||
+                      "Passwords do not match" // Use watch to get newPassword
+                  }
+                  registerFn={registerPassword}
+                  errors={errorsPassword}
+                />
+                <button
+                  className="btn btn-neutral"
+                  type="submit"
+                  disabled={isSubmittingPassword}
+                >
+                  {isSubmittingPassword ? "Saving..." : "Change Password"}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
