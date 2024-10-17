@@ -20,7 +20,7 @@ export default async function Home() {
           style={{ backgroundImage: `url('/tendency.png')` }}
         >
           <span
-            className="text-4xl font-bold text-white "
+            className="text-3xl sm:text-4xl font-bold text-white "
             style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.75)" }}
           >
             Trending
@@ -33,7 +33,7 @@ export default async function Home() {
           style={{ backgroundImage: `url('/new.png')` }}
         >
           <span
-            className="text-4xl font-bold text-white "
+            className="text-3xl sm:text-4xl font-bold text-white "
             style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.75)" }}
           >
             New
@@ -46,7 +46,7 @@ export default async function Home() {
           style={{ backgroundImage: `url('/Categories.png')` }}
         >
           <span
-            className="text-4xl font-bold text-white "
+            className="text-3xl sm:text-4xl font-bold text-white "
             style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.75)" }}
           >
             Categories

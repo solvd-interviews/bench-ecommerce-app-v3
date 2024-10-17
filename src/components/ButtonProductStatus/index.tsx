@@ -13,22 +13,29 @@ const ButtonProductStatus = ({
   deliveredAt?: string;
   id?: string;
 }) => {
+  const baseClass = "btn max-w-64 text-sm sm:text-base py-2 sm:py-3 h-auto min-h-12 sm:h-10 flex items-center justify-center";
+  const buttonClass = `${baseClass} btn-primary`;
+  const warningButtonClass = `${baseClass} btn-warning`;
+  const neutralButtonClass = `${baseClass} btn-neutral`;
+
   switch (type) {
     case "pay":
       if (isPaid && paidAt) {
         return (
           <div
-            className="btn btn-primary max-w-64"
+            className={buttonClass}
             id={id || "payment-status-paid"}
           >
-            Paid on {paidAt.split("T")[0]} at{" "}
-            {paidAt.split("T")[1].split(".")[0]}
+            <span className="text-center">
+              Paid on {paidAt.split("T")[0]} at{" "}
+              {paidAt.split("T")[1].split(".")[0]}
+            </span>
           </div>
         );
       } else {
         return (
           <div
-            className="btn btn-warning max-w-64"
+            className={warningButtonClass}
             id={id || "payment-status-not-paid"}
           >
             Not Paid yet.
@@ -36,22 +43,23 @@ const ButtonProductStatus = ({
         );
       }
     case "ship":
-      deliveredAt;
       if (isPaid) {
         if (isDelivered && deliveredAt) {
           return (
             <div
-              className="btn btn-primary max-w-64"
+              className={buttonClass}
               id={id || "shipping-status-delivered"}
             >
-              Delivered on {deliveredAt.split("T")[0]} at{" "}
-              {deliveredAt.split("T")[1].split(".")[0]}
+              <span className="text-center">
+                Delivered on {deliveredAt.split("T")[0]} at{" "}
+                {deliveredAt.split("T")[1].split(".")[0]}
+              </span>
             </div>
           );
         } else {
           return (
             <div
-              className="btn btn-warning max-w-64"
+              className={warningButtonClass}
               id={id || "shipping-status-not-delivered"}
             >
               Not delivered yet.
@@ -61,10 +69,10 @@ const ButtonProductStatus = ({
       } else {
         return (
           <button
-            className="btn btn-neutral max-w-64"
+            className={neutralButtonClass}
             id={id || "shipping-status-payment-required"}
           >
-            Payment required to shipping.
+            Payment required for shipping.
           </button>
         );
       }
