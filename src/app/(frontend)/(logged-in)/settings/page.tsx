@@ -3,7 +3,7 @@
 import { logicRules } from "@/lib/logic";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
-import { useForm, SubmitHandler, UseFormRegister } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
 interface NameData {
@@ -235,7 +235,8 @@ const Page = () => {
               type="email"
               required
               validate={(value) =>
-                /\S+@\S+\.\S+/.test(value) || "Invalid email address"
+                /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value) ||
+                "Invalid email address"
               }
               registerFn={registerEmail}
               errors={errorsEmail}

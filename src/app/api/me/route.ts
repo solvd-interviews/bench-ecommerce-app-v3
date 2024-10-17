@@ -8,7 +8,7 @@ import { compareSync, hashSync } from "bcrypt";
 import { logicRules } from "@/lib/logic";
 
 // Email validation regex
-const emailRegex = /\S+@\S+\.\S+/;
+const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
 // PATCH request handler
 export const PATCH = async (request: NextRequest) => {

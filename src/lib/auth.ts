@@ -72,6 +72,7 @@ export const config = {
               email: user.email,
               isBlocked: false,
               isAdmin: false,
+              externalProvider: "Google",
             });
           }
           token.user = {
@@ -80,6 +81,7 @@ export const config = {
             email: dbUser.email,
             isBlocked: dbUser.isBlocked,
             isAdmin: dbUser.isAdmin,
+            externalProvider: "Google",
           };
         } else {
           token.user = {
@@ -88,6 +90,7 @@ export const config = {
             email: user.email,
             isBlocked: user.isBlocked,
             isAdmin: user.isAdmin,
+            externalProvider: user.externalProvider,
           };
         }
       }
@@ -101,6 +104,7 @@ export const config = {
           _id: token.user._id,
           isAdmin: token.user.isAdmin,
           isBlocked: token.user.isBlocked,
+          externalProvider: token.user.externalProvider,
         };
       }
       return session;
