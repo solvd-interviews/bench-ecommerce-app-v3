@@ -226,7 +226,7 @@ const Page = () => {
           </div>
         </form>
 
-        {externalProvider === "Google" && (
+        {externalProvider !== "Google" && (
           <>
             {/* Email Section */}
             <form
