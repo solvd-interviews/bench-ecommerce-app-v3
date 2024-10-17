@@ -36,7 +36,9 @@ export const config = {
         const user = await UserModel.findOne({ email });
         if (user) {
           if (!user.password) {
-            throw new Error("This account uses Google Sign-In. Please use the Google button to log in.");
+            throw new Error(
+              "This account uses Google Sign-In. Please use the Google button to log in."
+            );
           }
           const isMatch = await compare(password, user.password);
           if (isMatch) {
@@ -56,8 +58,12 @@ export const config = {
   ],
   callbacks: {
     async jwt({ user, account, trigger, session, token }: any) {
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
+
       if (user) {
-        if (account?.provider === 'google') {
+        if (account?.provider === "google") {
           await dbConnect();
           let dbUser = await UserModel.findOne({ email: user.email });
           if (!dbUser) {
@@ -66,6 +72,7 @@ export const config = {
               email: user.email,
               isBlocked: false,
               isAdmin: false,
+              externalProvider: "Google",
             });
           }
           token.user = {
@@ -74,6 +81,7 @@ export const config = {
             email: dbUser.email,
             isBlocked: dbUser.isBlocked,
             isAdmin: dbUser.isAdmin,
+            externalProvider: "Google",
           };
         } else {
           token.user = {
@@ -82,16 +90,11 @@ export const config = {
             email: user.email,
             isBlocked: user.isBlocked,
             isAdmin: user.isAdmin,
+            externalProvider: user.externalProvider,
           };
         }
       }
-      if (trigger === "update" && session) {
-        token.user = {
-          ...token.user,
-          email: session.user.email,
-          name: session.user.name,
-        };
-      }
+
       return token;
     },
     async session({ session, token }: any) {
@@ -101,6 +104,7 @@ export const config = {
           _id: token.user._id,
           isAdmin: token.user.isAdmin,
           isBlocked: token.user.isBlocked,
+          externalProvider: token.user.externalProvider,
         };
       }
       return session;

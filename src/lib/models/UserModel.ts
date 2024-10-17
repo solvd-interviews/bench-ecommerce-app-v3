@@ -19,6 +19,11 @@ const UserSchema = new mongoose.Schema<User>(
     isAdmin: { type: Boolean, required: true, default: false },
     isBlocked: { type: Boolean, required: true, default: false },
     userNumber: { type: Number, unique: true },
+    externalProvider: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   { timestamps: true }
 );
@@ -49,4 +54,5 @@ export type User = {
   userNumber: number;
   createdAt: string;
   updatedAt: string;
+  externalProvider?: string;
 };

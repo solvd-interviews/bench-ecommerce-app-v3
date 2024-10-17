@@ -35,4 +35,18 @@ export const logicRules = {
       maxDesc: 90,
     },
   },
+  user: {
+    name: {
+      min: 3,
+      max: 40,
+    },
+    email: {
+      min: 3,
+      max: 40,
+    },
+    password: {
+      min: 6,
+      max: 40,
+    },
+  },
 };
