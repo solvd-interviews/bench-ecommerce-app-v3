@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema<User>(
     externalProvider: {
       type: String,
       required: false,
+      default: "",
     },
   },
   { timestamps: true }

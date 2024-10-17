@@ -11,6 +11,7 @@ export const POST = async (request: NextRequest) => {
     email,
     name: name || "",
     password: hashedPassword,
+    externalProvider: "",
   });
   try {
     await newUser.save();
