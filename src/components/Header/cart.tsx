@@ -20,7 +20,12 @@ const Cart = () => {
           {items.reduce((a, c) => a + c.qty, 0)}
         </div>
       ) : (
-        <div className={`badge badge-secondary font-bold`} id="cart-badge-empty">0</div>
+        <div
+          className={`badge  font-bold border-1 border-primary`}
+          id="cart-badge-empty"
+        >
+          0
+        </div>
       )}
     </Link>
   );
