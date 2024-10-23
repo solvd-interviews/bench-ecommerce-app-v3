@@ -65,6 +65,7 @@ export const config = {
       if (user) {
         if (account?.provider === "google") {
           await dbConnect();
+          console.log("google user: ", user);
           let dbUser = await UserModel.findOne({ email: user.email });
           if (!dbUser) {
             dbUser = await UserModel.create({
@@ -83,6 +84,7 @@ export const config = {
             isBlocked: dbUser.isBlocked,
             isAdmin: dbUser.isAdmin,
             externalProvider: "Google",
+            imgProfile: user.picture,
           };
         } else {
           token.user = {
@@ -106,6 +108,7 @@ export const config = {
           isAdmin: token.user.isAdmin,
           isBlocked: token.user.isBlocked,
           externalProvider: token.user.externalProvider,
+          imgProfile: token.user.picture,
         };
       }
       return session;
