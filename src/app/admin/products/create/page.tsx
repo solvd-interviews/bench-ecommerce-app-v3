@@ -84,6 +84,7 @@ const FormInput = ({
           value: max,
           message: `${name} must be a maximum of ${max}.`,
         },
+        valueAsNumber: type === "number",
       })}
       className={`input input-bordered max-w-sm ${classStyle}`}
       placeholder={placeholder}
@@ -190,7 +191,7 @@ const Page = () => {
     const formData = new FormData();
     formData.set("name", name);
     formData.set("description", description);
-    formData.set("price", price.toString());
+    formData.set("price", Number(price).toFixed(2));
     formData.set("categories", JSON.stringify(categories));
     formData.set("stock", stock.toString());
     formData.set("isBlock", JSON.stringify(isBlocked));
@@ -275,7 +276,7 @@ const Page = () => {
               required
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+              trigger={trigger}
               min={minPrice}
               max={maxPrice}
             />

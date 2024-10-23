@@ -70,7 +70,7 @@ export const POST = async (request: NextRequest) => {
     const product = {
       name: formData.get("name"),
       description: formData.get("description"),
-      price: parseInt(price),
+      price: parseFloat(price),
       stock: parseInt(stock),
       categories: categoryArray,
       isBlocked: String(isBlock === "true"),
