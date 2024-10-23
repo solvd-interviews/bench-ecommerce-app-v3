@@ -41,7 +41,10 @@ const Form = () => {
           window.location.reload();
         }
       } else if (response && response.error) {
-        if (response.error === "This account uses Google Sign-In. Please use the Google button to log in.") {
+        if (
+          response.error ===
+          "This account uses Google Sign-In. Please use the Google button to log in."
+        ) {
           toast.error(response.error);
         } else {
           throw new Error(response.error);
@@ -222,7 +225,12 @@ const Form = () => {
               <button
                 type="button"
                 onClick={() => {
-                  signIn("google", { callbackUrl: "/" });
+                  let finRed = "/";
+                  const redirectUrl = searchParams.get("redirect");
+                  if (redirectUrl) {
+                    finRed = "/" + redirectUrl;
+                  }
+                  signIn("google", { callbackUrl: finRed });
                 }}
                 className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
               >
