@@ -66,7 +66,7 @@ const Header = async ({ isAdmin = false }) => {
             name={session?.user?.name}
             email={session?.user?.email}
             isAdmin={isAdmin}
-            imgProfile={session?.user?.imgProfile}
+            image={session?.user?.image}
             elementsList={
               isAdmin
                 ? [

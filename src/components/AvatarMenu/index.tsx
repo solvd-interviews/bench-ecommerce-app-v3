@@ -7,7 +7,7 @@ import Cart from "../Header/cart";
 interface AvatarMenuProps {
   name: string;
   email: string;
-  imgProfile?: string;
+  image?: string;
   elementsList: { label: string; href: string }[];
   isAdmin: boolean;
 }
@@ -23,7 +23,7 @@ const getInitials = (name: string) => {
 const AvatarMenu: React.FC<AvatarMenuProps> = ({
   name,
   email,
-  imgProfile,
+  image,
   elementsList,
   isAdmin,
 }) => {
@@ -58,10 +58,10 @@ const AvatarMenu: React.FC<AvatarMenuProps> = ({
         <div
           className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold bg-primary`}
         >
-          {imgProfile ? (
+          {image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={imgProfile}
+              src={image}
               alt={name}
               className="w-full h-full rounded-full"
             />

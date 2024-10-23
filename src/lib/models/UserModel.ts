@@ -24,9 +24,10 @@ const UserSchema = new mongoose.Schema<User>(
       required: false,
       default: "",
     },
-    imgProfile: {
+    image: {
       type: String,
       required: false,
+      default: null,
     },
   },
   { timestamps: true }
@@ -59,5 +60,5 @@ export type User = {
   createdAt: string;
   updatedAt: string;
   externalProvider?: string;
-  imgProfile?: string;
+  image?: string;
 };
