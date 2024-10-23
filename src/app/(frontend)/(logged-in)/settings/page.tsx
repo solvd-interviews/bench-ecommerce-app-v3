@@ -65,8 +65,6 @@ const Page = () => {
   const email = data?.user?.email;
   const _id = data?.user?._id;
   const externalProvider = data?.user?.externalProvider;
-  console.log("_id ", _id);
-  console.log("externalProvider ", externalProvider);
 
   // Set default values from session
   useEffect(() => {

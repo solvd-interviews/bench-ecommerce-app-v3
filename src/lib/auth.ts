@@ -64,7 +64,6 @@ export const config = {
 
       if (user) {
         if (account?.provider === "google") {
-          console.log("user from google: ", user);
           await dbConnect();
           let dbUser = await UserModel.findOne({ email: user.email });
           if (!dbUser) {
