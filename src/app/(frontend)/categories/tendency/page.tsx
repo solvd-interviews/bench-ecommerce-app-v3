@@ -6,7 +6,6 @@ import { LuArrowLeft } from "react-icons/lu";
 
 const TendencyProducts = async () => {
   const tendencyProd = await fetchTendencyProductsLast15Days();
-  console.log("tendencyProd: ", tendencyProd);
   return (
     <div className="w-full h-full flex flex-col p-4">
       <div className="flex gap-4 items-center">

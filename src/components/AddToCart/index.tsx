@@ -25,7 +25,7 @@ export default function AddToCart({ item }: { item: OrderItem }) {
       >
         -
       </button>
-      <div className="px-2 w-10 text-center" id="item-quantity">
+      <div className="px-2 w-10 text-center " id="item-quantity">
         {existItem.qty}
       </div>
       <button

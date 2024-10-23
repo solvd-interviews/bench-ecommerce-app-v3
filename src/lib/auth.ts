@@ -73,6 +73,7 @@ export const config = {
               isBlocked: false,
               isAdmin: false,
               externalProvider: "Google",
+              imgProfile: user.picture,
             });
           }
           token.user = {

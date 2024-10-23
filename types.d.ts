@@ -9,6 +9,7 @@ declare module "next-auth" {
       isAdmin: boolean;
       isBlocked: boolean;
       externalProvider?: string;
+      imgProfile?: string;
     };
   }
 
@@ -19,6 +20,7 @@ declare module "next-auth" {
     isAdmin: boolean;
     isBlocked: boolean;
     externalProvider?: string;
+    imgProfile?: string;
   }
 
   interface JWT {
@@ -28,7 +30,7 @@ declare module "next-auth" {
       email: string;
       isAdmin: boolean;
       isBlocked: boolean;
-      externalProvider?: string;
+      imgProfile?: string;
     };
   }
 }
