@@ -84,7 +84,7 @@ export const config = {
             isBlocked: dbUser.isBlocked,
             isAdmin: dbUser.isAdmin,
             externalProvider: "Google",
-            imgProfile: user.image,
+            imgProfile: dbUser.imgProfile,
           };
         } else {
           token.user = {
@@ -108,7 +108,7 @@ export const config = {
           isAdmin: token.user.isAdmin,
           isBlocked: token.user.isBlocked,
           externalProvider: token.user.externalProvider,
-          imgProfile: token.user.image,
+          imgProfile: token.user.imgProfile,
         };
       }
       return session;

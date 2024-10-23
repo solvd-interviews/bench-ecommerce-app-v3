@@ -7,7 +7,7 @@ import Search from "../Search";
 
 const Header = async ({ isAdmin = false }) => {
   const session = await getServerSession();
-
+  console.log("session is ", session);
   return (
     <>
       <header className="w-full flex justify-around items-center p-2 fixed h-16 z-10 bg-white border-b-2">
