@@ -70,7 +70,12 @@ const FormInput = ({
       id={id}
       {...register(id, {
         required: required && `${name} is required.`,
-        pattern,
+        pattern: id === "price"
+          ? {
+            value: /^[0-9]*\.?[0-9]+$/,
+            message: "Price must be a number without commas."
+          }
+          : pattern,
         minLength: minLength && {
           value: minLength,
           message: `${name} must be at least ${minLength} characters long.`,
@@ -248,10 +253,10 @@ const Page = () => {
               id="name"
               required={true}
               classStyle={`w-full`}
-              placeholder="Pedro"
+              placeholder="Playstation 4"
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+              trigger={trigger}
               minLength={minName}
               maxLength={maxName}
             />
@@ -263,16 +268,16 @@ const Page = () => {
               classStyle="w-full"
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+              trigger={trigger}
               minLength={minDesc}
               maxLength={maxDesc}
             />
             <FormInput
               name="Price"
               id="price"
-              type="number"
+              type="text"
               classStyle="w-full"
-              placeholder="$50"
+              placeholder="50.00"
               required
               register={register}
               errors={errors}
@@ -294,7 +299,7 @@ const Page = () => {
               classStyle="w-full"
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+                  trigger={trigger}
               min={minStock}
               max={maxStock}
             />
@@ -306,7 +311,7 @@ const Page = () => {
               classStyle="toggle w-12"
               register={register}
               errors={errors}
-              trigger={trigger} // Pass trigger here
+                  trigger={trigger}
             />
           </>
         ) : (
