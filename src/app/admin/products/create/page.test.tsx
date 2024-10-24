@@ -23,7 +23,7 @@ describe("Product Creation Page", () => {
 
     setup();
     const inputElement = screen.getByPlaceholderText(
-      "Pedro"
+      "Playstation 4"
     ) as HTMLInputElement;
     fireEvent.change(inputElement, { target: { value: "New Product" } });
     expect(inputElement.value).toBe("New Product");
