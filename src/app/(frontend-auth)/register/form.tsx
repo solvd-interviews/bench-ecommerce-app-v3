@@ -4,7 +4,9 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+import { signIn } from "next-auth/react";
 
 interface FormData {
   email: string;
@@ -19,24 +21,31 @@ const Form = () => {
     formState: { errors },
     reset,
   } = useForm<FormData>();
-  const route = useRouter();
   const [isLoading, setisLoading] = useState(false);
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     setisLoading(true);
-    console.log("on submit register: ", data);
     try {
       const response = await fetch(`/api/auth/register`, {
         method: "POST",
         body: JSON.stringify(data),
       });
       if (response && response.ok) {
-        route.push("/login");
-        setTimeout(() => {
-          toast.success("The registration was successfully done.");
-        }, 1000);
+        const response2 = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        });
+        if (response2 && response2.ok) {
+          const redirectUrl = searchParams.get("redirect");
+          if (redirectUrl) {
+            window.location.href = "/" + redirectUrl;
+          } else {
+            window.location.reload();
+          }
+        }
       } else {
-        throw new Error();
+        throw new Error("An unexpected error occurred");
       }
     } catch (error) {
       console.error("error login: ", error);
@@ -46,6 +55,8 @@ const Form = () => {
       reset();
     }
   };
+
+  const searchParams = useSearchParams();
 
   return (
     <div
@@ -236,12 +247,29 @@ const Form = () => {
               <div className="w-full flex justify-center gap-2">
                 <p className="text-neutral">Already have an account?</p>
                 <Link
-                  href={"/login"}
+                  href={`/login${
+                    searchParams.toString() && "?" + searchParams.toString()
+                  }`}
                   className="hover:underline text-right text-primary"
                 >
                   Login
                 </Link>
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  let finRed = "/";
+                  const redirectUrl = searchParams.get("redirect");
+                  if (redirectUrl) {
+                    finRed = "/" + redirectUrl;
+                  }
+                  signIn("google", { callbackUrl: finRed });
+                }}
+                className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <FcGoogle className="w-5 h-5 mr-2" />
+                Continue with Google
+              </button>
             </form>
           </div>
         </div>
