@@ -1,5 +1,5 @@
 import dbConnect from "../dbConnect";
-import CategoryModel from "../models/CategoryModel";
+import CategoryModel, { Category } from "../models/CategoryModel";
 
 export const fetchCategoriesPagination = async (
   page = 1,
@@ -23,7 +23,9 @@ export const fetchCategoriesPagination = async (
     currentPage: page,
   };
 };
-export const fetchAllCategories = async () => {
+export const fetchAllCategories: () => Promise<{
+  categories: Category[];
+}> = async () => {
   await dbConnect();
 
   const categories = await CategoryModel.find();

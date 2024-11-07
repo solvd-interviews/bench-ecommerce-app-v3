@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import dbConnect from "../dbConnect";
 import CategoryModel from "../models/CategoryModel";
 import OrderModel from "../models/OrderModel";
-import ProductModel from "../models/ProductModel";
+import ProductModel, { Product } from "../models/ProductModel";
 import { MongoFilterProduct } from "@/app/api/products/route";
 
 export const fetchProducts = async () => {
@@ -115,7 +116,6 @@ export const fetchProductsLast30Days = async () => {
   return res;
 };
 
-
 export const fetchTendencyProductsLast15Days = async () => {
   await dbConnect();
 
@@ -150,7 +150,9 @@ export const fetchTendencyProductsLast15Days = async () => {
 
   // Step 3: Merge the sales data with the product details
   const result = productSales.map((sale) => {
-    const product = products.find((prod) => prod._id.toString() === sale._id.toString());
+    const product = products.find(
+      (prod) => prod._id.toString() === sale._id.toString()
+    );
     return {
       productId: sale._id,
       name: sale.name,
@@ -160,4 +162,107 @@ export const fetchTendencyProductsLast15Days = async () => {
   });
 
   return result;
+};
+
+type FetchProductFilters = {
+  name?: string;
+  minPriceFilter?: number;
+  maxPriceFilter?: number;
+  categories?: string;
+  ascOrder?: string;
+  sortBy?: string;
+};
+
+export const fetchProductsByFilters = async ({
+  name,
+  minPriceFilter,
+  maxPriceFilter,
+  categories,
+  ascOrder,
+  sortBy,
+}: FetchProductFilters): Promise<{
+  products: Product[];
+  minPriceLimit: number;
+  maxPriceLimit: number;
+}> => {
+  await dbConnect();
+
+  // Create the base query object
+  const query: any = {
+    isBlocked: false,
+  };
+
+  // Add regex for name search if name is provided
+  if (name) {
+    query.name = { $regex: new RegExp(name, "i") }; // Case-insensitive regex
+  }
+
+  // Add price filters if provided
+  if (minPriceFilter !== undefined) {
+    query.price = { ...query.price, $gte: minPriceFilter };
+  }
+  if (maxPriceFilter !== undefined) {
+    query.price = { ...query.price, $lte: maxPriceFilter };
+  }
+
+  // Log the query before adding categories for debugging
+  console.log("Constructed query before categories: ", query);
+
+  // Handle filtering by categories
+  if (categories) {
+    // Convert the comma-separated string to an array of trimmed IDs
+    const categoryArray = categories
+      .split(",")
+      .map((id) => new mongoose.Types.ObjectId(id.trim()));
+    query.categories = { $in: categoryArray };
+  }
+
+  // Log the final query for debugging
+  console.log("Final query with categories: ", query);
+  console.log("sortBy ascOrder: ", sortBy, ascOrder);
+
+  const sortField = sortBy || "createdAt"; // Default to "createdAt" if sortBy is not provided
+  const sortOrder = ascOrder === "true" ? 1 : -1; // 1 for ascending, -1 for descending
+
+  console.log("sortField and sortOrder", sortField, sortOrder);
+  // Fetch products using the constructed query
+  const query1 = ProductModel.find(query)
+    .populate({
+      path: "categories",
+      model: CategoryModel,
+    })
+    .sort({ [sortField]: sortOrder })
+    .collation({ locale: "en", strength: 2 })  // Case-insensitive collation
+
+    .exec();
+
+  // Remove price filters for the aggregation query
+  delete query.price;
+
+  // Aggregation to find min and max prices
+  const query2 = ProductModel.aggregate([
+    { $match: query }, // Apply the same query filters
+    {
+      $group: {
+        _id: null,
+        minPrice: { $min: "$price" },
+        maxPrice: { $max: "$price" },
+      },
+    },
+  ]);
+
+  // Use Promise.all to run both queries concurrently
+  const [products, priceRange] = await Promise.all([query1, query2]);
+
+  console.log("priceRange aggregation result: ", priceRange);
+
+  // Extract min and max price from the aggregation result
+  const minPriceValue = priceRange[0]?.minPrice || 0;
+  const maxPriceValue = priceRange[0]?.maxPrice || 0;
+
+  return {
+    products,
+    minPriceLimit: minPriceValue,
+    maxPriceLimit: maxPriceValue,
+  };
 };
