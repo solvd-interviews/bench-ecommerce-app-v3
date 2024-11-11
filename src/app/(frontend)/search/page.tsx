@@ -38,13 +38,7 @@ const Page = async ({
       sortBy,
     });
 
-  console.log(
-    "minPriceLimit, maxPriceLimit,minPriceFilter, maxPriceFilter ",
-    minPriceLimit,
-    maxPriceLimit,
-    minPriceFilter,
-    maxPriceFilter
-  );
+  
 
   /* 
     TODO 2): implement filter by price and categories 

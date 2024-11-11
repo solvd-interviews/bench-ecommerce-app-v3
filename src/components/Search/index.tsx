@@ -102,7 +102,6 @@ export default function SearchComponent() {
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      console.log("enter ", searchTerm);
       setSuggestions([]);
       saveSearchTermOnDb(searchTerm); // Save term when pressing Enter
       triggerFinalSearchRedirection(searchTerm);

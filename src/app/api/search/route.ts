@@ -33,9 +33,7 @@ export const GET = async (req: Request) => {
 
 // POST request: Save a new search term or increment the count if it exists
 export const POST = async (req: Request) => {
-  console.log("search post executed");
   const { query } = await req.json();
-  console.log("query search is: ", query);
 
   if (!query) {
     return NextResponse.json(

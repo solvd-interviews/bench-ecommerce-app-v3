@@ -205,8 +205,6 @@ export const fetchProductsByFilters = async ({
     query.price = { ...query.price, $lte: maxPriceFilter };
   }
 
-  // Log the query before adding categories for debugging
-  console.log("Constructed query before categories: ", query);
 
   // Handle filtering by categories
   if (categories) {
@@ -217,14 +215,10 @@ export const fetchProductsByFilters = async ({
     query.categories = { $in: categoryArray };
   }
 
-  // Log the final query for debugging
-  console.log("Final query with categories: ", query);
-  console.log("sortBy ascOrder: ", sortBy, ascOrder);
 
   const sortField = sortBy || "createdAt"; // Default to "createdAt" if sortBy is not provided
   const sortOrder = ascOrder === "true" ? 1 : -1; // 1 for ascending, -1 for descending
 
-  console.log("sortField and sortOrder", sortField, sortOrder);
   // Fetch products using the constructed query
   const query1 = ProductModel.find(query)
     .populate({
@@ -254,7 +248,6 @@ export const fetchProductsByFilters = async ({
   // Use Promise.all to run both queries concurrently
   const [products, priceRange] = await Promise.all([query1, query2]);
 
-  console.log("priceRange aggregation result: ", priceRange);
 
   // Extract min and max price from the aggregation result
   const minPriceValue = priceRange[0]?.minPrice || 0;
