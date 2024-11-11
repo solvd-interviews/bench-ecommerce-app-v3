@@ -22,7 +22,6 @@ const Form = () => {
   } = useForm<FormData>();
 
   const searchParams = useSearchParams();
-
   const [isLoading, setisLoading] = useState(false);
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
@@ -215,7 +214,9 @@ const Form = () => {
                   Don&apos;t have an account?
                 </p>
                 <Link
-                  href={"/register"}
+                  href={`/register${
+                    searchParams.toString() && "?" + searchParams.toString()
+                  }`}
                   className="hover:underline text-right text-primary"
                   id="src-app-frontend-auth-login-register-link"
                 >
@@ -235,7 +236,7 @@ const Form = () => {
                 className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
               >
                 <FcGoogle className="w-5 h-5 mr-2" />
-                Sign in with Google
+                Continue with Google
               </button>
             </form>
           </div>
